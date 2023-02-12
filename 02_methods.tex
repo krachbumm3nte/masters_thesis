@@ -2,19 +2,63 @@
 \chapter{Methods}
 
 \todo{from \cite{Haider2021}: To differentiate between biologically plausible, leaky neurons and abstract neurons with instantaneous
-response, we respectively use the terms “neuronal” and “neural”.}
+  response, we respectively use the terms “neuronal” and “neural”.}
+
+\section{The Backpropagation of errors algorithm}
+
+The Backpropagation of errors algorithm (henceforth referred as "Backprop") forms the backbone of modern machine
+learning. \citeme It is as of yet unmatched with regard to training in deep neural networks due to its unique capability to
+attribute errors in the output of a network to activations of specific neurons within its hidden layers and adapt 
+incoming weights in order to improve network performance. This property also forms the basis of the algorithm's name;
+After an initial forward pass to form a prediction about the nature of a given input, a separate backward pass 
+propagates the arising error through all layers in reverse order. During this second network traversal, local error
+gradients dictate, to what extent a given weight needs to be altered so that the next presentation of the same sample
+would elicit a lower error in the output layer. 
+
+
+While Backprop continues to prove exceptionally useful in conventional machine learning systems, attempts use it to
+explain the exceptional learning capabilities of the human brain have so far not been successful \phrasing. In fact,
+Backprop as a mechanism for synaptic plasticity in the brain is dismissed by many neuroscientists as biologically 
+implausible. This dismissal is primarily based on three mechanisms that are instrumental for Backprop
+\cite{whittington2019theories}:
+
+\subsection*{The backward pass}
+
+
+\subsection*{Local error representation}
+
+\subsection*{The weight transport problem}
+
+Yet, despite these mechanisms being at odds with biology, when training on real-world data, artificial neural networks
+ have been shown to learn similar representations as those found in brain areas responsible for comparable tasks
+ \cite{whittington2019theories,Yamins2016}. 
+
+
+\todo{discuss supervisor issue?}
 
 
 \section{Neuron and network model}
 
 \begin{figure}
-    \centerline{\includegraphics[width={1\linewidth}]{pyramidal.png}}
-    \caption{Self-predicting initialization without plasticity}
-  \end{figure}
+  \centerline{\includegraphics[width={1\linewidth}]{pyramidal.png}}
+  \caption{Self-predicting initialization without plasticity}
+\end{figure}
 \section{Urbanczik-Senn Plasticity}
 
 
-The 
+from \cite{Haider2021}:
+
+\textit{In this architecture, plasticity serves two purposes. For pyramidal-to-pyramidal feedforward synapses,
+  it implements error-correcting learning as a time-continuous approximation of BP. For pyramidal-to-
+  interneuron synapses, it drives interneurons to mimic their pyramidal partners in the layers above (see
+  also SI). Thus, in a well-trained network, apical compartments of pyramidal cells are at rest, reflecting
+  zero error, as top-down and lateral inputs cancel out. When an output error propagates through the
+  network, these two inputs can no longer cancel out and their difference represents the local error ei .
+  This architecture does not rely on the transpose of the forward weight matrix, improving viability for
+  implementation in distributed asynchronous systems. Here, we keep feedback weights fixed, realizing
+  a variant of feedback alignment. In principle, these weights could also be learned in order to further
+  improve the local representation of errors Section 7.}
+
 
 
 
@@ -133,7 +177,7 @@ Where $s_i$ is the postsynaptic spiketrain and $V_i^*$ is the error between dend
   \tau_s & = 3
 \end{align}
 
-Writing membrane potential to history (happens at every update step of the postsynaptic neuron:
+Writing membrane potential to history (happens at every update step of the postsynaptic neuron):
 
 \begin{lstlisting}[language=C++, directivestyle={\color{black}}
                    emph={int,char,double,float,unsigned,exp},
@@ -205,3 +249,20 @@ $I_1$ in the code is computed as a sum:
 
 
 \section{Cortical microcircuits}
+
+\section{Latent equilibrium}
+
+\begin{align*}
+  \phi(V^{som}) & \rightarrow \phi(\breve{V}^{som}) \\
+  \breve{V}     & := V + \tau^m \dot{V}             \\
+\end{align*}
+\begin{align*}
+  \frac{d}{dt} W_{ba} & = \eta (\phi(V_b^{som}) - \phi(\alpha V_b^{dend})) \phi(V_a^{som})                         \\
+  \frac{d}{dt} W_{ba} & = \eta (\phi(\breve{V}_b^{som}) - \phi(\alpha \breve{V}_b^{dend})) \phi(\breve{V}_a^{som})
+\end{align*}
+
+
+\section{simulation details/updates}
+
+All voltages need to be reset between simulations!
+
