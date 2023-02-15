@@ -22,3 +22,87 @@ able to learn in a goal-oriented way.
 The literature entails numerous approaches to adress this challenges, with varying degrees of success. In this thesis,
 I will investigate one such approach, and attempt to modify it in a way that it more closely resembles properties 
 exhibited by the human neocortex.
+
+
+
+
+
+\section{The Backpropagation of errors algorithm}
+
+The Backpropagation of errors algorithm (henceforth referred as "Backprop") forms the backbone of modern machine
+learning. \citeme It is as of yet unmatched with regard to training in deep neural networks due to its unique capability to
+attribute errors in the output of a network to activations of specific neurons within its hidden layers and adapt
+incoming weights in order to improve network performance. This property also forms the basis of the algorithm's name;
+After an initial forward pass to form a prediction about the nature of a given input, a separate backward pass
+propagates the arising error through all layers in reverse order. During this second network traversal, local error
+gradients dictate, to what extent a given weight needs to be altered so that the next presentation of the same sample
+would elicit a lower error in the output layer.
+
+
+While Backprop continues to prove exceptionally useful in conventional machine learning systems, attempts use it to
+explain the exceptional learning capabilities of the human brain have so far not been successful \phrasing. In fact,
+Backprop as a mechanism for synaptic plasticity in the brain is dismissed by many neuroscientists as biologically
+implausible. This dismissal is often focussed on three mechanisms that are instrumental for Backprop
+\cite{whittington2019theories,Crick1989,Bengio2015}:
+
+
+
+\subsection*{Local error representation}
+
+Within conventional artificial neural networks (ANNs), the neurons only serve the purpose of transmitting signals in
+a feedforward fashion. The errors on the other hand are computed and propagated by a completely separate algorithm
+which can access the entirity of the network state. The algorithm requires the activation of all downstream neurons in
+order to compute the weight changes of a given layer. Since plasticity in biological neurons is only dependent on factors
+that are local to the synapse, these errors would need to be represented within the neurons of each layer. Several
+mechanisms have been proposed to do this in a biologically plausible way, which will be discussed \todo{in a later
+  chapter.}
+
+
+\subsection*{The weight transport problem}
+
+During the weight update stage of Backprop, errors are transmitted between layers with the same weights that are used
+in the forward pass. In other words, the magnitude of a neuron-specific error that is propagated through a given connection
+should be proportional to its impact on output loss during the forward pass. For this to work, a neuronal network would
+require feedback connections that mirror both the network structure and synaptic weights exhibited by the
+original network. It was long assumed that the feedback weights are required to be an exact match, but \cite{Liao2016}
+showed, that this constraint can be relaxed somewhat to a concordance of weight signs.
+
+Bidirectional connections are common in the cortex, yet it is unclear by which mechanism pairs of
+synapses would be able to align. This issue becomes particularly apparent when considering long-range pyramidal
+projections, in which feedforward and feedback synapses would be separated by a considerable distance.
+
+Several theories have been proposed as to how biological neural networks could alleviate this issue, which will be 
+discussed \todo{in a later section}.
+
+\subsection*{Neuron models}
+
+While the fundamental computational unit of ANNs is called a neuron, it shares little resemblance to biological neurons.
+Most notably, these types of artificial neurons transmit a continuous activation. In theory, these activations correspond
+to the firing rate of a spiking neuron. Yet particularly with regard to synaptic plasticity, spike based communication
+poses a substantial challenge. In the case of backprop, it is even unclear how a derivative of activity can be computed
+from a spiketrain.
+
+Furthermore, a given neuron's activation is computed from a simple weighted sum of all inputs. This fails to capture the
+complex nonlinearities of synaptic connections that appear to be critical for neuronal computation. Finally, these 
+abstract neurons - at least in classical Backprop - have no persistence through time. Thus, their activation is dictated
+strictly by the presentation of a single stimulus, in contrast to the leaky membrane dynamics exhibited by biological
+neurons.
+
+To differentiate the two, I will be following \cite{Haider2021} in this Thesis; When referring to biologically 
+plausible, leaky neurons I will be using the term \textit{"neuronal"}. Respectively, when discussing abstract neurons with
+instantaneous response, I will be using \textit{"neural"}.
+
+
+\todo{discuss supervisor issue?}
+
+
+
+
+
+\section{Approximating Backprop}
+
+
+Yet, despite these mechanisms being at odds with biology, when training on real-world data, artificial neural networks
+have been shown to learn similar representations as those found in brain areas responsible for comparable tasks
+\cite{whittington2019theories,Yamins2016}.
+

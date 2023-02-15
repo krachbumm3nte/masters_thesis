@@ -1,40 +1,7 @@
 
 \chapter{Methods}
 
-\todo{from \cite{Haider2021}: To differentiate between biologically plausible, leaky neurons and abstract neurons with instantaneous
-  response, we respectively use the terms “neuronal” and “neural”.}
 
-\section{The Backpropagation of errors algorithm}
-
-The Backpropagation of errors algorithm (henceforth referred as "Backprop") forms the backbone of modern machine
-learning. \citeme It is as of yet unmatched with regard to training in deep neural networks due to its unique capability to
-attribute errors in the output of a network to activations of specific neurons within its hidden layers and adapt 
-incoming weights in order to improve network performance. This property also forms the basis of the algorithm's name;
-After an initial forward pass to form a prediction about the nature of a given input, a separate backward pass 
-propagates the arising error through all layers in reverse order. During this second network traversal, local error
-gradients dictate, to what extent a given weight needs to be altered so that the next presentation of the same sample
-would elicit a lower error in the output layer. 
-
-
-While Backprop continues to prove exceptionally useful in conventional machine learning systems, attempts use it to
-explain the exceptional learning capabilities of the human brain have so far not been successful \phrasing. In fact,
-Backprop as a mechanism for synaptic plasticity in the brain is dismissed by many neuroscientists as biologically 
-implausible. This dismissal is primarily based on three mechanisms that are instrumental for Backprop
-\cite{whittington2019theories}:
-
-\subsection*{The backward pass}
-
-
-\subsection*{Local error representation}
-
-\subsection*{The weight transport problem}
-
-Yet, despite these mechanisms being at odds with biology, when training on real-world data, artificial neural networks
- have been shown to learn similar representations as those found in brain areas responsible for comparable tasks
- \cite{whittington2019theories,Yamins2016}. 
-
-
-\todo{discuss supervisor issue?}
 
 
 \section{Neuron and network model}
