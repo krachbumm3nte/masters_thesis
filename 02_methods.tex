@@ -207,7 +207,33 @@ $I_1$ in the code is computed as a sum:
 \end{align*}
 
 
+\section{Haider 2021 updates}
 
+Besides the using a prediction of future somatic activity for neuronal transfer and plasticity, \cite{Haider2021} also
+slightly alter the plasticity rule, which turns out to be crucial for the latent equilibrium mechanism. While the 
+simulations by \cite{sacramento2018dendritic} use the equations above, the new implementation \href{https://github.com/neurips}{fill with neurips link}
+implicitly change them within its code. The fundamental building block of a network here is a layer, which is 
+represented in code as an instance of the class \texttt{Layer}. Each instances holds information about its corresponding 
+pyramidal- and interneurons. It also holds information about the synaptic connections between the two populations, as
+well as all incoming feedforward and feedback pyramidal synapses. A layer has two class methods that are fundamental 
+to its computation; \texttt{update()} computes membrane potential derivatives and synaptic weight changes given pyramidal
+neuron activations from the previous and subsequent layers. \texttt{apply()} updates weights and membrane potentials 
+from the previously calculated changes. Layers are processed in order from input to output layer, where all of them
+receive the \texttt{update()} signal first, before \texttt{apply()} is called on all of them. This ordering ensures,
+that changes in activation do not cascade through the layers and lead to excessive activations at the output. Yet, 
+since next layer activations at time $t$ have not been computed, top down information is always delayed by one timestep.
+\todo{evaluate importance of this}
+
+
+Thus, the equations for membrane updates change slightly:
+
+\begin{align*}
+  \dot{W_{ij}}(t) & = \eta (\phi(u_i) - \phi(\alpha v^{basal}_i(t))) \phi(u_j)                                         \\
+  \Delta W_{ij}(t,T) & = \int_t^T dt' \ \eta \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \  \phi(u_j^{t'}) \\
+  \Delta W_{ij}(t,T) & = \eta \int_t^T dt' \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \ \phi(u_j^{t'})    \\
+  V_i^*              & = \phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})                                            \\
+  s_j^*              & = \kappa_s * s_j
+\end{align*}
 
 
 
