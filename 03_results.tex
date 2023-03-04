@@ -1,2 +1,15 @@
 
 \chapter{Results}
+
+\todo{Today, I changed the test criterion from the output neuron voltage at time $t$ to a mean over a sample of the 
+last $20ms$, network performance improved tremendously. Intuitively makes sense, but in particular it makes NEST networks 
+diverge less after peak performance is reached. Are fluctuations in output layer activity increasing during late stages 
+of training?}
+
+\todo{it might be worth experimenting with different synaptic delays in NEST in order to evaluate learning performance 
+under biologically plausible transmission times. How easy this will \textbf{assumably} be to implement in NEST deserves 
+note at this point.}
+
+\todo{talk about the fact that NEST synapses are updated, and SpikeEvents stored to ring buffers to be integrated into 
+$u_som$ after the synaptic delay. How much of physiological synaptic delays occurs pre- and postsynaptically in pyramidal 
+neurons?}

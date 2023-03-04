@@ -207,6 +207,45 @@ $I_1$ in the code is computed as a sum:
 \end{align*}
 
 
+\section{Multi-compartment neuron models}
+
+The derivative somatic membrane potential of a pyramidal neuron in layer $l$ is given by:
+
+\begin{align*}
+  C_m \dot{u}_l^P &= - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api} \\
+\end{align*}
+
+where $v_i^{bas}$ and $v_i^{api}$ are the basal and apical compartment potentials respectively, and $g^{bas}$
+ and 
+$g^{api}$ the dendritic coupling conductances. An interneuron integrates synaptic information by the same principle, but 
+instead of feedback information arriving at the apical compartment, it is integrated directly into the soma with the 
+basal potential $v_l^{bas}$\footnote{Note, that \cite{Haider2021} differentiates between pyramidal neuron
+conductances $g^{bas}$ and interneuron dendritic conductances $g^{dend}$. Since they share the same value in all relevant
+simulations at hand, this separation has been omitted for the sake of brevity}:
+
+\begin{align*}
+  C_m \dot{u}_l^I &= - g_l u_j^{I} + g^{bas} v_j^{bas} + i^{nudge, I} \\
+  i^{nudge, I} &= g^{nudge, I} u_{l+1}^P\\
+\end{align*}
+
+where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
+pyramidal neuron in the next layer. \todo{discuss whether this 1 to 1 style connection is plausible!}. Pyramidal neurons
+in the output layer $N$ effectively behave like interneurons, as they receive no input to their apical compartment. Instead,
+the target  activation $u^{tgt}$ is injected into their soma:
+
+\begin{align*}
+  C_m \dot{u}_N^P &= - g_l u_N^{P} + g^{bas} v_N^{bas} + i^{nudge, tgt} \\
+  i^{nudge, tgt} &= g^{nudge, tgt} u^{tgt}\\
+\end{align*}
+
+\todo{
+  \cite{Haider2021} uses more complex differentials. maybe create a second branch to try them out? 
+}
+
+
+\section{Cortical microcircuits}
+
+
 \section{Haider 2021 updates}
 
 Besides the using a prediction of future somatic activity for neuronal transfer and plasticity, \cite{Haider2021} also
@@ -236,12 +275,6 @@ Thus, the equations for membrane updates change slightly:
 \end{align*}
 
 
-
-\section{Multi-compartment neuron models}
-
-
-
-\section{Cortical microcircuits}
 
 \section{Latent equilibrium}
 
