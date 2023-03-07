@@ -6,11 +6,95 @@
 
 \section{Neuron and network model}
 
+This section will go into detail about the computations behind the network which was developed by
+\cite{sacramento2018dendritic} and expanded by \cite{Haider2021}.
+
+
+\section{Pyramidal and interneurons}\label{sec-neurons}
+
+
+
+The network contains two types of multi-compartment neurons; Pyramidal neurons with three compartments each, and
+interneurons with two compartments each. They integrate synaptic inputs into dendritic compartment voltages,
+which leak into the soma with specific conductances. The activation $r_l^P$ of a pyramidal neuron at layer $l$ is given by applying
+the synaptic transfer function $\phi$ to to its somatic potential $u_l^P$.
+
+\begin{align}
+  r_l^P   & = \phi(u_l^P)                       \\
+  \phi(x) & = \begin{cases}
+    0 & \textrm{if } \ x < -\epsilon\\
+    \gamma log(1+e^{\beta(x-\theta)}) & \textrm{if } \ x < \epsilon\\
+    \gamma x & \textrm{otherwise}
+  \end{cases}
+\end{align}
+
+where $\phi$ can be interpreted as a smoothed variant of ReLu \todo{cite} with scaling factors $\gamma$, $\beta$, 
+$\theta$ and threshold parameter $\epsilon$. The derivative somatic membrane potential of a pyramidal neuron in layer $l$ is given by:
+
+\begin{align}
+  C_m \dot{u}_l^P & = - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api} 
+\end{align}
+
+where $v_i^{bas}$ and $v_i^{api}$ are the membrane potentials of basal and apical dendrites respectively, and $g^{bas}$
+and $g^{api}$ their corresponding coupling conductances. An interneuron integrates synaptic information by the same principle, but
+instead of feedback information arriving at the apical compartment, it is integrated directly into the soma\footnote{Note, that \cite{Haider2021} differentiates between pyramidal neuron
+  conductances $g^{bas}$ and interneuron dendritic conductances $g^{dend}$. Since they share the same value in all relevant
+  simulations at hand, this separation has been omitted for the sake of brevity}:
+
+\begin{align}
+  C_m \dot{u}_l^I & = - g_l u_l^{I} + g^{bas} v_l^{bas} + i^{nudge, I} \\
+  i^{nudge, I}    & = g^{nudge, I} u_{l+1}^P                           
+\end{align}
+
+where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
+pyramidal neuron in the next layer. \todo{discuss whether this 1 to 1 style connection is plausible!}. Pyramidal neurons
+in the output layer $N$ effectively behave like interneurons, as they receive no input to their apical compartment. Instead,
+the target  activation $u^{tgt}$ is injected into their soma:
+
+\begin{align}
+  C_m \dot{u}_N^P & = - g_l u_N^{P} + g^{bas} v_N^{bas} + i^{nudge, tgt} \\
+  i^{nudge, tgt}  & = g^{nudge, tgt} u^{tgt}                             
+\end{align}
+
+
+These neuron dynamics correspond closely to those by \cite{urbanczik2014learning}, including
+the extension to more than two compartments which was proposed in the paper. It should be noted however, that they are
+simplified in some key ways. Primarily, dendritic couplings and nudging are not relative to the somatic or some reversal potential
+(i.e. $i^{nudge, tgt}= g^{nudge, tgt} (u^{tgt} - u_N^P )$),
+but are simplified to absolute values. \todo{Figure out if this makes a difference. maybe create a second branch to try them out?
+}
+
+
+
+
+
+
 \begin{figure}
   \centerline{\includegraphics[width={1\linewidth}]{pyramidal.png}}
   \caption{Self-predicting initialization without plasticity}
 \end{figure}
-\section{Urbanczik-Senn Plasticity}
+\section{Urbanczik-Senn Plasticity}\label{sec-urb-senn-plast}
+
+The synapses in the network are all modulated through variations of the "Urbanczik-Senn" plasticity rule \citep{urbanczik2014learning},
+which will be discussed in this section.
+
+The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to
+the latter of which the synapse connects. Functionally, the plasticity rule seeks to minimize discrepancies between
+somatic and dendritic potential. If a current is injected into the soma, it creates a difference between somatic
+firing rate and dendritic prediction (i.e. a prediction error). The change in weight for a synapse fron neuron $j$ to neuron 
+$i$ is thus given by:
+
+\begin{align}
+  \dot{w}_{ij} &= \eta \ { \phi(u_i^{som}) - \phi(\hat{v}_i^{bas})} \ \phi(u_j^{som})\\
+  \hat{v}_i^{bas} &= \alpha \  v_i^{bas}
+\end{align}
+
+with learning rate $\eta$ and prediction of somatic voltage at the basal dendrite $\hat{v}_i^{bas}$. The dendritic 
+prediction is simply a scaled version of the dendritic potential by the constant factor $\alpha$, which is calculated
+from coupling and leakage conductances. For example, basal dendrites of pyramidal neurons in \cite{sacramento2018dendritic}
+are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. 
+
+
 
 
 from \cite{Haider2021}:
@@ -48,13 +132,13 @@ Antiderivatives:
 
 Convolution:
 
-\begin{align*}
+\begin{align}
   (f \ast g)(t) & = \int_{- \infty }^{\infty} f(\tau) g(t-\tau) d \tau
-\end{align*}
+\end{align}
 For functions f, g supported on only $[0, \infty]$ (as one-sided decay kernels and spiketrains are), integration limits can be truncated:
-\begin{align*}
+\begin{align}
   (f \ast g)(t) & = \int_{0}^{t} f(\tau) g(t-\tau) d \tau \\
-\end{align*}
+\end{align}
 
 
 Plasticity:
@@ -78,32 +162,32 @@ For an event-based plasticity we need:
 
 Starting with the complete Integral from $t=0$.
 
-\begin{align*}
+\begin{align}
   \Delta W_{ij}(0,t) & =\eta \int_0^t dt' \  \int_0^{t'} dt'' \ \kappa(t'-t'') V_i^\ast (t'') s_j^\ast (t'')                          \\
                      & = \eta \int_0^t dt'' \  \int_{t''}^{t} dt' \ \kappa(t'-t'') V_i^\ast (t'') s_j^\ast (t'')                      \\
                      & = \eta \int_0^t dt'' \  \left[ \tilde{\kappa}(t-t'') - \tilde{\kappa}(0) \right] V_i^\ast (t'') s_j^\ast (t'') \\
-\end{align*}
+\end{align}
 
 With $\tilde{\kappa}$ being the antiderivative of $\kappa$:
 
-\begin{align*}
+\begin{align}
   \kappa(t)         & = \frac{\delta}{\delta t} \tilde{\kappa}(t) \\
   \tilde{\kappa}(t) & = - e^{-\frac{t}{t_{\kappa}}}               \\
-\end{align*}
+\end{align}
 
 The above can be split up into two separate integrals:
-\begin{align*}
+\begin{align}
   \Delta W_{ij}(0,t) & =\eta \left[ -I_2 (0, t) + I_1(0,t) \right]                                      \\
   I_1(t_1, t_2)      & = - \int_{t_1}^{t_2} dt' \ \tilde{\kappa} (0) V_i^\ast (t') s_j^\ast (t')        \\
   I_2(t_1, t_2)      & = - \int_{t_1}^{t_2} dt' \ \tilde{\kappa} (t_2 - t') V_i^\ast (t') s_j^\ast (t') \\
-\end{align*}
+\end{align}
 
 Which implies the identities
 
-\begin{align*}
+\begin{align}
   I_1(t_1, t_2 + \Delta t) & = I_1 (t_1, t_2) + I_1 (t_2, t_2 + \Delta t)                                       \\
   I_2(t_1, t_2 + \Delta t) & = e^{- \frac{t_2 - t_1}{\tau_{\kappa}}} I_2 (t_1, t_2) + I_2 (t_2, t_2 + \Delta t)
-\end{align*}
+\end{align}
 
 
 \begin{align}
@@ -118,21 +202,21 @@ Which implies the identities
 Using this we can rewrite the weight change from $t$ to $T$ as:
 
 
-\begin{align*}
+\begin{align}
   \Delta W_{ij}(t,T) & = \Delta W_{ij}(0,T) - \Delta W_{ij}(0,t)                                               \\
                      & = \eta [-I_2(0,T) + I_1(0,T) + I_2(0,t) - I_1(0,t)]                                     \\
                      & = \eta [I_1(t,T) - I_2(t,T) + I_2(0,t)\left( 1 - e^{- \frac{T-t}{\tau_\kappa}} \right)]
-\end{align*}
+\end{align}
 
 The simplified \cite{sacramento2018dendritic} case would be:
 
-\begin{align*}
+\begin{align}
   \frac{dW_{ij}}{dt} & = \eta (\phi(u_i) - \phi(\hat{v_i})) \phi(u_j)                                         \\
   \Delta W_{ij}(t,T) & = \int_t^T dt' \ \eta \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \  \phi(u_j^{t'}) \\
   \Delta W_{ij}(t,T) & = \eta \int_t^T dt' \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \ \phi(u_j^{t'})    \\
   V_i^*              & = \phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})                                            \\
   s_j^*              & = \kappa_s * s_j
-\end{align*}
+\end{align}
 
 
 Where $s_i$ is the postsynaptic spiketrain and $V_i^*$ is the error between dendritic prediction and somatic rate and $h( u )$. The additional nonlinearity $h( u ) = \frac{d}{du} ln \  \phi(u)$ is ommited in our model \todo{should it though?}.
@@ -160,10 +244,10 @@ UrbanczikArchivingNode< urbanczik_parameters >::write_urbanczik_history(Time t, 
 I interpret this as:
 
 
-\begin{align*}
+\begin{align}
   \int_{t_{ls}}^T dt' \ V_i^* & = \int_{t_{ls}}^T dt' \  (s_i - \phi(V_i )) h(V_i),               \\
   \int_{t_{ls}}^T dt' \ V_i^* & = \sum_{t=t_{ls}}^T \  (s_i(t) -  \phi(V_i^t ) \Delta t) h(V_i^t) \\
-\end{align*}
+\end{align}
 
 \begin{lstlisting}[language=C++, directivestyle={\color{black}}
                    emph={int,char,double,float,unsigned,exp},
@@ -186,9 +270,9 @@ kappa_s = kappa_s * exp((t_ls - T)/tau_s) + 1.0;
   \end{lstlisting}
 
 
-\begin{align*}
+\begin{align}
   \int_{t_{ls}}^T dt' s_j^* & =  \tilde{\kappa_L}(t') * s_j -  \tilde{\kappa_s}(t') * s_j
-\end{align*}
+\end{align}
 
 $I_1$ in the code is computed as a sum:
 
@@ -199,48 +283,16 @@ $I_1$ in the code is computed as a sum:
 
 \section{steady-state potentials in Sacramento (2018)}
 
-\begin{align*}
+\begin{align}
   u_k^p           & = \frac{g_B}{g_{lk} + g_B + g_A} v^P_{B,k} + \frac{g_A}{g_{lk} + g_B + g_A} v^P_{A,k} \\
   \hat{v}^P_{B,k} & = \frac{g_B}{g_{lk} + g_B + g_A} v^P_{B,k}                                            \\
   \hat{v}^I_{k}   & = \frac{g_B}{g_{lk} + g_B} v^I_{k}                                                    \\
   \lambda         & = \frac{g_{som}}{g_{lk} + g_B + g_{som}}
-\end{align*}
+\end{align}
 
 
 \section{Multi-compartment neuron models}
 
-The derivative somatic membrane potential of a pyramidal neuron in layer $l$ is given by:
-
-\begin{align*}
-  C_m \dot{u}_l^P &= - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api} \\
-\end{align*}
-
-where $v_i^{bas}$ and $v_i^{api}$ are the basal and apical compartment potentials respectively, and $g^{bas}$
- and 
-$g^{api}$ the dendritic coupling conductances. An interneuron integrates synaptic information by the same principle, but 
-instead of feedback information arriving at the apical compartment, it is integrated directly into the soma with the 
-basal potential $v_l^{bas}$\footnote{Note, that \cite{Haider2021} differentiates between pyramidal neuron
-conductances $g^{bas}$ and interneuron dendritic conductances $g^{dend}$. Since they share the same value in all relevant
-simulations at hand, this separation has been omitted for the sake of brevity}:
-
-\begin{align*}
-  C_m \dot{u}_l^I &= - g_l u_j^{I} + g^{bas} v_j^{bas} + i^{nudge, I} \\
-  i^{nudge, I} &= g^{nudge, I} u_{l+1}^P\\
-\end{align*}
-
-where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
-pyramidal neuron in the next layer. \todo{discuss whether this 1 to 1 style connection is plausible!}. Pyramidal neurons
-in the output layer $N$ effectively behave like interneurons, as they receive no input to their apical compartment. Instead,
-the target  activation $u^{tgt}$ is injected into their soma:
-
-\begin{align*}
-  C_m \dot{u}_N^P &= - g_l u_N^{P} + g^{bas} v_N^{bas} + i^{nudge, tgt} \\
-  i^{nudge, tgt} &= g^{nudge, tgt} u^{tgt}\\
-\end{align*}
-
-\todo{
-  \cite{Haider2021} uses more complex differentials. maybe create a second branch to try them out? 
-}
 
 
 \section{Cortical microcircuits}
@@ -249,43 +301,43 @@ the target  activation $u^{tgt}$ is injected into their soma:
 \section{Haider 2021 updates}
 
 Besides the using a prediction of future somatic activity for neuronal transfer and plasticity, \cite{Haider2021} also
-slightly alter the plasticity rule, which turns out to be crucial for the latent equilibrium mechanism. While the 
+slightly alter the plasticity rule, which turns out to be crucial for the latent equilibrium mechanism. While the
 simulations by \cite{sacramento2018dendritic} use the equations above, the new implementation \href{https://github.com/neurips}{fill with neurips link}
-implicitly change them within its code. The fundamental building block of a network here is a layer, which is 
-represented in code as an instance of the class \texttt{Layer}. Each instances holds information about its corresponding 
+implicitly change them within its code. The fundamental building block of a network here is a layer, which is
+represented in code as an instance of the class \texttt{Layer}. Each instances holds information about its corresponding
 pyramidal- and interneurons. It also holds information about the synaptic connections between the two populations, as
-well as all incoming feedforward and feedback pyramidal synapses. A layer has two class methods that are fundamental 
+well as all incoming feedforward and feedback pyramidal synapses. A layer has two class methods that are fundamental
 to its computation; \texttt{update()} computes membrane potential derivatives and synaptic weight changes given pyramidal
-neuron activations from the previous and subsequent layers. \texttt{apply()} updates weights and membrane potentials 
+neuron activations from the previous and subsequent layers. \texttt{apply()} updates weights and membrane potentials
 from the previously calculated changes. Layers are processed in order from input to output layer, where all of them
 receive the \texttt{update()} signal first, before \texttt{apply()} is called on all of them. This ordering ensures,
-that changes in activation do not cascade through the layers and lead to excessive activations at the output. Yet, 
+that changes in activation do not cascade through the layers and lead to excessive activations at the output. Yet,
 since next layer activations at time $t$ have not been computed, top down information is always delayed by one timestep.
 \todo{evaluate importance of this}
 
 
 Thus, the equations for membrane updates change slightly:
 
-\begin{align*}
-  \dot{W_{ij}}(t) & = \eta (\phi(u_i) - \phi(\alpha v^{basal}_i(t))) \phi(u_j)                                         \\
+\begin{align}
+  \dot{W_{ij}}(t)    & = \eta (\phi(u_i) - \phi(\alpha v^{basal}_i(t))) \phi(u_j)                             \\
   \Delta W_{ij}(t,T) & = \int_t^T dt' \ \eta \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \  \phi(u_j^{t'}) \\
   \Delta W_{ij}(t,T) & = \eta \int_t^T dt' \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \ \phi(u_j^{t'})    \\
   V_i^*              & = \phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})                                            \\
   s_j^*              & = \kappa_s * s_j
-\end{align*}
+\end{align}
 
 
 
 \section{Latent equilibrium}
 
-\begin{align*}
+\begin{align}
   \phi(V^{som}) & \rightarrow \phi(\breve{V}^{som}) \\
   \breve{V}     & := V + \tau^m \dot{V}             \\
-\end{align*}
-\begin{align*}
+\end{align}
+\begin{align}
   \frac{d}{dt} W_{ba} & = \eta (\phi(V_b^{som}) - \phi(\alpha V_b^{dend})) \phi(V_a^{som})                         \\
   \frac{d}{dt} W_{ba} & = \eta (\phi(\breve{V}_b^{som}) - \phi(\alpha \breve{V}_b^{dend})) \phi(\breve{V}_a^{som})
-\end{align*}
+\end{align}
 
 
 \section{simulation details/updates}

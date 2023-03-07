@@ -15,12 +15,14 @@
 \usepackage{etoolbox}
 \AtBeginEnvironment{quote}{\par\singlespacing\small}
 \usepackage[top=100pt,bottom=100pt,left=75pt,right=75pt]{geometry}
-
 \usepackage{enumitem}
 \usepackage{hyperref}
 \usepackage[noabbrev]{cleveref}
 
+\DeclareSymbolFont{letters}{OML}{ztmcm}{m}{it}
+\DeclareSymbolFontAlphabet{\mathnormal}{letters}
 \pagestyle{headings}
+
 
 \hypersetup{
     colorlinks=true,
