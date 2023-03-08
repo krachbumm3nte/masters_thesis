@@ -20,19 +20,19 @@ which leak into the soma with specific conductances. The activation $r_l^P$ of a
 the synaptic transfer function $\phi$ to to its somatic potential $u_l^P$.
 
 \begin{align}
-  r_l^P   & = \phi(u_l^P)                       \\
+  r_l^P   & = \phi(u_l^P)                                                      \\
   \phi(x) & = \begin{cases}
-    0 & \textrm{if } \ x < -\epsilon\\
-    \gamma log(1+e^{\beta(x-\theta)}) & \textrm{if } \ x < \epsilon\\
-    \gamma x & \textrm{otherwise}
-  \end{cases}
+                0                                 & \textrm{if } \ x < -\epsilon \\
+                \gamma log(1+e^{\beta(x-\theta)}) & \textrm{if } \ x < \epsilon  \\
+                \gamma x                          & \textrm{otherwise}
+              \end{cases}
 \end{align}
 
-where $\phi$ can be interpreted as a smoothed variant of ReLu \todo{cite} with scaling factors $\gamma$, $\beta$, 
+where $\phi$ can be interpreted as a smoothed variant of ReLu \todo{cite} with scaling factors $\gamma$, $\beta$,
 $\theta$ and threshold parameter $\epsilon$. The derivative somatic membrane potential of a pyramidal neuron in layer $l$ is given by:
 
 \begin{align}
-  C_m \dot{u}_l^P & = - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api} 
+  C_m \dot{u}_l^P & = - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api}
 \end{align}
 
 where $v_i^{bas}$ and $v_i^{api}$ are the membrane potentials of basal and apical dendrites respectively, and $g^{bas}$
@@ -43,7 +43,7 @@ instead of feedback information arriving at the apical compartment, it is integr
 
 \begin{align}
   C_m \dot{u}_l^I & = - g_l u_l^{I} + g^{bas} v_l^{bas} + i^{nudge, I} \\
-  i^{nudge, I}    & = g^{nudge, I} u_{l+1}^P                           
+  i^{nudge, I}    & = g^{nudge, I} u_{l+1}^P
 \end{align}
 
 where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
@@ -53,7 +53,7 @@ the target  activation $u^{tgt}$ is injected into their soma:
 
 \begin{align}
   C_m \dot{u}_N^P & = - g_l u_N^{P} + g^{bas} v_N^{bas} + i^{nudge, tgt} \\
-  i^{nudge, tgt}  & = g^{nudge, tgt} u^{tgt}                             
+  i^{nudge, tgt}  & = g^{nudge, tgt} u^{tgt}
 \end{align}
 
 
@@ -81,18 +81,18 @@ which will be discussed in this section.
 The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to
 the latter of which the synapse connects. Functionally, the plasticity rule seeks to minimize discrepancies between
 somatic and dendritic potential. If a current is injected into the soma, it creates a difference between somatic
-firing rate and dendritic prediction (i.e. a prediction error). The change in weight for a synapse fron neuron $j$ to neuron 
+firing rate and dendritic prediction (i.e. a prediction error). The change in weight for a synapse fron neuron $j$ to neuron
 $i$ is thus given by:
 
 \begin{align}
-  \dot{w}_{ij} &= \eta \ { \phi(u_i^{som}) - \phi(\hat{v}_i^{bas})} \ \phi(u_j^{som})\\
-  \hat{v}_i^{bas} &= \alpha \  v_i^{bas}
+  \dot{w}_{ij}    & = \eta \ { \phi(u_i^{som}) - \phi(\hat{v}_i^{bas})} \ \phi(u_j^{som}) \\
+  \hat{v}_i^{bas} & = \alpha \  v_i^{bas}
 \end{align}
 
-with learning rate $\eta$ and prediction of somatic voltage at the basal dendrite $\hat{v}_i^{bas}$. The dendritic 
+with learning rate $\eta$ and prediction of somatic voltage at the basal dendrite $\hat{v}_i^{bas}$. The dendritic
 prediction is simply a scaled version of the dendritic potential by the constant factor $\alpha$, which is calculated
 from coupling and leakage conductances. For example, basal dendrites of pyramidal neurons in \cite{sacramento2018dendritic}
-are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. 
+are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$.
 
 
 

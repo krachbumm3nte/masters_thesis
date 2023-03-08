@@ -9,18 +9,18 @@
 
 The outstanding learning capabilities of the human brain have been found to be elusive
 and as of yet impossible to replicate in silicio. While the power and utility of classical
-Machine-learning solutions has improved greatly in recent years, these approaches can not serve as 
-an adequate model of human cognition. 
+Machine-learning solutions has improved greatly in recent years, these approaches can not serve as
+an adequate model of human cognition.
 The sheer number of neurons and synapses in the brain makes simulations
-of an entire brain impossible with current hardware constraints. 
+of an entire brain impossible with current hardware constraints.
 In fact, it has been found to be a substantial challenging to
 create artificial neural networks that simulate even parts of human neurophysiology while simultaneously being
-able to learn in a goal-oriented way. 
+able to learn in a goal-oriented way.
 
 
 
 The literature entails numerous approaches to adress this challenges, with varying degrees of success. In this thesis,
-I will investigate one such approach, and attempt to modify it in a way that it more closely resembles properties 
+I will investigate one such approach, and attempt to modify it in a way that it more closely resembles properties
 exhibited by the human neocortex.
 
 \todo{eigentvalue of the hessian matrix. if they have different signs, something might be off}
@@ -71,7 +71,7 @@ Bidirectional connections are common in the cortex, yet it is unclear by which m
 synapses would be able to align. This issue becomes particularly apparent when considering long-range pyramidal
 projections, in which feedforward and feedback synapses would be separated by a considerable distance.
 
-Several theories have been proposed as to how biological neural networks could alleviate this issue, which will be 
+Several theories have been proposed as to how biological neural networks could alleviate this issue, which will be
 discussed \todo{in a later section}.
 
 \subsection*{Neuron models}
@@ -83,12 +83,12 @@ poses a substantial challenge. In the case of backprop, it is even unclear how a
 from a spiketrain.
 
 Furthermore, a given neuron's activation is computed from a simple weighted sum of all inputs. This fails to capture the
-complex nonlinearities of synaptic connections that appear to be critical for neuronal computation. Finally, these 
+complex nonlinearities of synaptic connections that appear to be critical for neuronal computation. Finally, these
 abstract neurons - at least in classical Backprop - have no persistence through time. Thus, their activation is dictated
 strictly by the presentation of a single stimulus, in contrast to the leaky membrane dynamics exhibited by biological
 neurons.
 
-To differentiate the two, I will be following \cite{Haider2021} in this Thesis; When referring to biologically 
+To differentiate the two, I will be following \cite{Haider2021} in this Thesis; When referring to biologically
 plausible, leaky neurons I will be using the term \textit{"neuronal"}. Respectively, when discussing abstract neurons with
 instantaneous response, I will be using \textit{"neural"}.
 
