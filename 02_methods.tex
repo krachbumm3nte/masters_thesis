@@ -94,7 +94,7 @@ between simulation steps. Thus, they are defined at every timestep $t$ through i
 \end{align}
 
 Weight nomenclature conforms to the python implementation of the network by \cite{Haider2021}; Weights are indexed by
- the layer in which
+the layer in which
 the target neuron is located. Thus, feedforward and feedback pyramidal-to-pyramidal connections arriving at layer $l$
 are denoted $W_l^{up}$ and $W_l^{down}$ respectively. Lateral pyramidal-to-interneuron connections are denoted with $W_l^{ip}$
 and their corresponding feedback connections with $W_l^{pi}$. Since the input layer contains no synapses, indexing begins
@@ -105,7 +105,7 @@ instead of feedback information arriving at the apical compartment, it is integr
 this, interneurons functionally resemble the original neuron from \cite{urbanczik2014learning} most closely.
 
 \begin{align}
-  C_m \dot{u}_l^I & = - g_l u_l^{I} + g^{dend} v_l^{dend} + i^{nudge, I} \\
+  C_m \dot{u}_l^I & = - g_l u_l^{I} + g^{dend} v_l^{dend} + i^{nudge, I}\label{eq-intn-dynamics} \\
   i^{nudge, I}    & = g^{nudge, I} u_{l+1}^P                             \\
   v_l^{dend}      & = \phi(u_{l}^P) * W_l^{ip}
 \end{align}
@@ -127,41 +127,6 @@ simplified in some key ways. Primarily, dendritic couplings and nudging are not 
 (i.e. $i^{nudge, tgt}= g^{nudge, tgt} (u^{tgt} - u_N^P )$),
 but are simplified to absolute values. \todo{Figure out if this makes a difference. maybe create a second branch to try them out?
 }
-
-
-
-\subsection{Urbanczik-Senn Plasticity}\label{sec-urb-senn-plast}
-
-The synapses in the network are all modulated according to variations of the "Urbanczik-Senn" plasticity rule \citep{urbanczik2014learning},
-which will be discussed in this section.
-
-The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to
-the latter of which the synapse connects. Functionally, the plasticity rule seeks to minimize discrepancies between
-somatic and dendritic potential. If a current is injected into the soma, it creates a difference between somatic
-firing rate and dendritic prediction (i.e. a prediction error). The change in weight for a synapse fron neuron $j$ to neuron
-$i$ is thus given by:
-
-\begin{align}
-  \dot{w}_{ij}    & = \eta \ ( \phi(u_i^{som}) - \phi(\hat{v}_i^{bas}) ) \ \phi(u_j^{som})^T \\
-  \hat{v}_i^{bas} & = \alpha \  v_i^{bas}
-\end{align}
-
-with learning rate $\eta$ and $u^T$ denoting the transposition of the vector $u$ (which is by default assumed to be
-a column vector). The dendritic
-prediction is simply a scaled version of the dendritic potential by the constant factor $\alpha$, which is calculated
-from coupling and leakage conductances. For example, basal dendrites of pyramidal neurons in \cite{sacramento2018dendritic}
-are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. Weight changes for the synapses in a hidden layer
-$l$ are thus given by:
-
-\begin{align}
-  \dot{w}_{l}^{up}   & = \eta_l^{up} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{bas}) ) \ \phi(u_{l-1}^{P})^T                     \\
-  \dot{w}_{l}^{ip}   & = \eta_l^{ip} \ ( \phi(u_l^{I}) - \phi(\hat{v}_l^{dend}) ) \ \phi(u_{l}^{P})^T\label{eq-delta_w_ip} \\
-  \dot{w}_{l}^{pi}   & = \eta_l^{pi} \ - v_l^{api} \ \phi(u_l^{I})^T\label{eq-delta_w_pi}                                  \\
-  \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{api}) )\ \phi(u_{l+1}^{P})^T
-\end{align}
-
-Note that pyramidal-to-pyramidal feedback weights $w_l^{down}$ are not plastic in most simulations, and are only listed
-here for the sake of completeness \todo{some notes in the appendix to this?}
 
 
 \section{The self-predicting network state}
@@ -210,12 +175,63 @@ improve the local representation of errors Section 7.
 
 
 
-One-sided exponential decay kernel
+
+\section{Urbanczik-Senn Plasticity}\label{sec-urb-senn-plast}
+
+The synapses in the network are all modulated according to variations of the "Urbanczik-Senn" plasticity rule \citep{urbanczik2014learning},
+which will be discussed in this section. \todo{add paragraph about relevance of urbanczik-senn}
+
+The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to
+the latter of which synapses connect. The membrane potential of the dendritic compartment leaks into the somatic 
+compartment as described in Equation \ref{eq-intn-dynamics}. The extension 
+in which the somatic potential also affects dendrites, will be discussed in 
+
+
+
+Functionally, the plasticity rule 
+changes the synaptic weight in such a way, as
+to minimize discrepancies between somatic and dendritic potential. The change in weight for a synapse fron neuron 
+$j$ to neuron $i$ is thus given by:
+
+\begin{align}
+  \dot{w}_{ij}    & = \eta \ ( \phi(u_i^{som}) - \phi(\hat{v}_i^{bas}) ) \ \phi(u_j^{som})^T \\
+  \hat{v}_i^{bas} & = \alpha \  v_i^{bas}
+\end{align}
+
+with learning rate $\eta$ and $u^T$ denoting the transposition of the vector $u$ (which is by default assumed to be
+a column vector). The dendritic
+prediction is simply a scaled version of the dendritic potential by the constant factor $\alpha$, which is calculated
+from coupling and leakage conductances. For example, basal dendrites of pyramidal neurons in \cite{sacramento2018dendritic}
+are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. If a current is injected into the soma, it creates 
+a difference between somatic firing rate and dendritic prediction (i.e. a prediction error). \cite{urbanczik2014learning}
+show, that 
+
+
+
+
+
+Weight changes for the synapses in a hidden layer
+$l$ are thus given by:
+
+\begin{align}
+  \dot{w}_{l}^{up}   & = \eta_l^{up} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{bas}) ) \ \phi(u_{l-1}^{P})^T                     \\
+  \dot{w}_{l}^{ip}   & = \eta_l^{ip} \ ( \phi(u_l^{I}) - \phi(\hat{v}_l^{dend}) ) \ \phi(u_{l}^{P})^T\label{eq-delta_w_ip} \\
+  \dot{w}_{l}^{pi}   & = \eta_l^{pi} \ - v_l^{api} \ \phi(u_l^{I})^T\label{eq-delta_w_pi}                                  \\
+  \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{api}) )\ \phi(u_{l+1}^{P})^T
+\end{align}
+
+Note that pyramidal-to-pyramidal feedback weights $w_l^{down}$ are not plastic in most simulations, and are only listed
+here for the sake of completeness \todo{some notes in the appendix to this?}
+
+
 
 \section{NEST implementation}
 
-One of the key research questions motivating this thesis was, whether the proposed architecture would be able to
-learn successfully under a spiking neuron paradigm. To calculate a number of spikes from the rate $r = \phi(u)$
+One of the key research questions motivating this thesis is whether the proposed architecture would be able to
+learn successfully under a spiking neuron paradigm. 
+
+
+To calculate a number of spikes from the rate $r = \phi(u)$
 , a poisson point process was used:
 
 \begin{align}
@@ -224,31 +240,33 @@ learn successfully under a spiking neuron paradigm. To calculate a number of spi
 \end{align}
 
 with number of spikes \textit{n} and simulation timestep $\Delta t$, which will be assumed to be $0.1 ms$ from here
-on out. Within the code, true number of spikes during $\Delta t$ is drawn from a poisson distribution with parameter $\langle n \rangle$.
-Note that this mechanism makes the assumption, that more than one spike can occur per simulation step. NEST was
-developed with this possibility in mind, and handles such high rates without issue. Yet for the analysis with regard to biological
-plausibility, spiking behaviour with refractory periods might be useful. To calculate the probability of at least
-one spike occuring within the next simulation step, the probability of no spikes occuring can be employed. Plugging 0
-into Equation \ref{eq-pr-n-spikes}, we get:
+on out. Within the code, true number of spikes during $\Delta t$ is drawn from a poisson distribution with parameter
+$\langle n \rangle$.
+Note that this mechanism makes the assumption that more than one spike can occur per simulation step. NEST was
+developed with this possibility in mind, and handles such high rates without issue. Yet for the analysis with regard to
+biological plausibility, spiking behaviour with refractory periods might be useful. The probability of at least
+one spike occuring within the next simulation step thus is the inverse probability of no spike occuring. Entering $n=0$
+into Equation \ref{eq-pr-n-spikes}, the probability of eliciting at least one spike within the next simualtion step
+becomes:
 
 \begin{align}
   P\{ \textit{n} \geq 1\} & = 1 - e^{-r \Delta t}
 \end{align}
 
-After randomly drawing from this probability a spike can be sent, and spike generation be disabled for the refractory
-period $t_{ref}$. \todo{this reads like ass}
 
+After randomly drawing from this probability a spike is sent, and the spiking probability is set to 0 for the duration
+of the refractory period $t_{ref}$.
 
 \section{Event-based Urbanczik-Senn plasticity}
 
-One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity. Since it 
+One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity. Since it
 depends on pre- and postsynaptic information for all updates, one of two approaches is typically employed to compute
 it:
 
 One option is to store all relevant state variables for every timestep in the synapse and update the synaptic weight whenever
 a spike traverses the synapse. This is efficient in terms of computation time, since fewer computations are required
 per synapse. The major downside of the approach lies in memory efficiency; Every synapse potentially stores the history
-over several hundred simulation steps. In addition, every synapse innervating a given neuron would store its membrane 
+over several hundred simulation steps. In addition, every synapse innervating a given neuron would store its membrane
 potentials redundantly.
 
 Another approach updates synaptic weights at every timestep. This requires very little memory, but substantially increases
@@ -257,10 +275,10 @@ need to be updated at every simulation step. In particular for large networks an
 simulations have proven to be more efficient for most use cases \todo{cite something by abigail}
 
 Thus, a novel approach was developed by \cite{Stapmanns2021} for the NEST simulator, which will be explained in this
-section. In order to utilize the paralellization capabilities of NEST and spiking neural networks, transmitting 
+section. In order to utilize the paralellization capabilities of NEST and spiking neural networks, transmitting
 the pre- and postsynaptic membrane potential is a poor choice. Thus, the error between somatic and dendritic activation
-is stored in the \texttt{urbanczik\_history} of the postsynaptic neuron. Since it applies equally to all incoming synapses, redundant storage is avoided
-by storing a counter alongside each entry 
+is stored in the \texttt{urbanczik\_history} of the postsynaptic neuron. Since it applies equally to all incoming
+synapses, redundant storage is avoided by storing a counter alongside each entry
 
 
 

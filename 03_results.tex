@@ -20,4 +20,7 @@
 \begin{itemize}
     \item When reducing the \texttt{weight\_scale} parameter weights converge to lower absolute levels. I.e. mean abs
 weight drops from 0.5 to approx 0.1
+\item When reducing the size of the bar dataset by just 1 element, much simpler networks are capable of learning the task 
+at lower t\_pres. Failure to learn shows strange behaviour: the network fails to predict any sample of one group, with the
+group which it fails to represent switching every now and then.
 \end{itemize}

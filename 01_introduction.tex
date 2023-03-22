@@ -47,7 +47,7 @@ implausible. This dismissal is often focussed on three mechanisms that are instr
 
 
 
-\subsection*{Local error representation}
+\subsection{Local error representation}
 
 Within conventional artificial neural networks (ANNs), the neurons only serve the purpose of transmitting signals in
 a feedforward fashion. The errors on the other hand are computed and propagated by a completely separate algorithm
@@ -58,7 +58,7 @@ mechanisms have been proposed to do this in a biologically plausible way, which 
   chapter.}
 
 
-\subsection*{The weight transport problem}
+\subsection{The weight transport problem}
 
 During the weight update stage of Backprop, errors are transmitted between layers with the same weights that are used
 in the forward pass. In other words, the magnitude of a neuron-specific error that is propagated through a given connection
@@ -74,37 +74,57 @@ projections, in which feedforward and feedback synapses would be separated by a 
 Several theories have been proposed as to how biological neural networks could alleviate this issue, which will be
 discussed \todo{in a later section}.
 
-\subsection*{Neuron models}
+\subsection{Neuron models}
 
-While the fundamental computational unit of ANNs is called a neuron, it shares little resemblance to biological neurons.
+While the fundamental computational unit of ANNs is called a neuron, it usually shares little resemblance to biological neurons.
 Most notably, these types of artificial neurons transmit a continuous activation. In theory, these activations correspond
 to the firing rate of a spiking neuron. Yet particularly with regard to synaptic plasticity, spike based communication
-poses a substantial challenge. In the case of backprop, it is even unclear how a derivative of activity can be computed
-from a spiketrain.
+poses a substantial challenge. Plasticity rules derived for rate neurons do not necessarily have an easily derived 
+counterpart for spiking neurons. A notable example for this issue is Backprop itself; The local error gradient
+$\frac{\delta E}{\delta \phi(u_i)}$ \todo{cleanup} requires a method of filtering the spiketrain which itself has no
+derivative \phrasing{...} 
+
+
+To differentiate the two, I will be following \cite{Haider2021} in this Thesis; When referring to biologically
+plausible, leaky neurons I will be using the term \textit{"neuronal"}. Respectively, when discussing abstract neurons with
+instantaneous response, I will be using \textit{"neural"}.
 
 Furthermore, a given neuron's activation is computed from a simple weighted sum of all inputs. This fails to capture the
 complex nonlinearities of synaptic connections that appear to be critical for neuronal computation. Finally, these
 abstract neurons - at least in classical Backprop - have no persistence through time. Thus, their activation is dictated
 strictly by the presentation of a single stimulus, in contrast to the leaky membrane dynamics exhibited by biological
-neurons.
+neurons. \todo{talk about multiplicity of possible neuron models?}
 
-To differentiate the two, I will be following \cite{Haider2021} in this Thesis; When referring to biologically
-plausible, leaky neurons I will be using the term \textit{"neuronal"}. Respectively, when discussing abstract neurons with
-instantaneous response, I will be using \textit{"neural"}.
+\subsubsection{Transitioning to spiking neurons}
+
+It should also be noted that neuroscience has produced a vast amount of results which imply that the brain relies on
+precise spike timing for its plasticity \todo{cite}. Thus, one might expect rate neuron approximations to underperform  
+compared to spiking neurons, since a spiketrain contains more information than a rate approximation. However, several
+studies describe the opposite effect: Spiking neurons often perform substantially worse on learning tasks when compared 
+to rate neurons with similar plasticity rules \citep{Stapmanns2021} \todo{cite more}. 
+Given this data I assume that my implementation will also perform slightly worse than the existing rate implementations.   
+
 
 
 \todo{discuss supervisor issue?}
 
 
 
+\section{Approximations of the Backprop algorithm}
+
+These results have largely led neuroscience to dismiss Backprop as a plausible learning mechanism for biological brains,
+and focus different learning mechanisms \todo{do some reading and expand this}.
+Yet, Backprop has remained the gold standard against which all supervised learning mechanisms eventually have to compare.
+
+And despite its apparent biological implausibility, it does share some notable parallels to learning in the brain:
+When training on real-world data, artificial neural networks have been shown to learn similar representations as those 
+found in brain areas responsible for comparable tasks \cite{whittington2019theories,Yamins2016}. \todo{talk about ideal observer?}
+
+Thus, several attempts have been made to find biologically more plausible approximations of Backprop, which will be
+discussed in this section.
+\newline
 
 
-\section{Approximating Backprop}
-
-
-Yet, despite these mechanisms being at odds with biology, when training on real-world data, artificial neural networks
-have been shown to learn similar representations as those found in brain areas responsible for comparable tasks
-\cite{whittington2019theories,Yamins2016}.
 
 
 
