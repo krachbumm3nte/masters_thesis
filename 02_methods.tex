@@ -47,7 +47,9 @@ and innervate the basal compartments. Feedback connections from superficial laye
 arrive at apical compartments. Interneurons receive lateral input from all pyramidal neurons of their layer, as well as
 feedback information from superficial pyramidal neurons. These feedback connections are special, since they connect one
 pyramidal neuron to exactly one interneuron. Instead of transmitting neuronal activation, this connection relays somatic
-voltage directly, much like a \todo{find biological equivalent}. To understand what purpose this connectivity serves,
+voltage directly. The resulting dynamics share features of electrical synapses, which will be discussed in 
+Section \ref{sec-electric-syns}. 
+To understand what purpose this connectivity serves in our model,
 neuron and plasticity models require some elaboration.
 
 
@@ -70,11 +72,9 @@ weights $W$ are likewise assumed matrices.
               \end{cases}
 \end{align}
 
-where $\phi$ acts componentwise on $u$ and can be interpreted as a smoothed variant of ReLu \todo{cite} with scaling factors $\gamma$, $\beta$,
-$\theta$ and threshold parameter $\epsilon$.
-
-
-The derivative somatic membrane potentials of layer $l$ pyramidal neurons is given by:
+where $\phi$ acts componentwise on $u$ and can be interpreted as a smoothed variant of ReLu \todo{cite} with scaling 
+factors $\gamma$, $\beta$, $\theta$ and threshold parameter $\epsilon$. The derivative somatic membrane potentials 
+of layer $l$ pyramidal neurons is given by:
 
 \begin{align}
   C_m \dot{u}_l^P & = - g_l u_l^{som} + g^{bas} v_l^{bas} + g^{api} v_l^{api}
@@ -82,11 +82,12 @@ The derivative somatic membrane potentials of layer $l$ pyramidal neurons is giv
 
 where $v_i^{bas}$ and $v_i^{api}$ are the membrane potentials of basal and apical dendrites respectively, and $g^{bas}$
 and $g^{api}$ their corresponding coupling conductances. The membrane capacitance $C_m$ is $1$ in all relevant simulations,
-and will be omitted from calculations.
+and will be omitted from all Equations from here on out.
 
 
-In the rate model, dendritic compartments have no persistence
-between simulation steps. Thus, they are defined at every timestep $t$ through incoming activations and synaptic weights:
+In the computations, dendritic compartments have no persistence
+between simulation steps. Thus, they are defined at every timestep $t$ through incoming weight matrices and
+presynaptic activities:
 
 \begin{align}
   v_l^{bas}(t) & = W_l^{up} \ \phi(u_{l-1}^P(t))                                     \\
@@ -94,8 +95,8 @@ between simulation steps. Thus, they are defined at every timestep $t$ through i
 \end{align}
 
 Weight nomenclature conforms to the python implementation of the network by \cite{Haider2021}; Weights are indexed by
-the layer in which
-the target neuron is located. Thus, feedforward and feedback pyramidal-to-pyramidal connections arriving at layer $l$
+the layer in which the target neuron is located and belong to one of four populations. Feedforward and 
+feedback pyramidal-to-pyramidal connections arriving at layer $l$
 are denoted $W_l^{up}$ and $W_l^{down}$ respectively. Lateral pyramidal-to-interneuron connections are denoted with $W_l^{ip}$
 and their corresponding feedback connections with $W_l^{pi}$. Since the input layer contains no synapses, indexing begins
 with $0$ for the first hidden layer. \newline
@@ -128,47 +129,6 @@ simplified in some key ways. Primarily, dendritic couplings and nudging are not 
 but are simplified to absolute values. \todo{Figure out if this makes a difference. maybe create a second branch to try them out?
 }
 
-
-\section{The self-predicting network state}
-
-The aforementioned dynamics and the resulting architecture form an elegant interplay, and impose two
-purposes on plasticity:
-
-Since each interneuron receives a somatic nudging signal from its corresponding next-layer pyramidal neuron, incoming
-synapses from lateral pyramidal neurons adapt their weights to match feedforward pyramidal-to-pyramidal weights. In
-intuitive terms; Feedforward pyramidal-to-pyramidal weights elicit a certain activation in the subsequent layer, which
-is injected into corresponding interneurons. In order to minimize the dendritic error term in Equation
-\ref{eq-delta_w_ip}, pyramidal-to-interneuron weight matrices at every hidden layer must match these forward weights
-($w_l^{ip} = \omega w_l^{up}$) up to some scaling factor $\omega$.
-Note, that this alignment of two separate sets of outgoing weights is acheived with only local information, and could
-plausibly align synaptic weights that are separated by long distances. \newline
-
-Note the special case for interneuron-to-pyramidal weights in Equation \ref{eq-delta_w_pi}, in which plasticity does not serve to reduce
-discrepancies between dendritic and somatic potential. Instead, plasticity in these synapses works towards silencing the
-apical compartment. The apical compartment is also innervated by superficial pyramidal neurons, whose synapses will
-be considered non-plastic for now. Since interneurons learn to match their corresponding pyramidal neuron activity,
-silencing of apical compartments is acheived by mirroring feedback weights exactly ($w_l^{pi} = -\ w_l^{down}$).\newline
-
-Thus, when enabling plasticity in only these two synapse types, the network converges on the
-"\textbf{self-predicting state}" \citep{sacramento2018dendritic}.
-This state is defined by the aforementioned weight symmetry, inactivity in pyramidal neuron apical compartments and,
-as a consequence, equal activations between interneurons and their pyramidal \phrasing{sister neurons}.
-
-
-
-
-For feedforward pyramidal-to-pyramidal
-
-In this architecture, plasticity serves two purposes. For pyramidal-to-pyramidal feedforward synapses,
-it implements error-correcting learning as a time-continuous approximation of BP. For pyramidal-to-
-interneuron synapses, it drives interneurons to mimic their pyramidal partners in the layers above (see
-also SI). Thus, in a well-trained network, apical compartments of pyramidal cells are at rest, reflecting
-zero error, as top-down and lateral inputs cancel out. When an output error propagates through the
-network, these two inputs can no longer cancel out and their difference represents the local error ei .
-This architecture does not rely on the transpose of the forward weight matrix, improving viability for
-implementation in distributed asynchronous systems. Here, we keep feedback weights fixed, realizing
-a variant of feedback alignment. In principle, these weights could also be learned in order to further
-improve the local representation of errors Section 7.
 
 
 
@@ -222,6 +182,51 @@ $l$ are thus given by:
 
 Note that pyramidal-to-pyramidal feedback weights $w_l^{down}$ are not plastic in most simulations, and are only listed
 here for the sake of completeness \todo{some notes in the appendix to this?}
+
+
+
+
+\section{The self-predicting network state}
+
+Neuron dynamics, plasticity rule and network architecture form an elegant interplay, which I will attempt to \phrasing
+explain in this section. We will 
+
+Since each interneuron receives a somatic nudging signal from its corresponding next-layer pyramidal neuron, incoming
+synapses from lateral pyramidal neurons adapt their weights to match feedforward pyramidal-to-pyramidal weights. In
+intuitive terms; Feedforward pyramidal-to-pyramidal weights elicit a certain activation in the subsequent layer, which
+is injected into corresponding interneurons. In order to minimize the dendritic error term in Equation
+\ref{eq-delta_w_ip}, pyramidal-to-interneuron weight matrices at every hidden layer must match these forward weights
+($w_l^{ip} = \omega w_l^{up}$) up to some scaling factor $\omega$.
+Note, that this alignment of two separate sets of outgoing weights is acheived with only local information. Therefore 
+this mechanism could plausibly align the strengths of biological synapses that are physically separated by long 
+distances. \newline
+
+Note the special case for interneuron-to-pyramidal weights in Equation \ref{eq-delta_w_pi}, in which plasticity does not serve to reduce
+discrepancies between dendritic and somatic potential. Instead, plasticity in these synapses works towards silencing the
+apical compartment. The apical compartment is also innervated by superficial pyramidal neurons, whose synapses will
+be considered non-plastic for now. Since interneurons learn to match their corresponding pyramidal neuron activity,
+silencing of apical compartments is acheived by mirroring feedback weights exactly ($w_l^{pi} = -\ w_l^{down}$).\newline
+
+Thus, when enabling plasticity in only these two synapse types, the network converges on the
+"\textbf{self-predicting state}" \citep{sacramento2018dendritic}.
+This state is defined by the aforementioned weight symmetry, inactivity in pyramidal neuron apical compartments and,
+as a consequence, equal activations between interneurons and their pyramidal \phrasing{sister neurons}.
+
+
+
+
+For feedforward pyramidal-to-pyramidal
+
+In this architecture, plasticity serves two purposes. For pyramidal-to-pyramidal feedforward synapses,
+it implements error-correcting learning as a time-continuous approximation of BP. For pyramidal-to-
+interneuron synapses, it drives interneurons to mimic their pyramidal partners in the layers above (see
+also SI). Thus, in a well-trained network, apical compartments of pyramidal cells are at rest, reflecting
+zero error, as top-down and lateral inputs cancel out. When an output error propagates through the
+network, these two inputs can no longer cancel out and their difference represents the local error ei .
+This architecture does not rely on the transpose of the forward weight matrix, improving viability for
+implementation in distributed asynchronous systems. Here, we keep feedback weights fixed, realizing
+a variant of feedback alignment. In principle, these weights could also be learned in order to further
+improve the local representation of errors Section 7.
 
 
 
