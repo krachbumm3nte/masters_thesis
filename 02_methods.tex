@@ -109,9 +109,9 @@ original neuron from \cite{urbanczik2014learning} most closely.
 
 where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
 pyramidal neuron in the next layer. Since each interneuron is innervated by exactly one pyramidal neuron and vice versa,
-they will be called each others \textbf{sister neurons} from here on.\todo{discuss whether this 1 to 1 style connection is plausible!}. Pyramidal neurons
-in the output layer $N$ effectively behave like interneurons, as they receive no input to their apical compartment.
-Instead, the target  activation $u^{tgt}$ is injected into their soma:
+they will be called each others \textbf{sister neurons} from here on.\todo{discuss whether this 1 to 1 style connection
+  is plausible!}. Pyramidal neurons in the output layer $N$ effectively behave like interneurons, as they receive no input
+to their apical compartment. Instead, the target  activation $u^{tgt}$ is injected into their soma:
 
 \begin{align}
   C_m \dot{u}_N^P & = - g_l u_N^{P} + g^{bas} v_N^{bas} + i^{nudge, tgt} \\
@@ -122,8 +122,8 @@ Instead, the target  activation $u^{tgt}$ is injected into their soma:
 These neuron dynamics correspond closely to those by \cite{urbanczik2014learning}, including the extension to more than
 two compartments which was proposed in the paper. It should be noted however, that they are simplified in some key ways.
 Primarily, dendritic couplings and nudging are not relative to the somatic or some reversal potential (i.e. $i^{nudge,
-tgt}= g^{nudge, tgt} (u^{tgt} - u_N^P )$), but are simplified to absolute values. \todo{Figure out if this makes a
-difference. maybe create a second branch to try them out? }
+      tgt}= g^{nudge, tgt} (u^{tgt} - u_N^P )$), but are simplified to absolute values. \todo{Figure out if this makes a
+  difference. maybe create a second branch to try them out? }
 
 
 
@@ -136,7 +136,7 @@ difference. maybe create a second branch to try them out? }
 
 The synapses in the network are all modulated according to variations of the "Urbanczik-Senn" plasticity rule
 \citep{urbanczik2014learning}, which will be discussed in this section. \todo{add paragraph about relevance of
-urbanczik-senn}
+  urbanczik-senn}
 
 The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to the
 latter of which synapses connect. The membrane potential of the dendritic compartment leaks into the somatic compartment
@@ -181,15 +181,15 @@ here for the sake of completeness \todo{some notes in the appendix to this?}
 
 \section{The self-predicting network state}
 
-Neuron dynamics, plasticity rule and network architecture form an elegant interplay, which I will attempt to \phrasing
-explain in this section. We will
+In this model, euron dynamics, plasticity rules and network architecture form an elegant interplay, which I expand on
+ in this section. We will
 
 Since each interneuron receives a somatic nudging signal from its corresponding next-layer pyramidal neuron, incoming
 synapses from lateral pyramidal neurons adapt their weights to match feedforward pyramidal-to-pyramidal weights. In
 intuitive terms; Feedforward pyramidal-to-pyramidal weights elicit a certain activation in the subsequent layer, which
 is fed back into corresponding interneurons. In order to minimize the dendritic error term in Equation
 \ref{eq-delta_w_ip}, pyramidal-to-interneuron weight matrices at every layer must match these forward weights ($w_l^{ip}
-= \omega w_l^{up}$) up to some scaling factor $\omega$. $\omega$ depends on the difference in parameters between
+\approx \omega w_l^{up}$) up to some scaling factor $\omega$. $\omega$ depends on the difference in parameters between
 pyramidal- and interneurons, and is close to $1$ for most of the simulations considered here. As long as no feedback
 information arrives at the pyramidal neurons, the Urbanczik-Senn plasticity drives synaptic weight to fulfill this
 constraint. Note, that this alignment of two separate sets of outgoing weights is acheived with only local information.
@@ -201,14 +201,25 @@ plasticity does not serve to reduce discrepancies between dendritic and somatic 
 defined solely by the apical compartment voltage\footnote{In strict terms, it is defined by the deviation of the
 dendritic potential from its specific reversal potential. Since that potential is zero throughout, $- v_l^{api}$ remains
 as the error term.}. Thus, plasticity in these synapses works towards silencing the apical compartment. The apical
-compartment is also innervated by superficial pyramidal neurons, whose synapses will be considered non-plastic for now.
-Since interneurons learn to match their corresponding pyramidal neuron activity, silencing of apical compartments can 
-only be 
-acheived by mirroring the pyramidal-to-pyramidal feedback weights ($w_l^{pi} = -\ w_l^{down}$).\newline
+compartments also receive feedback from superficial pyramidal neurons, whose synapses will be considered non-plastic for now.
+As shown above, interneurons each learn to match their respective sister neuron activity. Thus, silencing of apical compartments can
+only be acheived by mirroring the pyramidal-to-pyramidal feedback weights ($w_l^{pi} \approx -w_l^{down}$).\newline
 
-Thus, when enabling plasticity in only these two synapse types, the network converges on the "\textbf{self-predicting
-  state}" \citep{sacramento2018dendritic}. This state is defined by the aforementioned weight symmetry, inactivity in
-  pyramidal neuron apical compartments and equal activations between interneurons and their sister neurons.
+When enabling plasticity in only these two synapse types, the network converges on the "\textbf{self-predicting
+  state}" \citep{sacramento2018dendritic}. This state is defined by four features: 
+  
+\begin{itemize}
+  \item The symmetries between feedforward ($w_l^{ip} \approx \omega w_l^{up}$) and feedback ($w_l^{pi} \approx -w_l^{down}$)
+weights.
+  \item Inactivity in pyramidal neuron apical compartments ($v_l^{api} \approx 0$)
+  \item Equal activations in interneurons and their respective sister neurons ($\phi (u_l^I) \approx \phi (u_{l+1}^P)$)
+\end{itemize}
+
+All of these equations are approximate, since the network does not truly 
+
+
+Note, how 
+all feedback 
 
 
 
@@ -225,6 +236,7 @@ viability for implementation in distributed asynchronous systems. Here, we keep 
 variant of feedback alignment. In principle, these weights could also be learned in order to further improve the local
 representation of errors Section 7.
 
+\section{Training the network}
 
 
 \section{NEST implementation}
@@ -388,7 +400,7 @@ The simplified \cite{sacramento2018dendritic} case would be:
 
 Where $s_i$ is the postsynaptic spiketrain and $V_i^*$ is the error between dendritic prediction and somatic rate and
 $h( u )$. The additional nonlinearity $h( u ) = \frac{d}{du} ln \  \phi(u)$ is ommited in our model \todo{should it
-though?}.
+  though?}.
 
 
 
