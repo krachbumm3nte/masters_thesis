@@ -27,8 +27,8 @@ This section will go into detail about the computations behind the network which
     in the subsequent layer\protect\footnotemark. \textbf{b:} connectivity within the highlighted section. Feedback
     pyramidal-to-interneuron connections (displayed with rectangular synapse) transmit pyramidal somatic potential
     directly and connect to a single interneuron. This enables these interneurons to learn to match their corresponding
-    next-layer pyramidal neurons. All other synapses in contrast transmit the neuron activation $\phi (u^{som})$ and
-    fully connect their populations.}
+    next-layer pyramidal neurons. All other synapses (circles) transmit the neuron somatic activation $\phi (u^{som})$
+    and fully connect their origin and target populations.}
   \label{fig-network}
 \end{figure}
 
@@ -57,16 +57,16 @@ understand what purpose this connectivity serves in our model, neuron and plasti
 
 The network contains two types of multi-compartment neurons; Pyramidal neurons with three compartments each, and
 interneurons with two compartments each. They integrate synaptic inputs into dendritic potentials, which leak into the
-soma with specific conductances. The activation $r_l^P$ of pyramidal neurons at layer $l$ is given by applying the
-synaptic transfer function $\phi$ to to their somatic potentials $u_l^P$. Note that vector notation is used here, and
-$u_l^P$ and $u_l^I$ denote the column vectors of pyramidal- and interneuron somatic voltages respectively. Synaptic
-weights $W$ are likewise assumed matrices.
+soma with specific conductances. Note that vector notation will be used throughout this section, and $u_l^P$ and $u_l^I$
+denote the column vectors of pyramidal- and interneuron somatic voltages respectively. Synaptic weights $W$ are likewise
+assumed matrices.The activation $r_l^P$ of pyramidal neurons at layer $l$ is given by applying the synaptic transfer
+function $\phi$ to to their somatic potentials $u_l^P$:
 \begin{align}
-  r_l^P   & = \phi(u_l^P)                                                      \\
+  r_l^P   & = \phi(u_l^P)                                                        \\
   \phi(x) & = \begin{cases}
-                0                                 & \textrm{if } \ x < -\epsilon \\
-                \gamma log(1+e^{\beta(x-\theta)}) & \textrm{if } \ x < \epsilon  \\
-                \gamma x                          & \textrm{otherwise}
+                0                                   & \textrm{if } \ x < -\epsilon \\
+                \gamma \ log(1+e^{\beta(x-\theta)}) & \textrm{if } \ x < \epsilon  \\
+                \gamma \ x                          & \textrm{otherwise}
               \end{cases}
 \end{align}
 
@@ -83,7 +83,7 @@ and $g^{api}$ their corresponding coupling conductances. The membrane capacitanc
 simulations, and will be omitted from all Equations from here on out.
 
 
-In the computations, dendritic compartments have no persistence between simulation steps. Thus, they are defined at
+In the original model, dendritic compartments have no persistence between simulation steps. Thus, they are defined at
 every timestep $t$ through incoming weight matrices and presynaptic activities:
 
 \begin{align}
@@ -104,7 +104,7 @@ original neuron from \cite{urbanczik2014learning} most closely.
 \begin{align}
   C_m \dot{u}_l^I & = - g_l u_l^{I} + g^{dend} v_l^{dend} + i^{nudge, I}\label{eq-intn-dynamics} \\
   i^{nudge, I}    & = g^{nudge, I} u_{l+1}^P                                                     \\
-  v_l^{dend}      & = \phi(u_{l}^P) * W_l^{ip}
+  v_l^{dend}      & = W_l^{ip} \ \phi(u_{l}^P)
 \end{align}
 
 where $ g^{nudge, I}$ is the interneuron nudging conductance, and $u_{l+1}^P$ is the somatic voltage of a corresponding
@@ -140,9 +140,7 @@ The synapses in the network are all modulated according to variations of the "Ur
 
 The plasticity rule requires the postsynaptic neuron to have one somatic and at least one dendritic compartment, to the
 latter of which synapses connect. The membrane potential of the dendritic compartment leaks into the somatic compartment
-as described in Equation \ref{eq-intn-dynamics}. The extension in which the somatic potential also affects dendrites,
-will be discussed in
-
+as described in Equation \ref{eq-intn-dynamics}.
 
 
 Functionally, the plasticity rule changes the synaptic weight in such a way, as to minimize discrepancies between
@@ -158,7 +156,7 @@ column vector). The dendritic prediction is simply a scaled version of the dendr
 $\alpha$, which is calculated from coupling and leakage conductances. For example, basal dendrites of pyramidal neurons
 in \cite{sacramento2018dendritic} are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. If a current is
 injected into the soma, it creates a difference between somatic firing rate and dendritic prediction (referred to as a
-dendritic error from here on error). \cite{urbanczik2014learning} show, that \todo{what?}
+dendritic error from here on). \cite{urbanczik2014learning} show, that \todo{what?}
 
 
 
@@ -167,9 +165,9 @@ dendritic error from here on error). \cite{urbanczik2014learning} show, that \to
 Weight changes for the synapses in a hidden layer $l$ are thus given by:
 
 \begin{align}
-  \dot{w}_{l}^{up}   & = \eta_l^{up} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{bas}) ) \ \phi(u_{l-1}^{P})^T                     \\
-  \dot{w}_{l}^{ip}   & = \eta_l^{ip} \ ( \phi(u_l^{I}) - \phi(\hat{v}_l^{dend}) ) \ \phi(u_{l}^{P})^T\label{eq-delta_w_ip} \\
-  \dot{w}_{l}^{pi}   & = \eta_l^{pi} \ - v_l^{api} \ \phi(u_l^{I})^T\label{eq-delta_w_pi}                                  \\
+  \dot{w}_{l}^{up}   & = \eta_l^{up} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{bas}) ) \ \phi(u_{l-1}^{P})^T\label{eq-delta_w_up} \\
+  \dot{w}_{l}^{ip}   & = \eta_l^{ip} \ ( \phi(u_l^{I}) - \phi(\hat{v}_l^{dend}) ) \ \phi(u_{l}^{P})^T\label{eq-delta_w_ip}  \\
+  \dot{w}_{l}^{pi}   & = \eta_l^{pi} \ - v_l^{api} \ \phi(u_l^{I})^T\label{eq-delta_w_pi}                                   \\
   \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(\hat{v}_l^{api}) )\ \phi(u_{l+1}^{P})^T
 \end{align}
 
@@ -181,15 +179,15 @@ here for the sake of completeness \todo{some notes in the appendix to this?}
 
 \section{The self-predicting network state}
 
-In this model, euron dynamics, plasticity rules and network architecture form an elegant interplay, which I expand on
- in this section. We will
+In this model, euron dynamics, plasticity rules and network architecture form an elegant interplay, which I expand on in
+this section. We will
 
 Since each interneuron receives a somatic nudging signal from its corresponding next-layer pyramidal neuron, incoming
 synapses from lateral pyramidal neurons adapt their weights to match feedforward pyramidal-to-pyramidal weights. In
 intuitive terms; Feedforward pyramidal-to-pyramidal weights elicit a certain activation in the subsequent layer, which
 is fed back into corresponding interneurons. In order to minimize the dendritic error term in Equation
 \ref{eq-delta_w_ip}, pyramidal-to-interneuron weight matrices at every layer must match these forward weights ($w_l^{ip}
-\approx \omega w_l^{up}$) up to some scaling factor $\omega$. $\omega$ depends on the difference in parameters between
+  \approx \omega w_l^{up}$) up to some scaling factor $\omega$. $\omega$ depends on the difference in parameters between
 pyramidal- and interneurons, and is close to $1$ for most of the simulations considered here. As long as no feedback
 information arrives at the pyramidal neurons, the Urbanczik-Senn plasticity drives synaptic weight to fulfill this
 constraint. Note, that this alignment of two separate sets of outgoing weights is acheived with only local information.
@@ -201,25 +199,50 @@ plasticity does not serve to reduce discrepancies between dendritic and somatic 
 defined solely by the apical compartment voltage\footnote{In strict terms, it is defined by the deviation of the
 dendritic potential from its specific reversal potential. Since that potential is zero throughout, $- v_l^{api}$ remains
 as the error term.}. Thus, plasticity in these synapses works towards silencing the apical compartment. The apical
-compartments also receive feedback from superficial pyramidal neurons, whose synapses will be considered non-plastic for now.
-As shown above, interneurons each learn to match their respective sister neuron activity. Thus, silencing of apical compartments can
-only be acheived by mirroring the pyramidal-to-pyramidal feedback weights ($w_l^{pi} \approx -w_l^{down}$).\newline
+compartments also receive feedback from superficial pyramidal neurons, whose synapses will be considered non-plastic for
+now. As shown above, interneurons each learn to match their respective sister neuron activity. Thus, silencing of apical
+compartments can only be acheived by mirroring the pyramidal-to-pyramidal feedback weights ($w_l^{pi} \approx
+  -w_l^{down}$).\newline
 
-When enabling plasticity in only these two synapse types, the network converges on the "\textbf{self-predicting
-  state}" \citep{sacramento2018dendritic}. This state is defined by four features: 
-  
+When enabling plasticity in only these two synapse types, the network converges on the "\textbf{self-predicting state}"
+\citep{sacramento2018dendritic}. This state is defined by a minimization of four error metrics at each hidden layer $l$:
+
 \begin{itemize}
-  \item The symmetries between feedforward ($w_l^{ip} \approx \omega w_l^{up}$) and feedback ($w_l^{pi} \approx -w_l^{down}$)
-weights.
-  \item Inactivity in pyramidal neuron apical compartments ($v_l^{api} \approx 0$)
-  \item Equal activations in interneurons and their respective sister neurons ($\phi (u_l^I) \approx \phi (u_{l+1}^P)$)
+  \item The symmetries between feedforward ($w_l^{ip} \approx \omega w_l^{up}$) and feedback ($w_l^{pi} \approx
+          -w_l^{down}$) weights. Mean squared error between these pairs of matrices will be called \textbf{Feedforward -
+        } and \textbf{Feedback weight error} respectively.
+  \item Silencing of pyramidal neuron apical compartments ($v_l^{api} \approx 0$). The Frobenius norm \citeme of apical
+        compartment voltages within a layer is called the \textbf{Apical error}.
+  \item Equal activations in interneurons and their respective sister neurons ($\phi (u_l^I) \approx \phi (u_{l+1}^P)$).
+        The mean squared error over these vectors is called the \textbf{Interneuron error}.
 \end{itemize}
 
-All of these equations are approximate, since the network does not truly 
+\what{is there a mathematical symbol for this type of convergence?}
+
+All of these equalities are approximate, since the network does not ever reach a state in which all of these values are
+zero. In the original implementation, these deviations are minute and can likely be explained with floating point
+conversions. Since it is impossible to replicate the timing of the original precisely within NEST, the NEST simulations
+deviate more strongly from this ideal. The key insight here is, that this state is not clearly defined by absolute error
+thresholds, but is rather flexible. Thus, networks are able to learn successfully even when their weights are
+initialized imperfectly. \todo{or not at all? some science is required here}
+
+An analysis of the equations describing the network reveals that the self-predicting state is stable. When Interneuron
+error is zero, dendritic and somatic compartments of all interneurons are equal, thus effectively disabling plasticity
+in incoming synapses. Likewise, a silenced apical compartment will disable plasticity in all synapses arriving at its
+pyramidal neuron. Synapses from lateral interneurons (Equation \ref{eq-delta_w_pi}) only depend on the apical
+compartment itself, thus can not change in this state. Similarly, the apical compartment is also the driving factor for
+feedforward synapses (Equation \ref{eq-delta_w_up}), since it affects somatic activity when active\footnote{This feature
+  is actually rather important when thinking about Urbanczik-Senn plasticity. In the original paper, currents were
+  injected directly into the soma to change the error term. The the introduction of a second dendrite which performs that
+  very task is a natural extension, as described by the authors. Whether interneurons could be modeled by the same
+  principles will be discussed in Section \todo{talk about interneuron dendritic trees}}. Thus, the network remains in
+the self-predicting state regardless of the kind of stimulus injected into the input layer. This fact highlights
+another important property of networks in this state. Notice, how information flows backwards through the network; All 
+feedback signals between layers ultimately pass through the apical compartments of pyramidal neurons. Thus, successful 
+silencing of all apical compartments implies that the network behaves strictly like a fully connected feedforward 
+network. The recurrence within this network is in balance, and completely cancels out its own effects.
 
 
-Note, how 
-all feedback 
 
 
 
