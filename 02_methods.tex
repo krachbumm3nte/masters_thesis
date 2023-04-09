@@ -226,47 +226,74 @@ deviate more strongly from this ideal. The key insight here is, that this state 
 thresholds, but is rather flexible. Thus, networks are able to learn successfully even when their weights are
 initialized imperfectly. \todo{or not at all? some science is required here}
 
-An analysis of the equations describing the network reveals that the self-predicting state is stable. When Interneuron
-error is zero, dendritic and somatic compartments of all interneurons are equal, thus effectively disabling plasticity
-in incoming synapses. Likewise, a silenced apical compartment will disable plasticity in all synapses arriving at its
-pyramidal neuron. Synapses from lateral interneurons (Equation \ref{eq-delta_w_pi}) only depend on the apical
-compartment itself, thus can not change in this state. Similarly, the apical compartment is also the driving factor for
-feedforward synapses (Equation \ref{eq-delta_w_up}), since it affects somatic activity when active\footnote{This feature
-  is actually rather important when thinking about Urbanczik-Senn plasticity. In the original paper, currents were
-  injected directly into the soma to change the error term. The the introduction of a second dendrite which performs that
-  very task is a natural extension, as described by the authors. Whether interneurons could be modeled by the same
-  principles will be discussed in Section \todo{talk about interneuron dendritic trees}}. Thus, the network remains in
-the self-predicting state regardless of the kind of stimulus injected into the input layer. This fact highlights
-another important property of networks in this state. Notice, how information flows backwards through the network; All 
-feedback signals between layers ultimately pass through the apical compartments of pyramidal neurons. Thus, successful 
-silencing of all apical compartments implies that the network behaves strictly like a fully connected feedforward 
-network. The recurrence within this network is in balance, and completely cancels out its own effects.
+An analysis of the equations describing the network reveals that the self-predicting state is stable \phrasing. When
+Interneuron error is zero, dendritic and somatic compartments of all interneurons are equal, thus effectively disabling
+plasticity in incoming synapses. Likewise, a silenced apical compartment will disable plasticity in all incoming
+synapses. Synapses from lateral interneurons (Equation \ref{eq-delta_w_pi}) only depend on the apical compartment
+itself, thus can not change in this state. Similarly, the apical compartment is also the driving factor for the
+dendritic error of feedforward synapses (Equation \ref{eq-delta_w_up}), since it affects somatic activity when
+active\footnote{This feature is actually rather important when contemplating biological neurons using the Urbanczik-Senn
+  plasticity. In the original paper, currents were injected directly into the soma to change the error term. The the
+  introduction of a second dendrite which performs that very task is much more useful, as originally described by the
+  authors. Whether interneurons could be modeled by the same principles will be discussed in Section \todo{talk about
+    interneuron dendritic trees}}. Thus, all plasticiy in the network is disabled, and remains in the self-predicting state
+regardless of the kind of stimulus injected into the input layer. This fact highlights another important property of
+networks in this state. Notice, how information flows backwards through the network; All feedback signals between layers
+ultimately pass through the apical compartments of pyramidal neurons. Thus, successful silencing of all apical
+compartments implies that no information can travel backwards between layers (with the exception of interneurons
+receiving top down signals). As a result, the network behaves strictly like a fully connected feedforward network
+consisting only of pyramidal neurons. The recurrence within this network is in balance, and completely cancels out its
+own effects. This holds true as long as all conditions for the self-predicting state are fulfilled, and the network only
+receives external stimulation at the input layer. One interpretation of this is, that the network has learned to predict
+its own top-down input. A failure by interneurons to fully explain (i.e. cancel out) top-down input thus results in a
+prediction error, encoded in deviation of apical dendrite potentials from their resting state. This prediction error in
+turn elicits plasticity in all synapses connecting to its pyramidal neuron, which drives the network towards a
+self-predicting state that is congruent with the novel top-down signal. Therefore, these neuron- specific prediction
+errors are the driving force of supervised learning in these networks
 
 
-
-
-
-
-For feedforward pyramidal-to-pyramidal
-
-In this architecture, plasticity serves two purposes. For pyramidal-to-pyramidal feedforward synapses, it implements
-error-correcting learning as a time-continuous approximation of BP. For pyramidal-to- interneuron synapses, it drives
-interneurons to mimic their pyramidal partners in the layers above (see also SI). Thus, in a well-trained network,
-apical compartments of pyramidal cells are at rest, reflecting zero error, as top-down and lateral inputs cancel out.
-When an output error propagates through the network, these two inputs can no longer cancel out and their difference
-represents the local error ei . This architecture does not rely on the transpose of the forward weight matrix, improving
-viability for implementation in distributed asynchronous systems. Here, we keep feedback weights fixed, realizing a
-variant of feedback alignment. In principle, these weights could also be learned in order to further improve the local
-representation of errors Section 7.
 
 \section{Training the network}
+
+Starting with a network in the self-predicting state, performing time-continuous supervised learning then requires an
+injection of a target activation into the network's output layer alongside with a stimulus at the input layer. Since
+output layer neurons feed back into both interneurons and pyramidal neurons of the previous layer, local prediction
+errors arise. Synapses activatee and drive to minimize the prediction errors, which requires the network to replicate
+the target activation from activations and weights of the last hidden layer.
+
+Note, that this mechanism is not exclusive to the last two layers. Any Apical errors cause a change in somatic activity,
+which previous layers will fail to predict. Thus, errors are propagated backwards through the entire network, causing
+error minimization at every layer. See the Supplementary analysis of \cite{sacramento2018dendritic} for a rigorous proof
+that this type of network does indeed approximate the Backpropagation algorithm \what{what does the $\mathit{O}$ mean?}.
+
+
+
+Classical backpropagation relies on a strict separation of a forward pass of some trainig pattern and a backwards pass
+dependent on the loss produced at the output layer. Since this network is time-continuous, stimulus and target
+activation are injected into the network simultaneously. These injections are maintained for a given presentation time
+$t_{pres}$, in order to allow the network to calculate errors through its recurrent connections before slowly adapting
+weights. Particluarly for deep networks, signals travelling from both the input and output layer require some time to
+balance out and elicit the correct dendritic error terms. The network tends to overshoot activations, which in turn can
+lead to poor learning performance with high learning rates. This issue will be discussed in more detail in Section
+\ref{sec-haider}.
+
 
 
 \section{NEST implementation}
 
 One of the key research questions motivating this thesis is whether the proposed architecture would be able to learn
-successfully under a spiking neuron paradigm.
+successfully when employing spike-based communication instead of the rate connections for which the original implementation
+was developed. As a framework for my spike-based implementation two options were considered: The first one was to use the existing
+implementation of the network within PyTorch \what{cite this or nah?} and expand it to employ spiking neurons. PyTorch
+does in principle support spiking communication between layers, but is streamlined for implementing less recurrent
+and less complex network and neuron models. A more pressing issue yet is efficiency. PyTorch is very well optimized for
+efficiently computing matrix manipulations on dedicated hardware. Spiking communication is almost antithetical to this
+design philosophy and thus can be expected to perform comparatively poor when using this backend.
 
+The second option was to use the NEST simulator \citeme, which was developed with highly parallel simulations of large
+SNN in mind. It is written in C++ and uses the \textit{Message Passing Interface} to efficiently communicate payloads
+across both processes and compute nodes. 
+Its key 
 
 To calculate a number of spikes from the rate $r = \phi(u)$ , a poisson point process was used:
 
@@ -292,27 +319,33 @@ step becomes:
 After randomly drawing from this probability a spike is sent, and the spiking probability is set to 0 for the duration
 of the refractory period $t_{ref}$.
 
-\section{Event-based Urbanczik-Senn plasticity}
+\section{Event-based Urbanczik-Senn plasticity}\label{sec-event-urb}
 
-One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity. Since it
+One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity as introduced
+in Section \ref{sec-urb-senn-plast}. This problem has been successfully solved in NEST by \cite{Stapmanns2021} for the
+two-compartment neurons described in \cite{urbanczik2014learning}. This Section will discuss its algorithm and
+implementation.
+
+Since it
 depends on pre- and postsynaptic information for all updates, one of two approaches is typically employed to compute it:
 
 One option is to store all relevant state variables for every timestep in the synapse and update the synaptic weight
-whenever a spike traverses the synapse. This is efficient in terms of computation time, since fewer computations are
+whenever a spike is sent through the synapse. This is efficient in terms of computation time, since fewer computations are
 required per synapse. The major downside of the approach lies in memory efficiency; Every synapse potentially stores the
 history over several hundred simulation steps. In addition, every synapse innervating a given neuron would store its
 membrane potentials redundantly.
 
 Another approach updates synaptic weights at every timestep. This requires very little memory, but substantially
-increases computation time. Importantly, it is incompatible with asynchronous neuron simulations, as all synapses and
-their weights need to be updated at every simulation step. In particular for large networks and modern hardware
-solutions, asynchronous simulations have proven to be more efficient for most use cases \todo{cite something by abigail}
+increases computation time. Importantly, it is poorly suited for asynchronous neuron simulations, as all synapses and
+their weights need to be updated at every simulation step sequentially for their target neuron. In particular for large
+networks and modern hardware
+solutions, asynchronous simulations have proven to be more efficient for many use cases \todo{cite something by abigail}
 
 Thus, a novel approach was developed by \cite{Stapmanns2021} for the NEST simulator, which will be explained in this
 section. In order to utilize the paralellization capabilities of NEST and spiking neural networks, transmitting the pre-
 and postsynaptic membrane potential is a poor choice. Thus, the error between somatic and dendritic activation is stored
 in the \texttt{urbanczik\_history} of the postsynaptic neuron. Since it applies equally to all incoming synapses,
-redundant storage is avoided by storing a counter alongside each entry
+redundant storage is avoided by storing an access counter alongside each entry. Whenever an incoming syna
 
 
 
@@ -485,7 +518,15 @@ $I_1$ in the code is computed as a sum:
 \end{align}
 
 
-\section{steady-state potentials in Sacramento (2018)}
+\section{Neuron model adaptations}
+
+\begin{itemize}
+  \item additional compartments
+  \item top-down plasticity changes
+  \item leaky dendrites
+  \item pyr and intn differences
+  \item
+\end{itemize}
 
 \begin{align}
   u_k^p           & = \frac{g_B}{g_{lk} + g_B + g_A} v^P_{B,k} + \frac{g_A}{g_{lk} + g_B + g_A} v^P_{A,k} \\
@@ -496,7 +537,7 @@ $I_1$ in the code is computed as a sum:
 
 
 
-\section{Haider 2021 updates}
+\section{Haider 2021 updates}\label{sec-haider}
 
 Besides the using a prediction of future somatic activity for neuronal transfer and plasticity, \cite{Haider2021} also
 slightly alter the plasticity rule, which turns out to be crucial for the latent equilibrium mechanism. While the
@@ -539,7 +580,17 @@ Thus, the equations for membrane updates change slightly:
 \end{align}
 
 
+\section{rate neurons in NEST}
+
 \section{simulation details/updates}
 
 All voltages need to be reset between simulations!
+
+\begin{itemize}
+  \item injections into the network
+  \item output layer readout
+  \item interoperability of networks
+  \item 
+
+\end{itemize}
 
