@@ -187,7 +187,7 @@ synapses from lateral pyramidal neurons adapt their weights to match feedforward
 intuitive terms; Feedforward pyramidal-to-pyramidal weights elicit a certain activation in the subsequent layer, which
 is fed back into corresponding interneurons. In order to minimize the dendritic error term in Equation
 \ref{eq-delta_w_ip}, pyramidal-to-interneuron weight matrices at every layer must match these forward weights ($w_l^{ip}
-  \approx \omega w_l^{up}$) up to some scaling factor $\omega$. $\omega$ depends on the difference in parameters between
+  \approx \rho w_l^{up}$) up to some scaling factor $\rho$. $\rho$ depends on the difference in parameters between
 pyramidal- and interneurons, and is close to $1$ for most of the simulations considered here. As long as no feedback
 information arrives at the pyramidal neurons, the Urbanczik-Senn plasticity drives synaptic weight to fulfill this
 constraint. Note, that this alignment of two separate sets of outgoing weights is acheived with only local information.
@@ -208,7 +208,7 @@ When enabling plasticity in only these two synapse types, the network converges 
 \citep{sacramento2018dendritic}. This state is defined by a minimization of four error metrics at each hidden layer $l$:
 
 \begin{itemize}
-  \item The symmetries between feedforward ($w_l^{ip} \approx \omega w_l^{up}$) and feedback ($w_l^{pi} \approx
+  \item The symmetries between feedforward ($w_l^{ip} \approx \rho w_l^{up}$) and feedback ($w_l^{pi} \approx
           -w_l^{down}$) weights. Mean squared error between these pairs of matrices will be called \textbf{Feedforward -
         } and \textbf{Feedback weight error} respectively.
   \item Silencing of pyramidal neuron apical compartments ($v_l^{api} \approx 0$). The Frobenius norm \citeme of apical
@@ -279,21 +279,49 @@ lead to poor learning performance with high learning rates. This issue will be d
 
 
 
-\section{NEST implementation}
+\section{The NEST simulator}
 
 One of the key research questions motivating this thesis is whether the proposed architecture would be able to learn
-successfully when employing spike-based communication instead of the rate connections for which the original implementation
-was developed. As a framework for my spike-based implementation two options were considered: The first one was to use the existing
-implementation of the network within PyTorch \what{cite this or nah?} and expand it to employ spiking neurons. PyTorch
-does in principle support spiking communication between layers, but is streamlined for implementing less recurrent
-and less complex network and neuron models. A more pressing issue yet is efficiency. PyTorch is very well optimized for
-efficiently computing matrix manipulations on dedicated hardware. Spiking communication is almost antithetical to this
-design philosophy and thus can be expected to perform comparatively poor when using this backend.
+successfully when employing spike-based communication instead of the rate connections for which the original
+implementation was developed. As a framework for my spike-based implementation two options were considered: The first
+one was to use the existing implementation of the network within PyTorch \what{cite this or nah?} and expand it to
+employ spiking neurons. PyTorch does in principle support spiking communication between layers, but is streamlined for
+implementing less recurrent and less complex network and neuron models. A more pressing issue yet is efficiency; PyTorch
+is very well optimized for efficiently computing matrix operations on dedicated hardware. This makes it a prime choice
+for simulating large networks of rate neurons, which transmit all of their activations between layers at every
+simulation step. Spiking communication between leaky neurons is almost antithetical to this design philosophy and thus
+can be expected to perform comparatively poor when using this backend.
 
 The second option was to use the NEST simulator \citeme, which was developed with highly parallel simulations of large
-SNN in mind. It is written in C++ and uses the \textit{Message Passing Interface} to efficiently communicate payloads
-across both processes and compute nodes. 
-Its key 
+spiking neural networks in mind. It is written in C++ and uses the \textit{Message Passing Interface} to efficiently
+communicate payloads across both threads and compute nodes. One design pillar of the simulator that is particularly 
+relevant for this project, is the event-based communication scheme that underpins all simulated nodes. It ensures, that
+communication bandwidth at every simulation step is only used by the subset of nodes which transmit spikes or other
+signals at that time step. The simulator also increases computational efficiency by enforcing a transmission delay of 
+at least one simulation step for all connections. This allows Events to be created out of order, and processed at the
+postsynaptic neuron during the next simulation step. While this feature is critical for efficiency in highly parallel
+environments, it inflicts some limitations on the simulation which will be discussed in \todo{create section}. Yet the 
+most notable advantage of the NEST simulator is, that an event-based implementation of the Urbanczik-Senn plasticity
+alongside a corresponding neuron model had already been developed for it. Combined with the fact that I had more prior
+experience with NEST over PyTorch, I decided to implement the neuron model in the NEST simulator.
+
+Early experiments showed that implementing a spiking neuron and synapse model that behave similarly enough to the 
+original python implementation would be more challenging than expected. The interplay between neuron activity and
+synaptic plasticity proved to be very sensitive to 
+minor differences in parametrization and simulator setup. It was also uncertain if spiking neurons would
+be able to perform the required types of learning at all. Finally, the NEST simulator itself imposes some limitations
+on the simulations, which could not be ruled out as being responsible for the failure of these early experiments. 
+Therefore, I decided to recreate the existing rate neuron model within NEST as well as the spiking implementation.
+This substantially increased the complexity of my NEST implementation, but turned out to be a critical step towards
+successful learning using spiking neurons. It allowed me to reliably identify whether errors arose from using a 
+different simulation backend, or from the transition to spiking neurons. 
+
+
+\section{Neuron model implementation}
+
+The neuron model relies heavily on the one developed by \cite{Stapmanns2021}, who showed that spiking neurons are able
+to learn tasks that were originally implemented for the rate neurons and synapses developed by
+\cite{urbanczik2014learning}. 
 
 To calculate a number of spikes from the rate $r = \phi(u)$ , a poisson point process was used:
 
@@ -301,6 +329,8 @@ To calculate a number of spikes from the rate $r = \phi(u)$ , a poisson point pr
   P\{\textit{n} \ \text{spikes during} \ \Delta t\} & = e^{-r \Delta t} \frac{(r \ \Delta t) ^ n}{n!}\label{eq-pr-n-spikes} \\
   \langle \textit{n} \rangle                        & = r \ \Delta t
 \end{align}
+
+\todo{find a citation for this}
 
 with number of spikes \textit{n} and simulation timestep $\Delta t$, which will be assumed to be $0.1 ms$ from here on
 out. Within the code, true number of spikes during $\Delta t$ is drawn from a poisson distribution with parameter
@@ -321,25 +351,25 @@ of the refractory period $t_{ref}$.
 
 \section{Event-based Urbanczik-Senn plasticity}\label{sec-event-urb}
 
-One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity as introduced
-in Section \ref{sec-urb-senn-plast}. This problem has been successfully solved in NEST by \cite{Stapmanns2021} for the
-two-compartment neurons described in \cite{urbanczik2014learning}. This Section will discuss its algorithm and
-implementation.
+One major challenge in implementing this architecture with spiking neurons is the Urbanczik-Senn plasticity as
+introduced in Section \ref{sec-urb-senn-plast}. This problem has been successfully solved in NEST by
+\cite{Stapmanns2021} for the two-compartment neurons described in \cite{urbanczik2014learning}. This Section will
+discuss its algorithm and implementation.
 
-Since it
-depends on pre- and postsynaptic information for all updates, one of two approaches is typically employed to compute it:
+Since it depends on pre- and postsynaptic information for all updates, one of two approaches is typically employed to
+compute it:
 
 One option is to store all relevant state variables for every timestep in the synapse and update the synaptic weight
-whenever a spike is sent through the synapse. This is efficient in terms of computation time, since fewer computations are
-required per synapse. The major downside of the approach lies in memory efficiency; Every synapse potentially stores the
-history over several hundred simulation steps. In addition, every synapse innervating a given neuron would store its
+whenever a spike is sent through the synapse. This is efficient in terms of computation time, since fewer computations
+are required per synapse. The major downside of the approach lies in memory efficiency; Every synapse potentially stores
+the history over several hundred simulation steps. In addition, every synapse innervating a given neuron would store its
 membrane potentials redundantly.
 
 Another approach updates synaptic weights at every timestep. This requires very little memory, but substantially
 increases computation time. Importantly, it is poorly suited for asynchronous neuron simulations, as all synapses and
 their weights need to be updated at every simulation step sequentially for their target neuron. In particular for large
-networks and modern hardware
-solutions, asynchronous simulations have proven to be more efficient for many use cases \todo{cite something by abigail}
+networks and modern hardware solutions, asynchronous simulations have proven to be more efficient for many use cases
+\todo{cite something by abigail}
 
 Thus, a novel approach was developed by \cite{Stapmanns2021} for the NEST simulator, which will be explained in this
 section. In order to utilize the paralellization capabilities of NEST and spiking neural networks, transmitting the pre-
@@ -590,7 +620,7 @@ All voltages need to be reset between simulations!
   \item injections into the network
   \item output layer readout
   \item interoperability of networks
-  \item 
+  \item
 
 \end{itemize}
 
