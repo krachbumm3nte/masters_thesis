@@ -87,8 +87,8 @@ In the original model, dendritic compartments have no persistence between simula
 every timestep $t$ through incoming weight matrices and presynaptic activities:
 
 \begin{align}
-  v_l^{bas}(t) & = W_l^{up} \ \phi(u_{l-1}^P(t))                                     \\
-  v_l^{api}(t) & =  W_l^{pi} \ \phi(u_l^I(t)) \ + \  W_l^{down} \ \phi(u_{l+1}^P(t))
+  v_l^{bas}(t) & = W_l^{up} \ \phi(u_{l-1}^P(t)) \label{eq-v-bas-rate}                                     \\
+  v_l^{api}(t) & =  W_l^{pi} \ \phi(u_l^I(t)) \ + \  W_l^{down} \ \phi(u_{l+1}^P(t)) \label{eq-v-api-rate}
 \end{align}
 
 Weight nomenclature conforms to the python implementation of the network by \cite{Haider2021}; Weights are indexed by
@@ -294,36 +294,35 @@ can be expected to perform comparatively poor when using this backend.
 
 The second option was to use the NEST simulator \citeme, which was developed with highly parallel simulations of large
 spiking neural networks in mind. It is written in C++ and uses the \textit{Message Passing Interface} to efficiently
-communicate payloads across both threads and compute nodes. One design pillar of the simulator that is particularly 
+communicate payloads across both threads and compute nodes. One design pillar of the simulator that is particularly
 relevant for this project, is the event-based communication scheme that underpins all simulated nodes. It ensures, that
 communication bandwidth at every simulation step is only used by the subset of nodes which transmit spikes or other
-signals at that time step. The simulator also increases computational efficiency by enforcing a transmission delay of 
-at least one simulation step for all connections. This allows Events to be created out of order, and processed at the
+signals at that time step. The simulator also increases computational efficiency by enforcing a transmission delay of at
+least one simulation step for all connections. This allows Events to be created out of order, and processed at the
 postsynaptic neuron during the next simulation step. While this feature is critical for efficiency in highly parallel
-environments, it inflicts some limitations on the simulation which will be discussed in \todo{create section}. Yet the 
+environments, it inflicts some limitations on the simulation which will be discussed in \todo{create section}. Yet the
 most notable advantage of the NEST simulator is, that an event-based implementation of the Urbanczik-Senn plasticity
 alongside a corresponding neuron model had already been developed for it. Combined with the fact that I had more prior
 experience with NEST over PyTorch, I decided to implement the neuron model in the NEST simulator.
 
-Early experiments showed that implementing a spiking neuron and synapse model that behave similarly enough to the 
+Early experiments showed that implementing spiking neuron and synapse models that behave similarly enough to the
 original python implementation would be more challenging than expected. The interplay between neuron activity and
-synaptic plasticity proved to be very sensitive to 
-minor differences in parametrization and simulator setup. It was also uncertain if spiking neurons would
-be able to perform the required types of learning at all. Finally, the NEST simulator itself imposes some limitations
-on the simulations, which could not be ruled out as being responsible for the failure of these early experiments. 
-Therefore, I decided to recreate the existing rate neuron model within NEST as well as the spiking implementation.
-This substantially increased the complexity of my NEST implementation, but turned out to be a critical step towards
-successful learning using spiking neurons. It allowed me to reliably identify whether errors arose from using a 
-different simulation backend, or from the transition to spiking neurons. 
+synaptic plasticity proved to be very sensitive to minor differences in parametrization and simulator setup. It was also
+uncertain if spiking neurons would be able to perform the desired learning tasks at all. Finally, the NEST simulator
+itself imposes some limitations on the simulations, which could not be ruled out as being responsible for the failure of
+these early experiments. Therefore, I decided to recreate the existing rate neuron model within NEST as well as the
+spiking implementation. This substantially increased the complexity of the NEST implementation, but turned out to be a
+critical step towards successful learning using spiking neurons. It allowed me to reliably identify whether errors arose
+from using a different simulation backend, or from the transition from rate-based to spiking neurons.
 
 
 \section{Neuron model implementation}
 
 The neuron model relies heavily on the one developed by \cite{Stapmanns2021}, who showed that spiking neurons are able
 to learn tasks that were originally implemented for the rate neurons and synapses developed by
-\cite{urbanczik2014learning}. 
-
-To calculate a number of spikes from the rate $r = \phi(u)$ , a poisson point process was used:
+\cite{urbanczik2014learning}. Instead of transmitting their activation $r = \phi(u)$ at every time step, these neurons
+use a poisson point process to determine the number of spikes to be sent during a simulation time step of duration
+$\Delta t$, which will be assumed to be $0.1 ms$ from here on out.
 
 \begin{align}
   P\{\textit{n} \ \text{spikes during} \ \Delta t\} & = e^{-r \Delta t} \frac{(r \ \Delta t) ^ n}{n!}\label{eq-pr-n-spikes} \\
@@ -332,22 +331,44 @@ To calculate a number of spikes from the rate $r = \phi(u)$ , a poisson point pr
 
 \todo{find a citation for this}
 
-with number of spikes \textit{n} and simulation timestep $\Delta t$, which will be assumed to be $0.1 ms$ from here on
-out. Within the code, true number of spikes during $\Delta t$ is drawn from a poisson distribution with parameter
-$\langle n \rangle$. Note that this mechanism makes the assumption that more than one spike can occur per simulation
-step. NEST was developed with this possibility in mind, and handles such high rates without issue. Yet for the analysis
-with regard to biological plausibility, spiking behaviour with refractory periods might be useful. The probability of at
-least one spike occuring within the next simulation step thus is the inverse probability of no spike occuring. Entering
-$n=0$ into Equation \ref{eq-pr-n-spikes}, the probability of eliciting at least one spike within the next simualtion
-step becomes:
+with \textit{n} denoting the number of spikes to be sent. Within the code, the number of spikes during $\Delta t$ is
+then drawn from a poisson distribution with parameter $\langle n \rangle$. Note that this mechanism makes the assumption
+that more than one spike can occur per simulation step. NEST was developed with this possibility in mind and provides a
+\textit{multiplicity} parameter for Spike Events, which is processed at the postsynaptic neuron.
+
+The model is also capable of simulating a refractory period after spiking, which is a well documented property of
+biological neurons. The probability of at least one spike occuring within the next simulation step is the inverse
+probability of no spike occuring. Thus, when inserting $n=0$ into Equation \ref{eq-pr-n-spikes}, the probability of
+eliciting at least one spike within the next simualtion step becomes:
 
 \begin{align}
   P\{ \textit{n} \geq 1\} & = 1 - e^{-r \Delta t}
 \end{align}
 
 
-After randomly drawing from this probability a spike is sent, and the spiking probability is set to 0 for the duration
-of the refractory period $t_{ref}$.
+Drawing from this probability then determines whether or not a spike is sent during that step, denoted with the function
+$s(t)$, which outputs $1$ if a spike is sent during the interval $[t, t+\Delta t]$ \todo{Notation correct?}, and $0$
+otherwise. If the neuron sends a spike, the spiking probability is set to 0 for the duration of the refractory period
+$t_{ref}$.\newline
+
+Since the Urbanczik-Senn plasticity relies on dendritic and somatic voltage differences at every timestep, a more
+sophisticated model of dendritic voltage is required. The approach for rate neurons described in Equations
+\ref{eq-v-bas-rate} and \ref{eq-v-api-rate} would cause dendritic voltages to be at rest most of the time and reach
+extreme values when spikes arrive through the synapses. Dendritic compartments therefore need to be modeled with leaky
+dynamics similar to those described for the somatic compartment. Thus, the basal dendritic compartment of neuron $j$
+evolves according to: \todo{do we need the same equations for the soma?}
+
+
+\begin{align}
+  C_m^{bas} \dot{v}_j^{bas} & = -g_l^{bas} \  v_j^{bas} + I^{bas}(t)               \\
+  \dot{I}^{bas}             & = \frac{-I^{bas} + \sum_i W^{ji} s_i(t)}{\tau_{bas}} \\
+\end{align}
+
+with membrane capacitance $C_m^{bas}$, leakage conductance $g_l^{bas}$ and membrane time constant $\tau_{bas}$ all being
+specific to the basal dendrite and independent from other compartments. The Current injected into the dendrite
+integrates presynaptic spikes ($s_i(t)$) and the corresponding through a low-pass filter. Note that these equations are
+calculated individually for each neuron and do not employ the matrix notation used for layers of rate neurons. Apical
+compartments are modeled by the same principle and with largely the same parameters.
 
 \section{Event-based Urbanczik-Senn plasticity}\label{sec-event-urb}
 
