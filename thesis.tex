@@ -1,7 +1,7 @@
 \documentclass[11pt,a4paper,titlepage]{report}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{xcolor}
+\usepackage[table,xcdraw]{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \graphicspath{ {./images/} }
@@ -9,6 +9,7 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{multirow}
 \usepackage[round]{natbib}
 \bibliographystyle{apalike}
 \usepackage[onehalfspacing]{setspace}
@@ -78,7 +79,7 @@
 
 \newcommand{\image}[3][1]
 {
-\begin{figure}
+\begin{figure}[t]
 	\centerline{\includegraphics[width={1\linewidth}]{#1}}
 	\caption{#2}
 	\label{#3}
