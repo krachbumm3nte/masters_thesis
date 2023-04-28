@@ -229,8 +229,8 @@ results impossible, as discussed in Section \todo{talk about timing differences}
     \centering
     \includegraphics[width=0.9\textwidth]{fig_3_numpy}
     \caption{Replication of Figure \ref{fig-bars-le-snest} using a re-implementation of the \cite{Haider2021} code in
-        python. Resulting performance matches the original results exactly, proving that my replication can serve as a
-        baseline for comparing the NEST implementation}
+        python. Resulting performance matches the original results closely, proving that the replication can serve as a
+        baseline for comparing performance of the NEST implementation}
     \label{fig-bars-le-numpy}
 \end{figure}
 
@@ -238,7 +238,10 @@ results impossible, as discussed in Section \todo{talk about timing differences}
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_3_rnest}
-    \caption{Replication of Figure \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator.}
+    \caption{Replication of Figure \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A
+    notable difference to the python implementation in Figure \ref{fig-bars-le-numpy} is, that this version does not
+    handle very low presentation times as well. This can likely be traced back to the synaptic delay enforced by NEST,
+    which imposes an upper bound on network relaxation time.}
     \label{fig-bars-le-rnest}
 \end{figure}
 

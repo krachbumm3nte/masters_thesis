@@ -100,60 +100,41 @@ Thus, several attempts have been made to find biologically more plausible approx
 discussed in this section.
 \newline
 
-\begin{table}[]
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|ll|ll|ll|}
-  \hline
-  \rowcolor[HTML]{C0C0C0} 
-  \multicolumn{2}{|l|}{\cellcolor[HTML]{C0C0C0}}                   &
-  \multicolumn{2}{l|}{\cellcolor[HTML]{C0C0C0}Temporal-error model}
-  & \multicolumn{2}{l|}{\cellcolor[HTML]{C0C0C0}Explicit-error model}
-  \\ \cline{3-6} 
-  \rowcolor[HTML]{C0C0C0} 
-  \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}}} &
-  \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}Contrastive learning}
-  & Continuous update                                                                  &
-  \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}Predictive coding}                                                    &
-  Dendritic error                                                                 \\ \hline
-  \multicolumn{2}{|l|}{Control signal}                             & \multicolumn{1}{l|}{{\color[HTML]{FE0000}
-  Required}}                                                                  & {\color[HTML]{FE0000} Required}
-  & \multicolumn{1}{l|}{{\color[HTML]{32CB00} Not required}}                                                          &
-  {\color[HTML]{32CB00} Not required}                                             \\ \hline
-  \multicolumn{2}{|l|}{Connectivity}                               & \multicolumn{1}{l|}{{\color[HTML]{32CB00}
-  Unconstrained}}                                                             & {\color[HTML]{32CB00} Unconstrained}
-  & \multicolumn{1}{l|}{{\color[HTML]{FE0000} Constrained}}                                                           &
-  {\color[HTML]{FE0000} Constrained}                                              \\ \hline
-  \multicolumn{2}{|l|}{Propagation time}                           & \multicolumn{1}{l|}{{\color[HTML]{32CB00} L-1}}
-  & {\color[HTML]{32CB00} L-1}                                                         &
-  \multicolumn{1}{l|}{{\color[HTML]{FE0000} 2L-1}}                                                                  &
-  {\color[HTML]{32CB00} L-1}                                                      \\ \hline
-  \multicolumn{2}{|l|}{Pre-training}                               & \multicolumn{1}{l|}{{\color[HTML]{32CB00} Not
-  required}}                                                              & {\color[HTML]{32CB00} Not required}
-  & \multicolumn{1}{l|}{{\color[HTML]{32CB00} Not required}}                                                          &
-  {\color[HTML]{FE0000} Required}                                                 \\ \hline
-  \multicolumn{2}{|l|}{Error encoded in}                           &
-  \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Difference in activity\\ between separate\\ phases\end{tabular}}
-  & \begin{tabular}[c]{@{}l@{}}Rate of change of\\ activity\end{tabular}               &
-  \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Activity of specialised\\ neurons\end{tabular}}                    &
-  \begin{tabular}[c]{@{}l@{}}Apical dendrites of\\ pyramidal neurons\end{tabular} \\ \hline
-  \multicolumn{2}{|l|}{Data accounted for}                         &
-  \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Neural responses\\ and behaviour in a\\ variety of tasks\end{tabular}}
-  & \begin{tabular}[c]{@{}l@{}}Typical spike-time-\\ dependent plasticity\end{tabular} &
-  \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Increased neural\\ activity to\\ unpredicted stimuli\end{tabular}} &
-  \begin{tabular}[c]{@{}l@{}}Properties of\\ pyramidal neurons\end{tabular}       \\ \hline
-  \multicolumn{2}{|l|}{MNIST performance}                          & \multicolumn{1}{l|}{$\sim$2-3}
-  & -                                                                                  & \multicolumn{1}{l|}{$\sim$1.7}
-  & $\sim$1.96                                                                      \\ \hline
-  \end{tabular}%
-  }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
-    \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
-    learing with Continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
-    Dendritic error network \citep{sacramento2018dendritic}. All algorithms were selected due to them reflecting 
-    some properties of biological brains, some of which are highlighted in the row "Data accounted for". To do this,
-    all of them need to make concessions. In the first few rows, desirable properties are highlighted in green, while 
-    undesirable traits are highlighted in red.}
-  \end{table}
 
+\arrayrulecolor{white} % <---
+{\renewcommand{\arraystretch}{1.45}
+    \begin{table}[]
+      \resizebox{\textwidth}{!}{%
+        \begin{tabular}{|ll|ll|ll|}
+          \hline
+          \rowcolor[HTML]{B3B3B3}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}                   & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}                                                                             & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                                                                                                                                                                                                                                                \\ \cline{3-6}
+          \rowcolor[HTML]{B3B3B3}
+          \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}} & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}                                                                             & Continuous update                                                                  & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}                                                                            & Dendritic error                                                                 \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}     & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}}                                                                  & {\color[HTML]{FE0000} Required}                                                    & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                                                          & {\color[HTML]{32CB00} Not required}                                             \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}       & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}}                                                             & {\color[HTML]{32CB00} Unconstrained}                                               & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}                                                           & {\color[HTML]{FE0000} Constrained}                                              \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}   & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}}                                                                       & {\color[HTML]{32CB00} L-1}                                                         & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}}                                                                  & {\color[HTML]{32CB00} L-1}                                                      \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}       & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                                                              & {\color[HTML]{32CB00} Not required}                                                & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                                                          & {\color[HTML]{FE0000} Required}                                                 \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}   & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity\\ between separate\\ phases\end{tabular}}       & \begin{tabular}[c]{@{}l@{}}Rate of change of\\ activity\end{tabular}               & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised\\ neurons\end{tabular}}                    & \begin{tabular}[c]{@{}l@{}}Apical dendrites of\\ pyramidal neurons\end{tabular} \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses\\ and behaviour in a\\ variety of tasks\end{tabular}} & \begin{tabular}[c]{@{}l@{}}Typical spike-time-\\ dependent plasticity\end{tabular} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural\\ activity to\\ unpredicted stimuli\end{tabular}} & \begin{tabular}[c]{@{}l@{}}Properties of\\ pyramidal neurons\end{tabular}       \\ \hline
+          \rowcolor[HTML]{D9D9D9}
+          \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}  & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}                                                                                        & -                                                                                  & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}                                                                                    & $\sim$1.96                                                                      \\ \hline
+        \end{tabular}%
+      }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
+        \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
+        learing with Continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
+        Dendritic error network \citep{sacramento2018dendritic}. All algorithms were selected due to them reflecting
+        some properties of biological brains, some of which are highlighted in the row "Data accounted for". To do this,
+        all of them need to make concessions. In the first few rows, desirable properties are highlighted in green, while
+        undesirable traits are highlighted in red.}
+    \end{table}
 
+}
 
 \section{Cortical microcircuits}

@@ -22,8 +22,10 @@
 
 \section{The self-predicting state}
 
-As a first comparison between the three implmementations, the pre-training was performed with equal parametrizations, as
-shown in Fiure \ref{fig-self-pred}.
+As a first comparison between the three implmementations, the pre-training towards a self-predicting stat (cf.
+\cite{sacramento2018dendritic} Figure S1) was performed with equal parametrizations, as shown in Figure
+\ref{fig-self-pred}. For this experiment, no target signal was provided at the output layer, and the network was 
+stimulated with random inputs. 
 
 
 
@@ -32,10 +34,9 @@ shown in Fiure \ref{fig-self-pred}.
     \includegraphics[width=0.9\textwidth]{fig_self_prediction}
     \caption{Different network types learn to predict self-generated activity in superficial layers. All networks were
         initialized with dimensions $[6, 10, 3]$, and stimulated with $5000$ samples of random input for $100ms$ each.
-        As described in \cite{sacramento2018dendritic}, during this phase no target is provided at the output layer, and
-        only Pyramidal-Interneuron and Interneuron-Pyramidal weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375,
-        \eta^{up}=\eta^{down}=0$). All variants reach a self-predicting state within the first 1000 stimulus
-        presentations and errors remain stable after that point.}
+        As described in \cite{sacramento2018dendritic}, during only Pyramidal-Interneuron and Interneuron-Pyramidal
+        weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375, \eta^{up}=\eta^{down}=0$). All variants reach a
+        self-predicting state within the first 1000 stimulus presentations and errors remain stable after that point.}
     \label{fig-self-pred}
 \end{figure}
 
@@ -44,11 +45,11 @@ exact values that errors converge on differs slightly between implementations, b
 magnitude and thus does not hinder learning performance greatly (cf. Section \ref{sec-le-tpres}). A notable outlier is
 the apical error of pyramidal neuron in the spike-based implementation. This can however be traced back to individual
 spikes causing substantial deviations in apical potentials, and can therefore be alleviated by increasing the
-\textit{weight\_scale} parameter (results not shown) at the cost of increased training time (cf. \todo{ref benchmark}).
-Additionally, increasing apical compartment capacitance also solves this issue. Yet this solution also increases the
-relaxation period of the entire network for each stimulus presentation, requiring a highly undesirable increase in
-$t_{pres}$ for successful learning. Since weight errors converge to similar values as the rate-based implementations, an
-increased absolute apical compartment voltage was deemed tolerable.
+\textit{weight\_scale} parameter (results not shown) at the cost of increased training time. Alternatively, increasing
+the membrane capacitance of the apical compartment also solves the issue as it smoothes out the effect of individual
+spikes. Yet this solution also increases the relaxation period of the entire network, requiring a highly
+undesirable increase in $t_{pres}$ for successful learning. Since weight errors converge to similar values as the
+rate-based implementations, an increased absolute apical compartment voltage was deemed tolerable.
 
 \section{Delayed presentation of instructive signals}
 
