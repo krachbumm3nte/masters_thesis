@@ -113,8 +113,8 @@ matrices and presynaptic activities:
   v_l^{api}(t) & =  W_l^{pi} \ \phi(u_l^I(t)) \ + \  W_l^{down} \ \phi(u_{l+1}^P(t)) \label{eq-v-api-rate}
 \end{align}
 
-The nomenclature for weight matrices conforms to the python implementation of the network by \cite{Haider2021}; Weights
-are indexed by the layer in which the target neuron is located and belong to one of four populations. Feedforward and
+The nomenclature for weight matrices conforms to \cite{Haider2021}, where weight matrices
+are indexed by the layer in which their neurons terminate and belong to one of four populations: Feedforward and
 feedback pyramidal-to-pyramidal connections arriving at layer $l$ are denoted $W_l^{up}$ and $W_l^{down}$ respectively.
 Lateral pyramidal-to-interneuron connections are denoted with $W_l^{ip}$ and their corresponding feedback connections
 with $W_l^{pi}$. Since the input layer contains no synapses, indexing begins with $0$ for the first hidden layer.
@@ -317,70 +317,65 @@ the issue and a possible solution will be discussed in Section \ref{sec-haider}.
 
 \section{The NEST simulator}
 
-One of the key research questions motivating this thesis is whether the proposed architecture would be able to learn
-successfully when employing spike-based communication instead of the rate connections for which the original
-implementation was developed. As a framework for my spike-based implementation two options were considered: The first
-one was to use the existing implementation of the network within PyTorch \what{cite this or nah?} and expand it to
-employ spiking neurons. PyTorch does in principle support spiking communication between layers, but is streamlined for
-implementing less recurrent and less complex network and neuron models. A more pressing issue yet is efficiency; PyTorch
-is very well optimized for efficiently computing matrix operations on dedicated hardware. This makes it a prime choice
-for simulating large networks of rate neurons, which transmit all of their activations between layers at every
-simulation step. Spiking communication between leaky neurons is almost antithetical to this design philosophy and thus
-can be expected to perform comparatively poor when using this backend.
+One of the key research questions motivating this thesis is whether the network would be able to learn successfully when
+employing spike-based communication instead of the rate neurons for which it was developed. As a framework for my
+spike-based implementation two options were considered: The first one was to use the existing implementation of the
+network which employs \texttt{PyTorch} and \texttt{NumPy}, and expand it to employ spiking neurons. PyTorch does in
+principle support spiking communication between layers, but is streamlined for implementing less recurrent and less
+complex network and neuron models. Another concern is efficiency; PyTorch is very well optimized for efficiently
+computing matrix operations on dedicated hardware. This makes it a good choice for simulating large networks of rate
+neurons, which transmit all of their activations between layers at every simulation step. Spiking communication between
+leaky neurons is almost antithetical to this design philosophy and thus can be expected to perform comparatively poor
+when using this backend.
 
-The second option was to use the NEST simulator \citeme, which was developed with highly parallel simulations of large
-spiking neural networks in mind. It is written in C++ and uses the \textit{Message Passing Interface} to efficiently
-communicate payloads across both threads and compute nodes. One design pillar of the simulator that is particularly
-relevant for this project, is the event-based communication scheme that underpins all simulated nodes. It ensures, that
-communication bandwidth at every simulation step is only used by the subset of nodes which transmit spikes or other
-signals at that time step. The simulator also increases computational efficiency by enforcing a transmission delay of at
-least one simulation step for all connections. This allows Events\footnote{An Event in NEST is an abstract C++ Class
-that is created by neurons, and transmitted across threads and compute nodes by the Simulator. A Multitude of Event
-types are provided (i.e. \texttt{SpikeEvent, CurrentEvent, RateEvent}), each able to carry specific types of payload and
-being processed differently by the postsynaptic neuron.} to be created out of order, and processed at the postsynaptic
-neuron during the next simulation step. While this feature is critical for efficiency in highly parallel environments,
-it inflicts some limitations on the simulation which will be discussed in \todo{create section}. Yet the most notable
+The second option was to use the NEST simulator
+(\href{https://nest-simulator.readthedocs.io}{nest-simulator.readthedocs.io}), which was developed with highly parallel
+simulations of large spiking neural networks in mind. It is written in C++ and uses the \textit{Message Passing
+Interface} (\href{https://www.mpi-forum.org/}{MPI}) to efficiently communicate evends between both threads and compute
+nodes. One design pillar of the simulator, which is particularly relevant for this project, is the event-based
+communication scheme that underpins all simulated nodes. It ensures that communication bandwidth at every simulation
+step is only used by the subset of nodes which transmit spikes or other signals at that time step. Yet the most notable
 advantage of the NEST simulator is, that an event-based implementation of the Urbanczik-Senn plasticity alongside a
 corresponding neuron model had already been developed for it. Combined with the fact that I had more prior experience
-with NEST over PyTorch, I decided to implement the neuron model in the NEST simulator.
+with NEST over PyTorch, I decided to implement the spiking neuron model in the NEST simulator.
 
-Early experiments showed that implementing spiking neuron and synapse models that behave similarly enough to the
-original python implementation would be more challenging than expected. The interplay between neuron activity and
-synaptic plasticity proved to be very sensitive to minor differences in parametrization and simulator setup. It was also
-uncertain if spiking neurons would be able to perform the desired learning tasks at all. Finally, the NEST simulator
-itself imposes some limitations on the simulations, which could not be ruled out as being responsible for the failure of
-these early experiments. Therefore, I decided to recreate the existing rate neuron model within NEST as well as the
-spiking implementation. This substantially increased the complexity of the NEST implementation, but turned out to be a
-critical step towards successful learning using spiking neurons. It allowed me to reliably identify whether errors arose
-from using a different simulation backend, or from the transition from rate-based to spiking neurons.
+The simulator has one particular limitation which needs to be considered. As communication between compute nodes takes
+time, Events\footnote{An Event in NEST is an abstract C++ Class that is created by neurons, and transmitted across
+threads and compute nodes by the Simulator. A Multitude of Event types are provided (i.e. \texttt{SpikeEvent,
+CurrentEvent, RateEvent}), each able to carry specific types of payload and being processed differently by postsynaptic
+neurons.} can not be handled in the same simulation step in which they were sent. Thus, NEST enforces a synaptic
+transmission delay of at least one simulation step for all connections. This property is integral to many parallel
+simulation backends \citep{davies2018loihi,Hines1997,Schepper2022}, and is in line with synaptic delays of biological
+neurons. Yet particularly with regard to network relaxation, it can be expected to affect performance.
 
 
-\section{Neuron model implementation}
+\section{Transitioning to spiking communication}
 
-The neuron model relies heavily on the one developed by \cite{Stapmanns2021}, who showed that spiking neurons are able
-to learn tasks that were originally implemented for the rate neurons and synapses developed by
-\cite{urbanczik2014learning}. The neuron model is an exact replication of the Urbanczik-Senn neuron in terms of membrane
-dynamics. The critical difference is that instead of transmitting their activation $r = \phi(u)$ at every time step,
-these neurons emit spikes in a similar way to stochastic binary neurons \citep{Ginzburg1994}. The number of spikes to be
-generated during a simulation step $n$ is determined by drawing from a Poisson distribution, which takes the activation
-$r$ as a parameter:
+The spiking pyramidal neuron model relies heavily on the one developed by \cite{Stapmanns2021}, who showed that spiking
+neurons are able to learn tasks that were originally implemented for the rate neurons described in
+\cite{urbanczik2014learning}. The existing model is an exact replication of the Urbanczik-Senn neuron in terms of
+membrane dynamics. The critical difference is that instead of transmitting their hypothetical rate $r = \phi(u)$ at
+every time step, these neurons emit spikes in a similar way to stochastic binary neurons \citep{Ginzburg1994}. The
+number of spikes to be generated during a simulation step $n$ is determined by drawing from a Poisson distribution,
+which takes $r$ as a parameter:
 
 \begin{align}
   P\{\textit{n} \ \text{spikes during} \ \Delta t\} & = e^{-r \Delta t} \frac{(r \ \Delta t) ^ n}{n!}\label{eq-pr-n-spikes} \\
-  \langle \textit{n} \rangle                        & = r \ \Delta t
+  \langle \textit{n} \rangle                        & = r \ \Delta t \label{eq-n-spikes}
 \end{align}
 
 \todo{find a citation for this}
 
-$\Delta t$ denotes the integration time step of the simulator, and will be assumed to be $0.1 ms$ from here on out. Note
-that this mechanism makes the assumption that more than one spike can occur per simulation step. NEST was developed with
-this possibility in mind and provides a \textit{multiplicity} parameter for Spike Events, which is processed at the
+where $\Delta t$ denotes the integration time step of the simulator, which will be assumed to be $0.1 ms$ from here on
+out.  $\langle \textit{n} \rangle$ denotes the expected number of spikes to be emitted between $[t, t+ \Delta t]$.
+Note that this mechanism makes the assumption that more than one spike can occur per simulation step. NEST was developed
+with this possibility in mind and provides a \textit{multiplicity} parameter for Spike Events, which is processed at the
 postsynaptic neuron. As the high spike frequencies resulting from this could not occur in biological neurons, the model
 is also capable of simulating a refractory period. For this, the number of spikes per step is limited to $1$, and the
 spiking probability is set to 0 for the duration of the refractory period $t_{ref}$. The probability of at least one
 spike occuring within the next simulation step is given the inverse probability of no spike occuring. Thus, when
 inserting $n=0$ into Equation \ref{eq-pr-n-spikes}, the probability of eliciting at least one spike within the next
-simualtion step becomes:
+simualtion step can be derived as:
 
 \begin{align}
   P\{ \textit{n} \geq 1\} & = 1 - e^{-r \Delta t}
@@ -391,27 +386,18 @@ Drawing from this probability then determines whether or not a spike is sent dur
 the function $s(t)$, which outputs $1$ if a spike is sent during the interval $[t, t+\Delta t]$ \todo{Notation
 correct?}, and $0$ otherwise. \newline
 
-Since the Urbanczik-Senn plasticity relies on dendritic and somatic voltage differences at every timestep, a more
-sophisticated model of dendritic voltage is required. The approach for rate neurons described in Equations
-\ref{eq-v-bas-rate} and \ref{eq-v-api-rate} would cause dendritic voltages to be at rest most of the time and reach
-extreme values when spikes arrive through the synapses. Dendritic compartments therefore need to be modeled with leaky
-dynamics similar to those described for the somatic compartment. Thus, the basal dendritic compartment of neuron $j$
-evolves according to: \todo{do we need the same equations for the soma?}
-
-In order to reduce the number of parameters, reversal potentials as well as the flow of currents from the soma to the
-dendrites were omitted in my model. Furthermore, the implementation by \cite{sacramento2018dendritic} requires synapses
-to be able change the sign of their weight through plasticity, which is not permitted in the original model. For this
-reason, the strict separation of excitatory and inhibitory synapses had to be relaxed aswell. The resulting neuron
-dynamics closely resemble those described in Equation \ref{eq-pyr-dynamics-rate}.
+In order to implement the plasticity rule for spiking neurons, dendritic compartments need to be modeled with leaky
+dynamics. These dynamics are fundamentally the same as those described for the somatic compartment. Thus, the basal
+dendritic compartment of neuron $j$ evolves according to:
 
 \begin{align}
-  C_m^{bas} \dot{v}_j^{bas} & = -g_l^{bas} \  v_j^{bas} + \sum_i W_{ji} s_i(t)     \label{eq-spiking-basal-compartment} \\
+  C_m^{bas} \dot{v}_j^{bas} & = -g_l^{bas} \  v_j^{bas} + \sum_i W_{ji} s_i(t)     \label{eq-spiking-basal-compartment}
 \end{align}
 
-with membrane capacitance $C_m^{bas}$, leakage conductance $g_l^{bas}$ being specific to the basal dendrite and
-independent from other compartments. Note that these equations are calculated individually for each neuron and do not
-employ the matrix notation used for layers of rate neurons. Apical compartments are modeled by the same principle and
-with largely the same parameters.
+with presynaptic neurons $i$, and membrane capacitance $C_m^{bas}$ and leakage conductance $g_l^{bas}$ being specific to
+the basal dendrite. Note that these equations are calculated individually for each neuron and do not employ the matrix
+notation used for layers of rate neurons. Pyramidal apical and interneuron dendritic compartments evolve by the same
+principle and with largely the same parameters.
 
 \section{Event-based Urbanczik-Senn plasticity}\label{sec-event-urb}
 
@@ -593,8 +579,7 @@ The approach proposed by Haider et al. is to change the parameter of the activat
 transmit a function of their somatic potential $u_i$, which is updated through euler integration at every simulation
 step (Equation \ref{eq-r-t-sacramento}). In contrast, neurons using Latent Equilibrium (henceforth called \textit{LE
 neurons}) transmit a function of what the somatic potential is expected to be in the future. To calculate this expected
-future somatic potential $\breve{u}$, the integration is performed with a larger euler step (Equation
-\ref{eq-r-t-haider}).
+future somatic potential $\breve{u}$, the integration is performed with a larger euler step:
 
 \begin{align}
   u_i(t+ \Delta t)          & = u_i(t) + \dot{u}_i(t) \ \Delta t \label{eq-r-t-sacramento} \\
@@ -616,14 +601,13 @@ approach their steady state more quickly, as depicted in Figure \ref{fig-compari
 local error terms of pyramidal- and interneurons, which relax much faster for LE networks, as shown in Figure
 \ref{fig-error-comp-le}. These results highlight the superiority of LE for learning, as a fully trained network elicits
 almost no plasticity in its synapses. In contrast, the error terms in a Sacramento network drive synaptic plasticity
-even when the network has reached a state that exhibits low output loss and in which it is self-predicting. Thus, both
-the issue of inefficient and redundant plasticity, as well as the concern over response and learning speed can be solved
-by LE.\newline
+even when the network classifies a stimulus correctly and is self-predicting. Thus, both the issue of redundant
+weight changes, as well as the concern over response and learning speed can be solved by LE.\newline
 
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{fig_le_comparison}
+  \includegraphics[width=1\textwidth]{fig_le_comparison}
   \caption{Signal transmission between an input neuron $x$ and a hidden layer pyramidal neuron $y$. Depicted are
     activations for the original Sacramento model and prospective activation using Latent Equilibrium. \textbf{A:}
     Somatic voltage $u_x$ of the input neuron. Three different currents are injected for $40ms$ each. The input neuron
@@ -680,45 +664,48 @@ next layer activations at time $t$ have not been computed, top down information 
 
 Thus, the equations for membrane updates change slightly:
 
-\begin{align}
-  \dot{W_{ij}}(t)    & = \eta (\phi(u_i) - \phi(\alpha v^{basal}_i(t))) \phi(u_j)                             \\
-  \Delta W_{ij}(t,T) & = \int_t^T dt' \ \eta \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \  \phi(u_j^{t'}) \\
-  \Delta W_{ij}(t,T) & = \eta \int_t^T dt' \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \ \phi(u_j^{t'})    \\
-  V_i^*              & = \phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})                                            \\
-  s_j^*              & = \kappa_s * s_j
-\end{align}
-
-
-
-\begin{align}
-  \phi(V^{som}) & \rightarrow \phi(\breve{V}^{som}) \\
-  \breve{V}     & := V + \tau^m \dot{V}             \\
-\end{align}
-\begin{align}
-  \frac{d}{dt} W_{ba} & = \eta (\phi(V_b^{som}) - \phi(\alpha V_b^{dend})) \phi(V_a^{som})                         \\
-  \frac{d}{dt} W_{ba} & = \eta (\phi(\breve{V}_b^{som}) - \phi(\alpha \breve{V}_b^{dend})) \phi(\breve{V}_a^{som})
-\end{align}
-
-
 \section{Implementational details}
 
 Building on the neuron and plasticity model from \cite{Stapmanns2021}, I was able implement an adequate model of the
 spiking pyramidal neuron. The existing neuron was expanded to three compartments, and storage and readout of dendritic
 errors were updated  to allow for compartment-specific plasticity rules. Interneurons were chosen to be modeled as
-pyramidal neurons with slightly updated parameters and apical conductance $g^{api}=0$, since internal dynamics follow 
+pyramidal neurons with slightly updated parameters and apical conductance $g^{api}=0$, as membrane dynamics follow 
 the same principles.  
 
-After facing some setbacks when attempting to train the first iteration of the network using spiking neurons, the
-decision was made to also implement a rate-based variant of the neuron in NEST. Following NEST convention, the two
-resulting neuron models were named \texttt{pp\_cond\_exp\_mc\_pyr}\footnote{The name does actually make sense, as it
-describes some key features of the model: It is a \textbf{point process} for \textbf{conductance} based synapses and has
-an \textbf{exponentially} decaying membrane in \textbf{multiple compartments}.} and \texttt{rate\_neuron\_pyr}
-respectively. Furthermore, the \texttt{pyr\_synapse} class was defined for spike events, and implements a variant
-of the event-based Urbanczik-Senn plasticity described in Section \ref{sec-event-urb}. The \texttt{pyr\_synapse\_rate}
-model on the other hand transmits rate events and updates its weight according to the original plasticity rule.
+After facing some setbacks when attempting to train the first spiking variant of the network, the decision was made to
+also implement a rate-based variant of the neuron in NEST.  While the additional effort required for another
+implementation might be questionable, this model turned out to be indispensible. It enabled the identification of both
+errors in the model, as well as mechanisms that required changes to be spike-compatible. 
 
-Finally, the \texttt{PyNEST} API was used to interface with the NEST simulator through python, which allowed for a much 
-more streamlined and intuitive 
+Following NEST convention, the spiking and rate-based neuron models were named
+\texttt{pp\_cond\_exp\_mc\_pyr}\footnote{The name does actually make sense, as it describes some key features of the
+model: It is a \textbf{point process} for \textbf{conductance} based synapses and has an \textbf{exponentially} decaying
+membrane in \textbf{multiple compartments}.} and \texttt{rate\_neuron\_pyr} respectively. Furthermore, the
+\texttt{pyr\_synapse} class was defined for spike events, and implements a variant of the event-based Urbanczik-Senn
+plasticity described in Section \ref{sec-event-urb}. The \texttt{pyr\_synapse\_rate} model on the other hand transmits
+rate events and updates its weight according to the original plasticity rule.
+
+Simulations were managed using the python API \texttt{PyNEST} \citep{Eppler2009}, which is much more convenient than the
+SLI interface that lies at the core of NEST. An additional advantage of using python is, that the network for LE is also
+implemented in python. Thus, by including a slightly modified version of that code in my project it was possible to
+unify all three variants in a single network class and accompanying interface, allowing for exact alignment of
+stimulation and readout. In the upcoming analysis, three variants of the same network will therefore be compared; The
+modified variant of the python implementation by \cite{Haider2021} is termed \texttt{NumPy} based on the framework that
+performs the matrix multiplications. The two NEST variants will be referred to as \textit{NEST spiking} and \textit{NEST
+rate}. The NEST rate version will serve to distinguish differences that are due to the novel simulation backend from
+those that were introduced by the spike-based communication scheme.
+
+\subsection{Neuron model Adaptations}
+
+The neuron model from \cite{Stapmanns2021} was modified in some ways in order to remove unnecessary parameters and match
+the pyramidal neuron implementation more closely. Both the inclusion of nonzero reversal potentials and the flow of
+currents from the soma to the dendrites were omitted in my model. Furthermore, the present network requires synapses to
+be able change the sign of their weight at runtime, which is not permitted in the original synapse model. For this
+reason, the strict separation of excitatory and inhibitory synapses had to be removed. In order to receive exact
+measurements for membrane potentials, the ODE solver with variable stepsize was replaced with Euler
+integrations\footnote{This change initially served debugging purposes, but turned out to have no negative effect on
+efficiency and was therefore kept} with step size $\Delta t$. For the spiking neuron model, dendritic compartments are
+modeled with 
 
 
 \begin{itemize}

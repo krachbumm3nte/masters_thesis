@@ -25,6 +25,11 @@ will not be considered here. The motivation is, that dendritic membrane area is
 Starting with the complete Integral from $t=0$.
 
 \begin{align}
+  \dot{W_{ij}}(t)    & = \eta (\phi(u_i) - \phi(\alpha v^{basal}_i(t))) \phi(u_j)                                                     \\
+  \Delta W_{ij}(t,T) & = \int_t^T dt' \ \eta \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \  \phi(u_j^{t'})                         \\
+  \Delta W_{ij}(t,T) & = \eta \int_t^T dt' \  (\phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})) \ \phi(u_j^{t'})                            \\
+  V_i^*              & = \phi(u_i^{t'}) - \phi(\widehat{v_i^{t'}})                                                                    \\
+  s_j^*              & = \kappa_s * s_j                                                                                               \\
   \Delta W_{ij}(0,t) & =\eta \int_0^t dt' \  \int_0^{t'} dt'' \ \kappa(t'-t'') V_i^\ast (t'') s_j^\ast (t'')                          \\
                      & = \eta \int_0^t dt'' \  \int_{t''}^{t} dt' \ \kappa(t'-t'') V_i^\ast (t'') s_j^\ast (t'')                      \\
                      & = \eta \int_0^t dt'' \  \left[ \tilde{\kappa}(t-t'') - \tilde{\kappa}(0) \right] V_i^\ast (t'') s_j^\ast (t'') \\
@@ -151,69 +156,64 @@ $I_1$ in the code is computed as a sum:
 
 \section{Dendritic leakage conductance}\label{sec-gl-dend}
 
-In order to match neuron dynamics between the rate and spiking neuron implementations as closely as possible, a suitable
-leakage conductance for dendritic compartments was required. For simplicity, we now consider a single synaptic
-connection from neuron $i$ to neuron $j$ with weight $W_{ji}$ and attempt to identify an appropriate parameter. As
-described in Equation \ref{eq-spiking-basal-compartment}, a dendritic compartment evolves according to: \todo{expand to
-    multiple presynaptic neurons?}
-
+In order to match the dendritic potential of rate neurons  in the spiking neuron model, a suitable
+leakage conductance for dendritic compartments was required. As described in Equation
+\ref{eq-spiking-basal-compartment}, a dendritic compartment evolves according to:
 \begin{align}
-    C_m^{dend} \dot{v}_j^{dend} & = -g_l^{dend} \  v_j^{dend} +  W_{ji} \    \langle \textit{n}_i \rangle
+  C_m^{dend} \dot{v}_j^{dend} & = -g_l^{dend} \  v_j^{dend} + \sum_i W_{ji} \    \langle \textit{n}_i \rangle
 \end{align}
 
-Under the assumption that the activation of neuron $i$ remains static over time, we can replace the spontaneous
-activation $s_i(t)$ with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle = r_i \ \Delta
-    t$. Next, in order to find the convergence point of the ODE, we set the left side of the equation to $0$ and attempt to
-solve it:
+Under the assumption that the activation of all presynaptic neurons $i$ remains static over time, we can replace the
+spontaneous activation $s_i(t)$ with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle =
+r_i \ \Delta t$ (cf Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but concern
+individual neurons. Next, in order to find the convergence point of the ODE, we set the left side of the equation to $0$
+and to solve it:
 
 \begin{align}
-    0                        & = -g_l^{dend} \  v_j^{dend} + W_{ji} \    r_i \ \Delta t \\
-    g_l^{dend} \  v_j^{dend} & = W_{ji} \    r_i \ \Delta t
+  0                        & = -g_l^{dend} \  v_j^{dend} + \sum_i W_{ji} \    r_i \ \Delta t \\
+  g_l^{dend} \  v_j^{dend} & = W_{ji} \    r_i \ \Delta t
 \end{align}
 
-The desired effect of presynaptic activation on the postsynaptic dendritic potential is described in Equation
-\ref{eq-v-bas-rate} ($v_j^{dend} = W_{ji} \    r_i$), which occurs on both sides of the above equation. Assuming the
-desired equalitiy, both terms to drop out from the equation. Thus, the correct parametrization for the dendritic leakage
-conductance is:
+The desired dendritic potential of rate neurons is $v_j^{dend} = \sum_i W_{ji} \ r_i$, which occurs on both sides of the above equation. Assuming that
+our dendritic model fulfills this equality, both terms to drop out from the equation. Thus, the correct parametrization
+for the dendritic leakage conductance remains:
 \begin{align}
-    g_l^{dend} & = \Delta t
+  g_l^{dend} & = \Delta t
 \end{align}
 
-It was shown experimentally, that for hight spike frequencies, this parameterization leads to an exact match of
-dendritic potentials between neuron models. This value for the dendritic leakage conductance will be assumed to be the
-default throughout all experiments where spiking neurons are used. \newline
+It was shown experimentally that for hight spike frequencies, this parameterization leads to an exact match of dendritic
+potentials between the neuron models. It will therefore be assumed as the default throughout all experiments where
+spiking neurons are used. \newline
 
-In order to keep the NEST models as similar as possible, rate neurons evolve according to the same dynamics, with the
-difference that they transmit their activation at every timestep. Like the original implementation, dendrites of rate
-neurons do not evolve gradually, but are fully defined by presynaptic at time $t$ \footnote{Due to the synaptic delay
-    enforced by the architecture of NEST, this is not entirely correct. Dendritic potentials at time $t$ are computed from
-    presynaptic activity at time $t- \Delta t$, i.e. the previous simulation step.}. This behaviour is acheived by setting
-the leakage conductance to $1$ for all dendritic compartments. During network initialization, dendritic leakage
-conductances are set to either one of these values depending on the type of network to be trained.
+In order to keep the NEST models as similar as possible, rate neurons evolve according to the same dynamics. Like in the
+original implementation, dendrites of rate neurons are fully defined by their inputs at time
+$t$. This behaviour is acheived by setting the leakage conductance to $1$ for all dendritic compartments. During
+network initialization, dendritic leakage conductances are set to either one of these values depending on the type of
+neuron model employed.
 
 
 \section{Plasticity in feedback connections}\label{sec-feedback-plast}
 
-In the model by \cite{sacramento2018dendritic}, Pyramidal-to-pyramidal feedback weights evolve according to: 
+In the model by \cite{sacramento2018dendritic}, Pyramidal-to-pyramidal feedback weights evolve according to:
 
 \begin{align}
-    \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(w_l^{down} r_{l+1}^P) )\ \phi(u_{l+1}^{P})^T
+  \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(w_l^{down} r_{l+1}^P) )\ \phi(u_{l+1}^{P})^T
 \end{align}
 
-The error term in this case on first sight differs greatly from the original Urbanczik-Senn plasticity rule. Yet it 
+The error term in this case on first sight differs greatly from the original Urbanczik-Senn plasticity rule. Yet it
 serves a purpose for learning and could arguably be implemented by biological neurons. An intuitive way to interpret the error
-term is as the difference between somatic activity and the apical activity that can be traced back to superficial 
+term is as the difference between somatic activity and the apical activity that can be traced back to superficial
 pyramidal neurons. In a biological neuron, this second part could plausibly be encoded by the voltage of a distal
 apical compartment which is innervated only by top-down connections and leaks into the proximal apical compartment
 ($v^{api}$) with a conductance of $1$. The separation of pyramidal neuron apical dendrites into a proximal and a distal
-tree is well documented \citeme. A difference between plasticity mechanisms for synapses arriving at these two 
+tree is well documented \citeme. A difference between plasticity mechanisms for synapses arriving at these two
 integration zones is plausible, although I was unable to find prior research supporting this type of plasticity \citeme.
 \newline
 
 In the NEST implementation, the neuron model contains a distal apical compartment which is innervated exclusively by top-down
 feedback connections. For simplicity, this compartment has no complex connection to the other compartments. Instead,
-all events sent to it are duplicated and sent to the proximal apical compartment as well. This allows for convenient 
-readout of the aforementioned error term for plasticity without affecting the neuron dynamics for simualtions where 
+all events sent to it are duplicated and sent to the proximal apical compartment as well. This allows for convenient
+readout of the aforementioned error term for plasticity without affecting the neuron dynamics for simualtions where
 this compartment serves no purpose. A more sophisticated model of the apical tree which resembles pyramidal neurons more
 closely could be a desirable extension to this network.
 
@@ -226,23 +226,24 @@ results impossible, as discussed in Section \todo{talk about timing differences}
 
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=0.9\textwidth]{fig_3_numpy}
-    \caption{Replication of Figure \ref{fig-bars-le-snest} using a re-implementation of the \cite{Haider2021} code in
-        python. Resulting performance matches the original results closely, proving that the replication can serve as a
-        baseline for comparing performance of the NEST implementation}
-    \label{fig-bars-le-numpy}
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig_3_numpy}
+  \caption{Replication of Figure \ref{fig-bars-le-snest} using a slightly modified version of the python code from
+    \cite{Haider2021}. Resulting performance matches the original results closely, showing that this version can
+    serve as a baseline for comparing performance of the NEST implementation to the original results.}
+  \label{fig-bars-le-numpy}
 \end{figure}
 
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=0.9\textwidth]{fig_3_rnest}
-    \caption{Replication of Figure \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig_3_rnest}
+  \caption{Replication of Figure \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A
     notable difference to the python implementation in Figure \ref{fig-bars-le-numpy} is, that this version does not
     handle very low presentation times as well. This can likely be traced back to the synaptic delay enforced by NEST,
-    which imposes an upper bound on network relaxation time.}
-    \label{fig-bars-le-rnest}
+    which imposes an upper bound on network relaxation time. Besides that, performance of the two variants is very
+    similar.}
+  \label{fig-bars-le-rnest}
 \end{figure}
 
 

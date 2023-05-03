@@ -24,8 +24,8 @@
 
 As a first comparison between the three implmementations, the pre-training towards a self-predicting stat (cf.
 \cite{sacramento2018dendritic} Figure S1) was performed with equal parametrizations, as shown in Figure
-\ref{fig-self-pred}. For this experiment, no target signal was provided at the output layer, and the network was 
-stimulated with random inputs. 
+\ref{fig-self-pred}. For this experiment, no target signal was provided at the output layer, and the network was
+stimulated with random inputs.
 
 
 
@@ -63,7 +63,7 @@ the organism responds to the best of its ability. Yet, the consequences of that 
 
 In order to validate the performance of my implementations, I replicated a parameter study from \cite{Haider2021}[Fig.
     3]. The results for the NEST network using spiking neurons with default parameters \todo{elaborate on this} are
-    shown in Figure \ref{fig-bars-le-snest}. A
+shown in Figure \ref{fig-bars-le-snest}. A
 
 
 
@@ -78,6 +78,63 @@ In order to validate the performance of my implementations, I replicated a param
     \label{fig-bars-le-snest}
 \end{figure}
 
+
+\section{Separation of synaptic polarity}
+
+A key limitation of the network model from \cite{sacramento2018dendritic} is the requirement that all synapses must be
+able to assume both positive and negative polarities. When restricting any synaptic population in the network to just
+one polarity, the network is unable to reach the self-predicting state \todo{expand?}. Thus, as the model is presented
+here, activity in any neuron must be able to have both excitatory and inhibitory postsynaptic effects facilitated by
+synaptic weights. This requirement is at odds with biology, which dictates a singular synaptic polarity for all outgoing
+connections of a neuron, determined by neuron type and its corresponding neurotransmitter \citeme.
+
+
+To investigate to what degree the plasticity rule can deal with this constraint, an experiment was conducted: An input
+neuron population $A$  was connected to another population $C$ with plastic synapses that were constrained to positive
+weights. In order to facilitate the required depression, $A$ was also connected to a population of inhibitory
+interneurons $B$ through excitatory synapses with random and non-plastic weights. The interneurons in turn were
+connected to $C$ through plastic, inhibitory connections arriving at the same dendrite. When inducing a dendritic error
+in $C$, all plastic synapses in the network collaborated in order to minimize that error. When injecting a positive
+basal error for example, the inhibitory weights ($C \rightarrow B$) decayed to 0, while excitatory synaptic weights ($A
+\rightarrow B$) increased. Flipping the sign of that error injection had the opposite effect on weights, and likewise
+compensated induced errors. This shows that a separation of synaptic polarity does not interfere with the principles of
+the Urbanczik-Senn plasticity when depression is facilitated by interneurons.
+
+Yet, as criticised by \citeme, the one-to-one connections between $A$ and $B$ are untypical for biological neural
+networks \citeme. Hence, a second experiment was performed, in which $A$ and $B$ were fully connected through static
+synapses with random positive weights. This added complexity did not hinder the error-correcting learning, as shown in
+Figure \ref{fig-exc-inh-split}.
+
+
+\begin{figure}[t]
+    \centering
+    \begin{minipage}{0.2\textwidth}
+        \textbf{a)}\par\medskip
+        \centering
+        \includegraphics[width=0.9\textwidth]{fig_exc_inh_network}
+    \end{minipage}\hfill
+    \begin{minipage}{0.7\textwidth}
+        \textbf{b)}\par\medskip
+        \centering
+        \includegraphics[width=0.9\textwidth]{fig_exc_inh_split}
+    \end{minipage}
+    \caption{Dendritic error minimization under biological constraints on synaptic polarity and network connectivity. 
+    \textbf{a)} Network architecture. Excitatory population $A$ connects to a dendrite of Neuron $C$ both directly
+    and through inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$ are plastic 
+    through dendritic error rules. All connections between populations are 'all-to-all'\phrasing. \textbf{b)}
+        \textit{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation
+        \ref{eq-delta_w_pi}. \textit{Right:} Identical configuration regarding basal dendrites (Equations
+        \ref{eq-delta_w_up},\ref{eq-delta_w_ip}). \textit{Top:} Dendritic error of a single target neuron. Errors of
+        opposite signs are induced at $0$ and $500ms$ (vertical dashed line), and are quickly reduced
+        through weight changes. \textit{Bottom:} Synaptic weights of incoming connections.}
+    \label{fig-exc-inh-split}
+\end{figure}
+
+These results are useful, as they enable a biologically plausible way for excitatory long-range pyramidal projections to
+connect to pyramidal neurons from another layer (i.e. in a different part of the cortex). The steps required to
+facilitate this type of network are rather simple; A pyramidal neuron projection could enter a distant cortical area and
+would only have to spread spread its axonal tree \phrasing within a layer that contains both pyramidal neuron dendrites 
+and interneurons. If these interneurons themselves fully connect to the local pyramidal population, 
 
 
 
@@ -104,9 +161,9 @@ The result of this comparison is shown in Figure \ref{fig-benchmark}. The NumPy 
 likely explained by the fact that it is the only variant which is running on a single thread. This is due to a
 limitation of NumPy, and could likely be improved greatly by using batched matrix multiplications, as are provided for
 example by \texttt{PyTorch}\footnote{It is also possible, that the network code surrounding the NumPy computations is
-less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
-dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
-investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
+    less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
+    dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
+    investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
 My assumption is, that the vectorization of synaptic updates on a single thread scales up better than the communication
 between threads that is required by most events in the NEST simulations. The NEST implementation using rate neurons
 performed best in terms of speed across the board. This result was slightly surprising, as the demand on the
@@ -116,7 +173,7 @@ targets at every time step.
 Finally, the novel spiking variant of this model performed substantially worse than anticipated. Particularly in
 comparison to the rate implementation, I initially expected substantial performance improvements. The Difference between
 the two was even greater when simulating on an office-grade processor (Benchmark was also run on an \textit{Intel Core
-i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
+    i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
 one, both the rate and the spiking neuron model employ almost identical neuron models, with minor changes to
 parametrization and output generation. Thus, updates to the neuron state are unlikely to be responsible for the worse
 performance. Secondly, the number of Events transmitted between neurons is much lower for the SNN compared to
@@ -135,7 +192,7 @@ of total synapses in the network is given by
 
 with $|w|$ of a weight matrix $w$ in this case denoting the total number of elements in that matrix \what{Is there a
     more conventional notation?}. Thus, the number of synapses in a network grows much faster than the number of total
-    neurons when increasing the size of the hidden layer.
+neurons when increasing the size of the hidden layer.
 
 availis given by the stark increase in
 
@@ -144,20 +201,3 @@ availis given by the stark increase in
 
 
 
-
-
-
-\chapter{room for random observations}
-
-\begin{itemize}
-    \item When reducing the \texttt{weight\_scale} parameter weights converge to lower absolute levels. I.e. mean abs
-          weight drops from 0.5 to approx 0.1
-    \item When reducing the size of the bar dataset by just 1 element, much simpler networks are capable of learning the
-          task at lower t\_pres. Failure to learn shows strange behaviour: the network fails to predict any sample of
-          one group, with the group which it fails to represent switching every now and then.
-    \item increasing apical $C_m$ for spiking neurons was a straight banger.
-    \item I switched input neurons for poisson\_generators. This is faster, but will fuck up any simulations that rely
-          on precise spike timing, since the generator redraws spikes for every target nrn.
-    \item looking at the reduced neural activity for known stimuli reported in \cite{Whittington2017} i got mixed
-          results. Interneuron activity was reduced, while pyramidal neuron activity drastically increased.
-\end{itemize}
