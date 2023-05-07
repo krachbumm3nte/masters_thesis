@@ -47,23 +47,16 @@ the apical error of pyramidal neuron in the spike-based implementation. This can
 spikes causing substantial deviations in apical potentials, and can therefore be alleviated by increasing the
 \textit{weight\_scale} parameter (results not shown) at the cost of increased training time. Alternatively, increasing
 the membrane capacitance of the apical compartment also solves the issue as it smoothes out the effect of individual
-spikes. Yet this solution also increases the relaxation period of the entire network, requiring a highly
-undesirable increase in $t_{pres}$ for successful learning. Since weight errors converge to similar values as the
-rate-based implementations, an increased absolute apical compartment voltage was deemed tolerable.
-
-\section{Delayed presentation of instructive signals}
-
-A key concern of biologically plausible learning is the issue of when an instructive signal becomes available for
-training the network \todo{cite or nah?}. When an organism is presented with a stimulus that requires a specific action,
-the organism responds to the best of its ability. Yet, the consequences of that response are likely to be delayed.
-\todo{do we want this section?}
+spikes. Yet this solution also increases the relaxation period of the entire network, requiring a highly undesirable
+increase in $t_{pres}$ for successful learning. Since weight errors converge to similar values as the rate-based
+implementations, an increased absolute apical compartment voltage was deemed tolerable.
 
 
 \section{Presentation times with latent equilibrium}\label{sec-le-tpres}
 
 In order to validate the performance of my implementations, I replicated a parameter study from \cite{Haider2021}[Fig.
     3]. The results for the NEST network using spiking neurons with default parameters \todo{elaborate on this} are
-shown in Figure \ref{fig-bars-le-snest}. A
+    shown in Figure \ref{fig-bars-le-snest}. A
 
 
 
@@ -81,32 +74,27 @@ shown in Figure \ref{fig-bars-le-snest}. A
 
 \section{Separation of synaptic polarity}
 
-A key limitation of the network model from \cite{sacramento2018dendritic} is the requirement that all synapses must be
-able to assume both positive and negative polarities. When restricting any synaptic population in the network to just
-one polarity, the network is unable to reach the self-predicting state \todo{expand?}. Thus, as the model is presented
-here, activity in any neuron must be able to have both excitatory and inhibitory postsynaptic effects facilitated by
-synaptic weights. This requirement is at odds with biology, which dictates a singular synaptic polarity for all outgoing
-connections of a neuron, determined by neuron type and its corresponding neurotransmitter \citeme.
+A key limitation of the present network model is the requirement that all synapses must be able to assume both positive
+and negative polarities. When restricting any synaptic population in the network to just one polarity, the network is
+unable to reach the self-predicting state \todo{expand?}. Thus, activity in any neuron must be able to have both
+excitatory and inhibitory postsynaptic effects facilitated by appropriate synaptic weights. This requirement is at odds
+with biology, which dictates a singular synaptic polarity for all outgoing connections of a neuron, determined by neuron
+type and its corresponding neurotransmitter \citeme.
 
 
-To investigate to what degree the plasticity rule can deal with this constraint, an experiment was conducted: An input
-neuron population $A$  was connected to another population $C$ with plastic synapses that were constrained to positive
-weights. In order to facilitate the required depression, $A$ was also connected to a population of inhibitory
-interneurons $B$ through excitatory synapses with random and non-plastic weights. The interneurons in turn were
-connected to $C$ through plastic, inhibitory connections arriving at the same dendrite. When inducing a dendritic error
-in $C$, all plastic synapses in the network collaborated in order to minimize that error. When injecting a positive
-basal error for example, the inhibitory weights ($C \rightarrow B$) decayed to 0, while excitatory synaptic weights ($A
-\rightarrow B$) increased. Flipping the sign of that error injection had the opposite effect on weights, and likewise
-compensated induced errors. This shows that a separation of synaptic polarity does not interfere with the principles of
-the Urbanczik-Senn plasticity when depression is facilitated by interneurons.
+To investigate to what degree the plasticity rule can deal with this constraint, an experiment was conducted: A
+ population of pyramidal neurons $A$  was connected to another population $C$ with plastic synapses that were
+ constrained to positive weights. In order to facilitate the required depression, $A$ was also connected to a population
+ of inhibitory interneurons $B$ through excitatory synapses with random and non-plastic weights. The interneurons in
+ turn were connected to $C$ through plastic, inhibitory connections. All incoming synapses at $C$ targeted the same
+ dendritic compartment. When inducing a dendritic error in that compartment, all plastic synapses in the network
+ collaborated in order to minimize that error. When injecting a positive basal error for example, the inhibitory weights
+ ($C \rightarrow B$) decayed, while excitatory synaptic weights ($A \rightarrow B$) increased. Flipping the sign of that
+ error injection had the opposite effect on weights, and likewise cancelled the artificial error. This shows that a
+ separation of synaptic polarity does not interfere with the principles of the Urbanczik-Senn plasticity when depression
+ is facilitated by interneurons.
 
-Yet, as criticised by \citeme, the one-to-one connections between $A$ and $B$ are untypical for biological neural
-networks \citeme. Hence, a second experiment was performed, in which $A$ and $B$ were fully connected through static
-synapses with random positive weights. This added complexity did not hinder the error-correcting learning, as shown in
-Figure \ref{fig-exc-inh-split}.
-
-
-\begin{figure}[t]
+ \begin{figure}[t]
     \centering
     \begin{minipage}{0.2\textwidth}
         \textbf{a)}\par\medskip
@@ -118,23 +106,67 @@ Figure \ref{fig-exc-inh-split}.
         \centering
         \includegraphics[width=0.9\textwidth]{fig_exc_inh_split}
     \end{minipage}
-    \caption{Dendritic error minimization under biological constraints on synaptic polarity and network connectivity. 
-    \textbf{a)} Network architecture. Excitatory population $A$ connects to a dendrite of Neuron $C$ both directly
-    and through inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$ are plastic 
-    through dendritic error rules. All connections between populations are 'all-to-all'\phrasing. \textbf{b)}
-        \textit{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation
-        \ref{eq-delta_w_pi}. \textit{Right:} Identical configuration regarding basal dendrites (Equations
-        \ref{eq-delta_w_up},\ref{eq-delta_w_ip}). \textit{Top:} Dendritic error of a single target neuron. Errors of
-        opposite signs are induced at $0$ and $500ms$ (vertical dashed line), and are quickly reduced
-        through weight changes. \textit{Bottom:} Synaptic weights of incoming connections.}
+    \caption{Dendritic error minimization under biological constraints on synaptic polarity and network connectivity.
+        \textbf{a)} Network architecture. An excitatory population $A$ connects to a dendrite of Neuron $C$ both
+        directly and through inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$
+        are plastic through dendritic error rules. Populations $A$ and $B$ are fully connected with random weights.
+        \textbf{b)} \textit{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation
+        \ref{eq-delta_w_pi}. \textit{Right:} Identical network setup, plasticity for synapses at basal dendrites
+        (Equations \ref{eq-delta_w_up}, \ref{eq-delta_w_ip}). \textit{Top:} Dendritic error of a single target neuron.
+        Errors of opposite signs are induced at $0$ and $500ms$ (vertical dashed line). \textit{Bottom:} Synaptic
+        weights of incoming connections. All initial synaptic weights and input neuron activations were drawn from
+        uniform distributions.}
     \label{fig-exc-inh-split}
 \end{figure}
 
+Yet, as criticised previously \citep{whittington2019theories}, the one-to-one connections between $A$ and $B$ are
+untypical for biological neural networks \citeme. Hence, a second experiment was performed, in which $A$ and $B$ were
+fully connected through static synapses with random positive weights. This decrease in specificity of the connections
+did not hinder the error-correcting learning, as shown in Figure \ref{fig-exc-inh-split}.
+
 These results are useful, as they enable a biologically plausible way for excitatory long-range pyramidal projections to
-connect to pyramidal neurons from another layer (i.e. in a different part of the cortex). The steps required to
-facilitate this type of network are rather simple; A pyramidal neuron projection could enter a distant cortical area and
-would only have to spread spread its axonal tree \phrasing within a layer that contains both pyramidal neuron dendrites 
-and interneurons. If these interneurons themselves fully connect to the local pyramidal population, 
+connect to pyramidal neurons in another layer (i.e. in a different part of the cortex). The steps required to facilitate
+this type of network are rather simple; A pyramidal neuron projection could enter a distant cortical area and spread
+spread its axonal tree \phrasing within a layer that contains both pyramidal neuron dendrites and interneurons. If these
+interneurons themselves connect to the local pyramidal population, Errors with arbitrary signs and magnitudes in those
+dendrites could be effectively minimized by the described connectivity. While error minimization is a funcamental
+feature of this network, it does not necessarily imply that synaptic credit assignment is successful aswell. To prove
+that this nonspecific connectivity does not hinder learning, it was introduced into the dendritic error network. The
+connection between Interneurons and Pyramidal neuron apical dendrites was chosen for the first test, as the employed
+plasticity rule had proven most resilient to parameter imperfections previously. A network of rate neurons was
+initialized with self-predicting weights as in Section \ref{sec-le-tpres}. The Weights $w^{pi}$ were redrawn and
+restricted to postive values, and a secondary inhibitory interneuron population was prepared and fully connected to both
+populations as described in Figure \ref{fig-exc-inh-split}. 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\textwidth]{fig_exc_inh_training}
+    \caption{Training progress of a network of rate neurons in NEST, in which hidden layer connections between
+    interneurons and pyramidal neurons are unipolar and nonspecific.}
+    \label{fig-exc-inh-training}
+\end{figure}
+
+
+\section{In search of plausible spike frequencies}
+ \todo{expand}
+
+
+\section{Resilience to imperfect connectivity}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig_dropout}
+    \caption{Error terms after training a network with dimensions [8, 8, 8] towards the self predicting states, with
+    different percentages of synaptic connections randomly removed. To avoid completely separated layers, synapse
+    deletion was performed per synaptic population, and the percentage is therefore only an approximation. Even with
+    only 60\% of synaptic connections present, the network architecture still achieves competetive values for all four
+    error metrics. For the weight errors, which is calculated with mean-squared-error over two matrices, missing
+    synapses were set to $0$. This choice was made under the assumption that a missing connection in an ideal
+    self-predicting network would be matched by a zero-weight - or likewise absent - synapse. Experiments were performed
+    with the rate-based network in NEST, each network was trained fro 2000 epochs of 50ms each.}
+    \label{fig-dropout}
+\end{figure}
 
 
 
@@ -161,9 +193,9 @@ The result of this comparison is shown in Figure \ref{fig-benchmark}. The NumPy 
 likely explained by the fact that it is the only variant which is running on a single thread. This is due to a
 limitation of NumPy, and could likely be improved greatly by using batched matrix multiplications, as are provided for
 example by \texttt{PyTorch}\footnote{It is also possible, that the network code surrounding the NumPy computations is
-    less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
-    dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
-    investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
+less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
+dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
+investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
 My assumption is, that the vectorization of synaptic updates on a single thread scales up better than the communication
 between threads that is required by most events in the NEST simulations. The NEST implementation using rate neurons
 performed best in terms of speed across the board. This result was slightly surprising, as the demand on the
@@ -173,7 +205,7 @@ targets at every time step.
 Finally, the novel spiking variant of this model performed substantially worse than anticipated. Particularly in
 comparison to the rate implementation, I initially expected substantial performance improvements. The Difference between
 the two was even greater when simulating on an office-grade processor (Benchmark was also run on an \textit{Intel Core
-    i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
+i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
 one, both the rate and the spiking neuron model employ almost identical neuron models, with minor changes to
 parametrization and output generation. Thus, updates to the neuron state are unlikely to be responsible for the worse
 performance. Secondly, the number of Events transmitted between neurons is much lower for the SNN compared to
@@ -192,11 +224,24 @@ of total synapses in the network is given by
 
 with $|w|$ of a weight matrix $w$ in this case denoting the total number of elements in that matrix \what{Is there a
     more conventional notation?}. Thus, the number of synapses in a network grows much faster than the number of total
-neurons when increasing the size of the hidden layer.
+    neurons when increasing the size of the hidden layer.
 
 availis given by the stark increase in
 
+\section{Response to unpredicted stimuli}
 
+The activity of many cortical neurons increases when a brain is presented with unpredicted stimuly that regard these
+neurons \todo{check out \cite{whittington2019theories} refs 50-54}. This property is prominently replicated by
+predictive coding networks, since activation of error nodes is a function of local prediction errors. Prediction errors
+in the present model on the other hand are encoded in both positive and negative potentials of apical dendrites. Hence, 
+the 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig_activity_unpredicted_stimulus}
+    \caption{Comparison of network response to stimuli from the Bars dataset.}
+    \label{fig-stimulus-response}
+\end{figure}
 
 
 

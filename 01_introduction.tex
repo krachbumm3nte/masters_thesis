@@ -49,10 +49,10 @@ Within conventional artificial neural networks (ANNs), neurons are only capable 
 fashion. Error terms in Backprop on the other hand are computed and propagated by a completely separate algorithm which
 requires access to the entirity of the network state. The algorithm depends on the activation of all downstream neurons
 in order to compute the weight changes of a given layer. Plasticity in biological neurons is largely considered to be
-only dependent on factors that are local to the synapse \citep{Abbott2000,magee2020synaptic,urbanczik2014learning}.
-Thus, biologically plausible Backprop would require a method for encoding local errors within either pre- or
-postsynaptic neurons. This has been perhaps the strongest criticism of Backprop in the brain, as both qestions about the
-mechanisms for computing and storing these errors remain unanswered as of yet.
+primarily dependent on factors that are local to the synapse \citep{Abbott2000,magee2020synaptic,urbanczik2014learning}
+\todo{this is super wrong, wtf?}. Thus, biologically plausible Backprop would require a method for encoding local errors
+within either pre- or postsynaptic neurons. This has been perhaps the strongest criticism of Backprop in the brain, as
+both qestions about the mechanisms for computing and storing these errors remain unanswered as of yet.
 
 \subsection{The weight transport problem}
 
@@ -103,7 +103,7 @@ discussed in this section.
 
 \arrayrulecolor{white} % <---
 {\renewcommand{\arraystretch}{1.45}
-    \begin{table}[]
+    \begin{table}[t]
       \resizebox{\textwidth}{!}{%
         \begin{tabular}{|ll|ll|ll|}
           \hline
@@ -128,7 +128,7 @@ discussed in this section.
         \end{tabular}%
       }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
         \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
-        learing with Continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
+        learing with continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
         Dendritic error network \citep{sacramento2018dendritic}. All algorithms were selected due to them reflecting
         some properties of biological brains, some of which are highlighted in the row "Data accounted for". To do this,
         all of them need to make concessions. In the first few rows, desirable properties are highlighted in green, while

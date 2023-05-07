@@ -17,15 +17,15 @@ non-resetting, non-refractory
 In which we discuss, to what extent the network conforms to the criteria for biologically plausible learning rules
 introduced by \cite{Whittington2017}:
 \begin{enumerate}
-    \item Local computation. A neuron performs computation only on the basis
-          of the inputs it receives from other neurons weighted by the strengths
-          of its synaptic connections.
-    \item  Local plasticity. The amount of synaptic weight modification is dependent on only the activity of the two
-          neurons the synapse connects (and possibly a neuromodulator).
-    \item  Minimal external control. The neurons perform the computation autonomously with as little external control
-          routing information in different ways at different times as possible.
-    \item   Plausible architecture. The connectivity patterns in the model should
-          be consistent with basic constraints of connectivity in neocortex.
+      \item Local computation. A neuron performs computation only on the basis
+            of the inputs it receives from other neurons weighted by the strengths
+            of its synaptic connections.
+      \item  Local plasticity. The amount of synaptic weight modification is dependent on only the activity of the two
+            neurons the synapse connects (and possibly a neuromodulator).
+      \item  Minimal external control. The neurons perform the computation autonomously with as little external control
+            routing information in different ways at different times as possible.
+      \item   Plausible architecture. The connectivity patterns in the model should
+            be consistent with basic constraints of connectivity in neocortex.
 \end{enumerate}
 
 \section{Should it be considered pre-training?}
@@ -39,11 +39,11 @@ introduced by \cite{Whittington2017}:
 
 Cortical neurons depend on neuromodulation too \cite{Roelfsema2018}
 
-
+Completely unclear whether cortical circuits perform supervised learning \citep{magee2020synaptic}
 
 \section{Outlook}
 
-This would likely be super efficient on neuromorphics!
+This would probs be super efficient on neuromorphics!
 
 I am not going to try plasticity with spike-spike or spike-rate dendritic errors
 
@@ -51,14 +51,22 @@ Training on ImageNet
 
 Making this shit faster
 
+
 \subsection{improvements to the neuron models}
 
+\subsubsection{improve prospective activity with regard to spike creation}
+
+le does a lot, particularly at hidden layers. Yet response time under spiking paradigms is still
+lackluster. In particular, prospective activation does next to nothing for these very low input time
+constants. SNN performs best when $\tau_x$ is greater than $\Delta_t$ by roughly x10.
+
+\subsubsection{foo}
 
 \todo{talk about ALIF neurons \citep{Gerstner2009} also reffed in e-prop. look for sources}
 
 pyr and intn are wayy to similar
 
-LIF, membrane reset and $t_{ref}$ 
+LIF, membrane reset and $t_{ref}$
 
 reward-modulated urbanczik-senn plasticity?
 
