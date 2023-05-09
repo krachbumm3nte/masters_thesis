@@ -28,6 +28,28 @@ introduced by \cite{Whittington2017}:
             be consistent with basic constraints of connectivity in neocortex.
 \end{enumerate}
 
+
+\subsection{Additional Backprop concerns}
+
+
+from \citep{Marblestone2016} on one-shot learning
+
+Additionally, the nervous system may have a way of quickly
+storing and replaying sequences of events. This would allow
+the brain to move an item from episodic memory into a long-
+term memory stored in the weights of a cortical network (Ji and
+Wilson, 2007), by replaying the memory over and over. This
+solution effectively uses many iterations of weight updating to
+fully learn a single item, even if one has only been exposed to
+it once. Alternatively, the brain could rapidly store an episodic
+memory and then retrieve it later without the need to perform
+slow gradient updates, which has proven to be useful for
+fast reinforcement learning in scenarios with limited available
+data (Blundell et al., 2016)
+
+
+Where do targets come from? \cite{Bengio2015}
+
 \section{Should it be considered pre-training?}
 
 \todo{someone said this network needs pre-training and that made me sad :(}
@@ -52,6 +74,11 @@ Training on ImageNet
 Making this shit faster
 
 BPTT
+
+
+The dendritic error rule at the core of Urbanczik-Senn looks absurdly similar to superspike \citep{Zenke2018}.
+Someone should look into that!
+
 
 \subsection{improvements to the neuron models}
 

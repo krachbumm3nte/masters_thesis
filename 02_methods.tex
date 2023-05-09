@@ -95,8 +95,9 @@ parameter $\epsilon=15$ does not change its output, but instead serves to preven
 values of $x$.
 
 As mentioned before, pyramidal and interneurons are modeled as rate neurons with leaky membrane dynamics and multiple
-compartments. Where applicable, they will be differentiated with superscripts $P$ and $I$ respectively.  The derivative
-somatic membrane potentials of layer $l$ pyramidal neurons is given by:
+compartments. Where applicable, they will be differentiated with superscripts $P$ and $I$ respectively. The basal and
+apical dendrites of pyramidal neurons are denoted with superscripts $bas$ and $api$ respectively, while interneuron
+dendrites are simply denoted $dend$.  The derivative somatic membrane potentials of layer $l$ pyramidal neurons is given by:
 
 \begin{align}
   C_m \dot{u}_l^P & = - g_l u_l^{P} + g^{bas} v_l^{bas} + g^{api} v_l^{api} \label{eq-pyr-dynamics-rate}
@@ -116,12 +117,11 @@ matrices and presynaptic activities:
 The nomenclature for weight matrices conforms to \cite{Haider2021}, where weight matrices are indexed by the layer in
 which their neurons terminate and belong to one of four populations: Feedforward and feedback pyramidal-to-pyramidal
 connections arriving at layer $l$ are denoted $W_l^{up}$ and $W_l^{down}$ respectively. Lateral pyramidal-to-interneuron
-connections are denoted with $W_l^{ip}$ and their corresponding feedback connections with $W_l^{pi}$. Since the input
-layer contains no synapses, indexing begins with $0$ for the first hidden layer.
+connections are denoted with $W_l^{ip}$ and their corresponding feedback connections with $W_l^{pi}$.
 \newline
 
-Interneurons integrate synaptic information by largely the same principle, but instead of the signals from sister
-neurons arriving at an apical compartment, it is injected directly into the soma. Through this, interneurons
+Interneurons integrate synaptic information by largely the same principle, but instead of top-down signals from their
+sister neurons arriving at an apical compartment, it is injected directly into the soma. Through this, interneurons
 functionally resemble the original two-compartment neuron from \cite{urbanczik2014learning} most closely.
 
 \begin{align}
@@ -637,7 +637,7 @@ response and learning speed can be solved by LE.\newline
     for a hidden layer Interneuron. \textbf{C:} Proximal apical error for a hidden layer Pyramidal neuron. For this case
     the difference between the two networks is most striking, as errors for the LE network exhibit almost no deviation
     from rest. \textbf{D:} Distal apical error for the same pyramidal neuron. Note that this error term does not
-    converge to zero for either network even after training is complete, which will be discussed in Section
+    converge to zero for either network after the relaxation period, an issue that will be discussed in Section
     \ref{sec-feedback-plast}.}
   \label{fig-error-comp-le}
 \end{figure}

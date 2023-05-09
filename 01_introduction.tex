@@ -53,67 +53,90 @@ network itself, which requires access to the entirity of the network state. In o
 given layer, the algorithm takes as an input the activation and synaptic weights of all downstream neurons. In contrast,
 plasticity in biological neurons is largely considered to be primarily dependent on factors that are local to the
 synapse \citep{Abbott2000,magee2020synaptic,urbanczik2014learning}. While neuromodulators are known to influence
-synaptic plasticity, their dispersion is too wide to communicate neuron-specific errors\citeme. Thus, biologically
-plausible Backprop would require a method for encoding local errors locally, i.e. close to the neurons which cause them.
-This has been perhaps the strongest criticism of Backprop in the brain, as both qestions about the mechanisms for
-computing and storing these errors remain unanswered as of yet.
+synaptic plasticity, their dispersion is too wide to communicate the neuron-specific errors required for Backprop. Thus,
+biologically plausible Backprop would require a method for encoding errors locally, i.e. close to the neurons to which
+they relate. This has been perhaps the strongest criticism of Backprop in the brain, as both qestions about the
+mechanisms for both computing and storing these errors remain unanswered as of yet.
 
 \subsection{The weight transport problem}
 
 During the weight update stage of Backprop, errors are transmitted between layers with the same weights that are used in
 the forward pass. In other words, the magnitude of a neuron-specific error that is propagated through a given connection
-should be proportional to its impact on output loss during the forward pass. For this to work, a neuronal network would
-require feedback connections that mirror both the network structure and synaptic weights exhibited by the original
-network. It was long assumed that the feedback weights are required to be an exact match, but \citep{Liao2016} showed,
-that this constraint can be relaxed somewhat to a concordance of weight signs.
-
-Bidirectional connections are common in the cortex, yet it is unclear by which mechanism pairs of synapses would be able
-to align. This issue becomes particularly apparent when considering long-range pyramidal projections, in which
-feedforward and feedback synapses would potentially be separated by a considerable distance.
+should be proportional to its impact on output loss during the forward pass. For this to work, a neuronal network
+implementing Backprop would require feedback connections that mirror both the connectivity and synaptic weights of the
+forward connections. Bidirectional connections that could theoretically back-propagate errors are common in the cortex,
+yet it is unclear by which mechanism pairs of synapses would be able to align. This issue becomes particularly apparent
+when considering long-range pyramidal projections, in which feedforward and feedback synapses would potentially be
+separated by a considerable distance.
 
 \subsection{Neuron models}
 
 Finally, the types of artificial neurons typically used in Backprop transmit a continuous scalar activation at all
 times, instead of discrete spikes. In theory, these activations correspond to the firing rate of a spiking neuron,
-giving this class of models the title \textit{rate neurons}. Yet particularly with regard to synaptic plasticity, spike
-based communication often requires completely novel approaches. Plasticity rules in rate neurons do not necessarily have
-an easily derived counterpart for spiking neurons. A notable example for this issue is Backprop itself; The local error
-gradient $\frac{\delta E}{\delta \phi(u_i)}$ of a neuron $i$  is not trivial to compute for Spiking neural networks
-(SNN), as a spiketrain has no natural derivative. Furthermore, a given neuron's activation in classical Backprop is
-computed from a simple weighted sum of all inputs. This fails to capture the complex nonlinearities of dendritic
-integration that are fundamental to cortical neurons \citep{Gerstner2009,sjostrom2008dendritic,Eyal2018}. Finally, these
-abstract neurons - at least in classical Backprop - have no persistence through time. Thus, their activation is dictated
-strictly by the presentation of a single stimulus, in contrast to the leaky membrane dynamics exhibited by biological
-neurons.\newline
+giving this class of models the title \textit{rate neurons}. Yet spike based communication requires more sophisticated
+neuron models. Additionally, plasticity rules for rate neurons do not necessarily have an easily derived counterpart for
+spiking neurons. A notable example for this issue is Backprop itself; The local error gradient of a neuron is not
+trivial to compute for Spiking neural networks (SNN), as a spiketrain has no natural derivative. Furthermore, a given
+neuron's activation in classical Backprop is computed from a simple weighted sum of all inputs. This fails to capture
+the complex nonlinearities of dendritic integration that are fundamental to cortical neurons
+\citep{Gerstner2009,sjostrom2008dendritic,Eyal2018}. Finally, these abstract neurons - at least in classical Backprop -
+have no persistence through time. Thus, their activation is dictated strictly by the presentation of a single stimulus,
+in contrast to the leaky membrane dynamics exhibited by biological neurons.\newline
 
 Additional concerns regarding Backprop will be discussed in Section \todo{}.
 
 
 \section{Alternatives to classical Backprop}
 
-The complexity of the algorithm has led neuroscience to largely dismiss Backprop as a plausible learning mechanism for
+The complexity of Backprop has led neuroscience to largely dismiss the algorithm as a plausible learning mechanism for
 biological brains. Yet, Backprop has remained the gold standard against which all supervised learning mechanisms
 eventually have to compare, as it is unmatched in learning performance for many tasks. Also, despite its apparent
 biological implausibility, it does share some notable parallels to learning in the brain: When training on real-world
 data, artificial neural networks have been shown to learn similar representations as those found in brain areas
-responsible for comparable tasks \cite{McClelland1995,barone2000laminarwhittington2019theories,Yamins2016}. Thus,
-several attempts have been made to define more biologically plausible learning rules which are able to approach the
-performance of  Backprop. A full review of the available literature would be out of scope for this thesis, so only a few
-examples will be discussed in this section.
+responsible for comparable tasks \citep{McClelland1995,barone2000laminar,Yamins2016,Marblestone2016}. Thus, several
+attempts have been made to define more biologically plausible learning rules which are able to approach the performance
+of  Backprop. A full review of the available literature would be out of scope for this thesis, so only a few examples
+will be discussed in this section.
 \newline
 
 One approach to solve the issues around local error representations is, to drive synaptic plasticity through a global
 error signal. The appeal of this solution is that this task could be plausibly performed by neuromodulators like
-Dopamine \citep{Mazzoni1991,Seung2003,izhikevich2007solving}. While these solutions enable a kind of reinforcement
+dopamine \citep{Mazzoni1991,Seung2003,izhikevich2007solving}. While these solutions enable a kind of reinforcement
 learning, performance of global error/reward signalling stays far behind that of the exact credit assignment performed
-in Backprop. Additionally, this class of algorithms requires even more examples of a pattern, and was shown to scale
-poorly with network size \citep{Werfel2003}. 
+in Backprop. Additionally, this class of algorithms requires even more examples of a training dataset, and was shown to
+scale poorly with network size \citep{Werfel2003}.
+\newline
 
 
-The weight transport problem was similarly adressed through a mechanism called \textit{Feedback Alignment}
-\cite{Lillicrap2014}. This seminal paper shows that Backpropagation of errors can still be successful when feedback 
-weights are random. In addition to learning an input-output mapping, Backpropagation is capable of training a network
-to gain information from randomly weighted instructive pathways. The authors call this process \textit{learning to learn}.
+The weight transport problem was successfully adressed by a mechanism called \textit{Feedback Alignment} (FA)
+\citep{Lillicrap2014}. This seminal paper shows that Backpropagation of errors can still learn successfully when
+feedback weights are random. In addition to learning to represent an input-output mapping in forward weights,
+Backpropagation is capable of training the network to extract information from randomly weighted instructive pathways.
+The authors call this process \textit{learning to learn} and show that learning performance is even superior than
+classical Backprop for some tasks. This mechanism was further expanded to show that the principles of FA perform very
+well when biologically plausible plasticity rules are employed \citep{Liao2016,Zenke2018}. Another popular line of
+thought is - instead of computing local errors - to compute optimal activations for hidden layer neurons using
+autoencoders \citep{Bengio2014,Lee2015,Ahmad2020}. Approaches derived from this do not suffer from the weight transport
+problem, and by design does not require local error representations. While these solutions promise to solve the weight
+transport problem, on more complex benchmark datasets like
+\textit{\href{https://www.cs.toronto.edu/~kriz/cifar.html}{CIFAR}} and
+\textit{\href{https://www.image-net.org/index.php}{ImageNet}} both of them fall far behind traditional Backprop
+\citep{Bartunov2018}. \newline
+
+Numerous approaches for implementing Backprop in more plausible neuron models exist, most of which employ variants of
+the \textit{Leaky Integrate-and-fire} (LIF) neuron \citep{Sporea2013,Lee2016,Bengio2017,Lee2020}. The aforementioned
+issue of computing the derivative over spiketrains has been solved in several different ways, with the most prominent
+variant perhaps being \textit{SuperSpike} \citep{Zenke2018}. 
+
+The issue of oversimplified neuron models is by far the most frequent to be ommited from explanations of the biological
+implausibility of Backprop (See for example \citep{Meulemans2020,Lillicrap2014}). This disregard might stem from the
+fact that rate-based point neurons are employed in many of the most powerful artificial neural networks. This
+observation might be seen as an argument that the simple integration of synaptic inputs in point neurons is sufficient
+for powerful and generalized learning. Modelling neurons more closely to biology would by this view only increase
+mathematical complexity and computational cost without practical benefit. Another hypothesis states that the dominance
+of point neurons stems from a "somato-centric perspective" \citep{Larkum2018} which stems from the technical challenges
+inherent to studying dendrites in vivo. The vastly different amount of available data regarding the two neuronal
+components might have induced a bias in how neurons are viewed computationally.  
 
 
 
@@ -124,61 +147,78 @@ to gain information from randomly weighted instructive pathways. The authors cal
       \begin{tabular}{|ll|ll|ll|}
         \hline
         \rowcolor[HTML]{B3B3B3}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}                                                                  &
-        \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}                                               &
-        \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                                                                                                                                                                                                            \\ \cline{3-6}
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}
+        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}
+        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                  \\ \cline{3-6}
         \rowcolor[HTML]{B3B3B3}
-        \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}                                               & Continuous update                                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}                                                  & Dendritic error                                                                                                                                            \\ \hline
+        \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}
+        & Continuous update                                                                &
+        \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}
+        & Dendritic error                                                                    \\ \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}                                                    &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}}                                    & {\color[HTML]{FE0000} Required}
-                                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{32CB00} Not
-        required}                                                                                                                                                                                                                                                                    \\ \hline
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}}
+        & {\color[HTML]{FE0000} Required}                                                  &
+        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
+        & {\color[HTML]{32CB00} Not required}
+        \\ \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}                                                      &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}}                               & {\color[HTML]{32CB00}
-        Unconstrained}                                                                                                  &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}                                 & {\color[HTML]{FE0000}
-        Constrained}                                                                                                                                                                                                                                                                 \\ \hline
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}}
+        & {\color[HTML]{32CB00} Unconstrained}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}  & {\color[HTML]{FE0000}
+        Constrained}
+        \\ \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}                                                  &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}}                                         & {\color[HTML]{32CB00} L-1}                                                       &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}}                                        & {\color[HTML]{32CB00} L-1}                                                                                                                                 \\
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}}
+        & {\color[HTML]{32CB00} L-1}                                                       &
+        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}}
+        & {\color[HTML]{32CB00} L-1}                                                         \\
         \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}                                                      &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                                & {\color[HTML]{32CB00} Not
-        required}                                                                                                       &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                                & {\color[HTML]{FE0000}
-        Required}                                                                                                                                                                                                                                                                    \\ \hline
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
+        & {\color[HTML]{32CB00} Not required}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{FE0000}
+        Required}
+        \\ \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}                                                  &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\ between
-                                                        separate                           \\ phases\end{tabular}}        & \begin{tabular}[c]{@{}l@{}}Rate of change of\\ activity\end{tabular}             &
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\ between
+        separate                           \\ phases\end{tabular}}        & \begin{tabular}[c]{@{}l@{}}Rate of change of
+        \\ activity\end{tabular}                                        &
         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
-                                                        neurons\end{tabular}}               & \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal
-                                                                                            neurons\end{tabular}                                                                                                                                 \\ \hline
+                                                        neurons\end{tabular}}               &
+        \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}
+          \\
+        \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour in a\\
-                                                        variety of tasks\end{tabular}} & \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent
-                                                                                       plasticity\end{tabular}                      & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased
-                                                                                                                                                                                    neural \\ activity to\\ unpredicted stimuli\end{tabular}} & \begin{tabular}[c]{@{}l@{}}Properties of \\
-                                                                                                                                                                                                                                              pyramidal neurons\end{tabular} \\ \hline
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour in
+        a\\
+                                                        variety of tasks\end{tabular}} &
+        \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}
+          & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\ activity to\\
+                                                        unpredicted stimuli\end{tabular}} &
+        \begin{tabular}[c]{@{}l@{}}Properties of \\
+          pyramidal neurons\end{tabular} \\
+        \hline
         \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}                                                 &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}                                                          & -                                                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}                                                          & $\sim$1.96                                                                                                                                                 \\ \hline
+        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}
+        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}
+        & -                                                                                &
+        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}
+        & $\sim$1.96                                                                         \\ \hline
       \end{tabular}%
     }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
-      \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996},
-      Contrastive learing with continuous update \citep{Bengio2017}, Predictive Coding
-      \citep{Whittington2017,rao1999predictive}, Dendritic error network \citep{sacramento2018dendritic}. All
-      algorithms were selected due to them reflecting some properties of biological brains, some of which are
-      highlighted in the row "Data accounted for". To do this, all of them need to make concessions. In the first few
-      rows, desirable properties are highlighted in green, while undesirable traits are highlighted in red.}
+      \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
+      learing with continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
+      Dendritic error network \citep{sacramento2018dendritic}. All algorithms were selected due to them reflecting some
+      properties of biological brains, some of which are highlighted in the row "Data accounted for". To do this, all of
+      them need to make concessions. In the first few rows, desirable properties are highlighted in green, while
+      undesirable traits are highlighted in red.}
   \end{table}
 
 }
