@@ -2,24 +2,6 @@
 \chapter{Results}
 
 
-\todo{Today, I changed the test criterion from the output neuron voltage at time $t$ to a mean over a sample of the last
-    $20ms$, network performance improved tremendously. Intuitively makes sense, but in particular it makes NEST networks
-    diverge less after peak performance is reached. Are fluctuations in output layer activity increasing during late
-    stages of training?}
-
-\todo{it might be worth experimenting with different synaptic delays in NEST in order to evaluate learning performance
-    under biologically plausible transmission times. How easy this will \textbf{assumably} be to implement in NEST
-    deserves note at this point.}
-
-\todo{talk about the fact that NEST synapses are updated, and SpikeEvents stored to ring buffers to be integrated into
-    $u_som$ after the synaptic delay. How much of physiological synaptic delays occurs pre- and postsynaptically in
-    pyramidal neurons?}
-
-\section{direct feedback connections to interneurons}\label{sec-electric-syns}
-
-\cite{Vaughn2022,Mancilla2007}
-
-
 \section{The self-predicting state}
 
 As a first comparison between the three implmementations, the pre-training towards a self-predicting stat (cf.
@@ -168,6 +150,11 @@ populations as described in Figure \ref{fig-exc-inh-split}.
     with the rate-based network in NEST, each network was trained fro 2000 epochs of 50ms each.}
     \label{fig-dropout}
 \end{figure}
+
+
+\section{direct feedback connections to interneurons}\label{sec-electric-syns}
+
+\cite{Vaughn2022,Mancilla2007}
 
 
 

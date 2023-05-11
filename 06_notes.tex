@@ -4,14 +4,8 @@
 
 
 \begin{itemize}
-    \item Is refractoryness interesting to us or more of a sidenote?
-    \item Neuron dropout?
-    \item How does one prove that the network is converged and will not diverge again.
-    \item randomized/longer synaptic delays?
-    \item As a follow up of dropout, maybe even neurogenesis?
-    \item Should I look at delaying injection of the target activation?
-    \item more ways in which this is biologically implausible?
     \item how interested are you in the code? reference it, explain it, or shut up?
+    \item Citations in my motivation or not?
 \end{itemize}
 
 
@@ -21,50 +15,30 @@
     \item In the torch implementation, there no persistence between timesteps at all. Input is fed into the network and
     processed feedforward and feedback. Output is read and weights (+biases) are updated. Rinse and repeat.
     \item to what extent should dendritic and somatic compartments decay?
-    \item Can (should) we transfer the learned bias from the torch model?
     \item I can "cheat" the apical voltage constraint for self prediction by increasing apical leakage conductance. How
     does this influence my model?
-    \item Is there some analytical approach to identifying why synaptic weights deviate from their intended targets?
-
-    \item Show the limits of learning capability (i.e. how big of a network it can match)
-    \item Test the network on a real-world dataset (mnist)
-    \item prove/find literature on why the poisson process is a rate neuron in the limit.
     \item Does the network still learn when neurons have a refractory period?
-    \item Comparison to other spiking backprops
-    \item what can we learn from this? does it describe part of the brain
     \item talk about feedback plasticity
-    \item Do the membrane capacitance experiments for basal dendrites aswell.
     \item redo the spike rate experiment, but investigate whether novel stimuli cause bursts.
     \item Reconsider title?
     \item replace cite with citep
     \item investigate exc-inh split biologically
-\end{itemize}
-
-\section{Observations}
-
-\begin{itemize}
-    \item oversize networks fail more often. No idea why
-    \item Different configurations for which synapses are plastic should be elaborated on.
+    \item Urbanczik-senn has little empirical background. shits for the outlook
 \end{itemize}
 
 
-\section{Preliminary structural components}
-
-\subsection{Synaptic delays}
-
-Where I will inspect the implications of synaptic delays inherent to the NEST simulations on the model and plasticity
-rule. In particular, I will look at the biological necessity for this type of delay and discuss why any model attempting
-to replicate neuronal processes must be resilient to these delays.
-
-
-\subsection{The relation between the pyramidal microcircuit and actual microcircuits}
-
-Where I can finally use the shit that has been on my whiteboard for half a year...
-
-This will also serve as valuable insight into how plausible this microcircuit actually is, and might give some insight
-into possible model extensions.
 
 \subsection{Interneurons and their jobs}
+
+
+
+
+reciprocal inhibition of SST+ neurons. In agreement,
+recent experiments show that feedback input can gate
+plasticity of the feedforward synapses through VIP+
+neuron mediated disinhibition 176 and that pyrami
+dal neurons indeed recruit inhibitory populations to
+produce a predictive error177 \citep{Poirazi2020}
 
 \subsection{tpres}
 

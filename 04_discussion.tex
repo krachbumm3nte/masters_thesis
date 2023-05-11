@@ -2,14 +2,9 @@
 \chapter{Discussion}
 
 
-\section{Limitations of the implementation}
+\section{Contribution}
 
-Network needs to be reset between stimuli
-original does not do that, in NEST it's kindof a big deal.
 
-exposure time and training set still quite large
-
-non-resetting, non-refractory
 
 
 \section{Whittington and Bogacz criteria}
@@ -28,6 +23,39 @@ introduced by \cite{Whittington2017}:
             be consistent with basic constraints of connectivity in neocortex.
 \end{enumerate}
 
+
+
+
+
+
+
+
+\section{Limitations}
+
+Network needs to be reset between stimuli
+original does not do that, in NEST it's kindof a big deal.
+
+\subsection*{Efficiency}
+exposure time and training set still quite large
+
+
+\subsection*{Neuron model}
+
+non-resetting, non-refractory
+
+\subsection*{Network}
+
+Oversized networks have a higher tendency of failing on some tasks (results not shown). This issue is not consistent,
+but plagued some of my experiments with no satisfactory explanation yet found.
+
+
+ When injecting large currents (i.e. in func approx experiments), the network kinda shits itself. Somewhat
+expected, somewhat annoying
+
+
+
+
+\section{Future directions}
 
 \subsection{Additional Backprop concerns}
 
@@ -63,7 +91,6 @@ Cortical neurons depend on neuromodulation too \cite{Roelfsema2018}
 
 Completely unclear whether cortical circuits perform supervised learning \citep{magee2020synaptic}
 
-\section{Outlook}
 
 This would probs be super efficient on neuromorphics!
 
@@ -73,22 +100,17 @@ Training on ImageNet
 
 Making this shit faster
 
-BPTT
+BPTT/time-continuous inputs
 
 
 The dendritic error rule at the core of Urbanczik-Senn looks absurdly similar to superspike \citep{Zenke2018}.
 Someone should look into that!
 
+Different configurations for which synapses are plastic should be elaborated on.
+
 
 \subsection{improvements to the neuron models}
 
-\subsubsection{improve prospective activity with regard to spike creation}
-
-le does a lot, particularly at hidden layers. Yet response time under spiking paradigms is still
-lackluster. In particular, prospective activation does next to nothing for these very low input time
-constants. SNN performs best when $\tau_x$ is greater than $\Delta_t$ by roughly x10.
-
-\subsubsection{foo}
 
 \todo{talk about ALIF neurons \citep{Gerstner2009} also reffed in
 e-prop\citep{bellec2019biologically,bellec2020solution}. look for sources}
@@ -101,9 +123,23 @@ reward-modulated urbanczik-senn plasticity?
 
 wtf is shunting inhibition?
 
+Consider neurogenesis deeper. Any network that is plausible must be able to develop in a plausible fashion. Investigating
+how the cortex develops might hold insights into plausible connectivity schemes. This does not necessarily compete or
+conflict with looking at connectivity of developed brains
 
 
-\subsection{improvements to the network}
+\subsubsection{improve prospective activity with regard to spike creation}
 
-think about recurrence?
+le does a lot, particularly at hidden layers. Yet response time under spiking paradigms is still
+lackluster. In particular, prospective activation does next to nothing for these very low input time
+constants. SNN performs best when $\tau_x$ is greater than $\Delta_t$ by roughly x10.
 
+
+
+
+
+
+
+
+
+\section{Conclusion}

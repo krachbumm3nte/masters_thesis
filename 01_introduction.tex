@@ -5,42 +5,56 @@
 
 \section{Motivation}
 
-\todo{fill with citations?}
+The outstanding learning capabilities of the human brain have been found to be elusive and as of yet impossible to fully
+explain or replicate in silicio. While the power of classical machine learning solutions for some tasks has improved
+even beyond human capabilities in recent years, these approaches cannot serve as an adequate model of human cognition.
+Some of the reasons brains and machines appear irreconcilable relate to questions about network structure and neuron
+models. Yet more pressingly, almost all of the most powerful artificial neural networks are trained with the
+Backpropagation of errors algorithm, which is largely considered to be impossible for neurons to implement. Hence,
+Neuroscience has dismissed this algorithm in an almost dogmatic way for many years after its development, stating that
+the brain must employ a different mechanism to learn.
 
-The outstanding learning capabilities of the human brain have been found to be elusive and as of yet impossible to
-replicate in silicio. While the power and utility of classical Machine-learning solutions has improved greatly in recent
-years, these approaches can not serve as an adequate model of human cognition. The sheer number of neurons and synapses
-in the brain makes simulations of an entire brain impossible with current hardware constraints. In fact, it has been
-found to be a substantial challenging to create artificial neural networks that simulate even parts of human
-neurophysiology while simultaneously being able to learn in a goal-oriented way.
+Yet in recent years, there has been a resurgence of attempts by neuroscientists towards reconciling biological and
+artificial neural networks despite these issues. This led to a number of experimental results indicating that
+brains might be capable of performing the impossible - using Backpropagation of errors to learn. Furthermore, despite
+rigorous efforts, no unifying alternative to this learning principle was found which performs well enough to account
+for the brain's vast capabilities.
 
-
-
-The literature entails numerous approaches to adress these challenges, with varying degrees of success. In this thesis,
-I will investigate one such approach, and attempt to modify it in a way that it more closely resembles properties
-exhibited by the human neocortex.
-
-
+Hence, there is a vibrant communitiy developing  novel concepts for implementing this algorithm - or some approximation
+of it. These novel approaches are capable of replicating an increasing number of properties of biological brains.
+Nevertheless, many problems remain unsolved, and a lot of neuronal features remain unaccounted for in brain models that
+are capable of any kind of learning. It is this open problem, to which I want to dedicate my efforts in this thesis.
+After reviewing the existing literature, I have selected a promising model of learning in cortical circuits. This model
+uses multi-compartment neuron models and local plasticity rules to implement a variant of Backpropagation. In this
+project, I will investigate and attempt to further improve its concordance with data on the human neocortex. I will use
+the approach of computationally modelling the model while increasingly adding biological features, attempting to retain
+learning performance in the process.
 
 
 \section{The Backpropagation of errors algorithm}
 
-The Backpropagation of errors algorithm (\textit{Backprop}) forms the backbone of modern machine learning and is able to
-outperform humans on some tasks \citeme.  Particularly for training deep neural networks it has remained a popular
-choice since its initial development. Its power for supervised learning stems from to its unique capability to attribute
-errors in the output of a network to activations of specific neurons within its hidden layers. This property also forms
-the basis of the algorithm's name; After an initial forward pass to form a prediction about the nature of a given input,
-a separate backward pass propagates the arising error through all layers in reverse order. During this second network
-traversal, local error gradients dictate to what extent a given weight needs to be altered so that the next presentation
-of the same sample would elicit a lower error in the output layer.
+The Backpropagation of errors algorithm (\textit{Backprop}) \citep{werbos1982} is the workhorse of modern machine
+learning and is able to outperform humans on a growing number of tasks \citep{LeCun2015}. Particularly for training deep
+neural networks it has remained popular and largely unchanged since its initial development. Its learning potential
+stems from its unique capability to attribute errors in the output of a network to activations of specific neurons and
+connections within its hidden layers. This property also forms the basis of the algorithm's name; After an initial
+forward pass to form a prediction about the nature of a given input, a separate backward pass propagates the arising
+error through all layers in reverse order. During this second network traversal, local error gradients dictate to what
+extent a given weight needs to be altered so that the next presentation of the same sample would elicit a lower error in
+the output layer. It has been argued that through this mechanism, Backprop solves the \textit{credit assignment problem}
+- i.e. the question about to what degree a parameter contributes to an error signal - optimally \citep{Lillicrap2020}. 
+With this critical information in hand, computing parameter changes that decrease error becomes almost trivial. Thus,
+it is naturally desirable find a solution to the credit assignment which likewise explains how the brain updates its
+parameters. This  
 
+\section{Concerns over biological plausibility}
 
 While Backprop continues to prove exceptionally useful in conventional machine learning systems, it is viewed critically
-by many neuroscientists. For one, Backprop relies on a slow adaptation of synaptic weights, and therefore requires a
-large amount of examples to learn rather simple input-output mappings. In this way, its performance is far inferior to
-the powerful one-shot learning exhibited by humans \citep{Brea2016}. Yet more importantly, no plausible mechanisms have
-yet been found by which biological neural networks could implement this algorithm. In fact, Backprop as an algorithm by
-which brains may learn has been dismissed entirely by much of the neuroscience community for decades
+by many neuroscientists. For one, it relies on a slow adaptation of synaptic weights, and therefore requires a large
+amount of examples to learn rather simple input-output mappings. In this particular way, its performance is far inferior
+to the powerful one-shot learning exhibited by humans \citep{Brea2016}. Yet more importantly, no plausible mechanisms
+have yet been found by which biological neural networks could implement this algorithm. In fact, Backprop as an
+algorithm by which brains may learn has been dismissed entirely by much of the neuroscience community for decades
 \citep{Grossberg1987,Crick1989,Mazzoni1991,OReilly1996}. This dismissal is often focussed on three mechanisms that are
 instrumental for the algorithm \citep{whittington2019theories,Bengio2015,Liao2016}:
 
@@ -53,10 +67,10 @@ network itself, which requires access to the entirity of the network state. In o
 given layer, the algorithm takes as an input the activation and synaptic weights of all downstream neurons. In contrast,
 plasticity in biological neurons is largely considered to be primarily dependent on factors that are local to the
 synapse \citep{Abbott2000,magee2020synaptic,urbanczik2014learning}. While neuromodulators are known to influence
-synaptic plasticity, their dispersion is too wide to communicate the neuron-specific errors required for Backprop. Thus,
-biologically plausible Backprop would require a method for encoding errors locally, i.e. close to the neurons to which
-they relate. This has been perhaps the strongest criticism of Backprop in the brain, as both qestions about the
-mechanisms for both computing and storing these errors remain unanswered as of yet.
+synaptic plasticity, their dispersion is too wide to communicate neuron-specific errors. Thus, biologically plausible
+Backprop would require a method for encoding errors locally, i.e. close to the neurons to which they relate. This has
+been perhaps the strongest criticism of Backprop in the brain, as many qestions regarding biological mechanisms for both
+computing and storing these errors remain unanswered as of yet.
 
 \subsection{The weight transport problem}
 
@@ -86,18 +100,15 @@ in contrast to the leaky membrane dynamics exhibited by biological neurons.\newl
 Additional concerns regarding Backprop will be discussed in Section \todo{}.
 
 
-\section{Alternatives to classical Backprop}
+\section{Overcoming biological implausibility}
 
-The complexity of Backprop has led neuroscience to largely dismiss the algorithm as a plausible learning mechanism for
-biological brains. Yet, Backprop has remained the gold standard against which all supervised learning mechanisms
-eventually have to compare, as it is unmatched in learning performance for many tasks. Also, despite its apparent
-biological implausibility, it does share some notable parallels to learning in the brain: When training on real-world
-data, artificial neural networks have been shown to learn similar representations as those found in brain areas
-responsible for comparable tasks \citep{McClelland1995,barone2000laminar,Yamins2016,Marblestone2016}. Thus, several
-attempts have been made to define more biologically plausible learning rules which are able to approach the performance
-of  Backprop. A full review of the available literature would be out of scope for this thesis, so only a few examples
-will be discussed in this section.
-\newline
+Despite these issues, Backprop has remained the gold standard against which most attempts at modelling learning in the
+brain eventually have to compare. Also, despite its apparent biological implausibility, it does share some notable
+parallels to learning in the brain. Artificial neural networks (ANN) trained with Backprop have been shown to develop
+similar representations to those found in brain areas responsible for comparable tasks
+\citep{Yamins2016,Whittington2018,KhalighRazavi2014,Kubilius2016}. Thus, numerous attempts have been made to define more
+biologically plausible learning rules which approximate Backprop to some degree. A full review of the available
+literature would be out of scope for this thesis, so only a few examples will be discussed in this section.
 
 One approach to solve the issues around local error representations is, to drive synaptic plasticity through a global
 error signal. The appeal of this solution is that this task could be plausibly performed by neuromodulators like
@@ -105,7 +116,6 @@ dopamine \citep{Mazzoni1991,Seung2003,izhikevich2007solving}. While these soluti
 learning, performance of global error/reward signalling stays far behind that of the exact credit assignment performed
 in Backprop. Additionally, this class of algorithms requires even more examples of a training dataset, and was shown to
 scale poorly with network size \citep{Werfel2003}.
-\newline
 
 
 The weight transport problem was successfully adressed by a mechanism called \textit{Feedback Alignment} (FA)
@@ -121,106 +131,207 @@ problem, and by design does not require local error representations. While these
 transport problem, on more complex benchmark datasets like
 \textit{\href{https://www.cs.toronto.edu/~kriz/cifar.html}{CIFAR}} and
 \textit{\href{https://www.image-net.org/index.php}{ImageNet}} both of them fall far behind traditional Backprop
-\citep{Bartunov2018}. \newline
+\citep{Bartunov2018}.
 
 Numerous approaches for implementing Backprop in more plausible neuron models exist, most of which employ variants of
 the \textit{Leaky Integrate-and-fire} (LIF) neuron \citep{Sporea2013,Lee2016,Bengio2017,Lee2020}. The aforementioned
 issue of computing the derivative over spiketrains has been solved in several different ways, with the most prominent
-variant perhaps being \textit{SuperSpike} \citep{Zenke2018}. 
+variant perhaps being \textit{SuperSpike} \citep{Zenke2018}. \newline
+
+All of these approaches successfully solve one or more concerns of biological plausibility, while still approximating
+Backprop to some degree. Yet none of them are able to solve all three of them, and some of them even rely on novel
+mechanisms that are themselves biologically questionable. Thus, whether Backprop could be implemented by biological
+neurons remains an open question.
+
+\subsection{Dendrites as computational elements}
 
 The issue of oversimplified neuron models is by far the most frequent to be ommited from explanations of the biological
 implausibility of Backprop (See for example \citep{Meulemans2020,Lillicrap2014}). This disregard might stem from the
 fact that rate-based point neurons are employed in many of the most powerful artificial neural networks. This
-observation might be seen as an argument that the simple integration of synaptic inputs in point neurons is sufficient
-for powerful and generalized learning. Modelling neurons more closely to biology would by this view only increase
-mathematical complexity and computational cost without practical benefit. Another hypothesis states that the dominance
-of point neurons stems from a "somato-centric perspective" \citep{Larkum2018} which stems from the technical challenges
-inherent to studying dendrites in vivo. The vastly different amount of available data regarding the two neuronal
-components might have induced a bias in how neurons are viewed computationally.  
+observation might be taken as an argument that the simple summation of synaptic inputs is sufficient for powerful and
+generalized learning. Modelling neurons more closely to biology would by this view only increase mathematical complexity
+and computational cost without practical benefit. Another hypothesis states that the dominance of point neurons stems
+from a "somato-centric perspective" within neuroscience \citep{Larkum2018}, which stems from the technical challenges
+inherent to studying dendrites in vivo. The vastly different amount of available data regarding these two neuronal
+components might have induced a bias in how neurons are modelled computationally. Some researchers have even questioned
+whether dendrites should be seen as more of a 'bug' than a 'feature' \citep{Haeusser2003}, i.e. a biological necessity
+which needs to be overcome and compensated for.
+
+Yet in recent years, with novel mechanisms of dendritic computation being discovered, interest in researching and
+explicitly modelling dendrites has increased. Particularly the vast dendritic branches of pyramidal neurons found in the
+cerebral cortex, hyppocampus and amygdala, were shown to perform complex integrations of their synaptic inputs
+\citep{spruston2008pyramidal}. They recently have been shown to be capable of performing computations, which were
+previously assumed to require multi-layer networks \citep{Schiess2016,Gidon2020}. The size of dendritic trees is also
+known to discriminate regular spiking from burst firing pyramidal neurons \citep{Elburg2010}. \todo{expand}
+
+(See \citep{Larkum2022} and \citep{Poirazi2020} for extensive reviews). These neuroscientific insights have also sparked
+hope that modelling dendritic compartments explicitly might aid machine learning in terms in both learning and
+efficiency \citep{Chavlis2021,guerguiev2017towards,Richards2019,Eyal2018}. It appears then that, if not for
+computational gains, dendrites might be critical for any model that attempts to explain the power of human learning.
+While the network discussed here is concerned with rather simple multi-compartment models, the choice of model was
+strongly influenced by the recent excitement about dendrites.
 
 
 
-\arrayrulecolor{white} % <---
-{\renewcommand{\arraystretch}{1.45}
-  \begin{table}[t]
-    \resizebox{\textwidth}{!}{%
-      \begin{tabular}{|ll|ll|ll|}
-        \hline
-        \rowcolor[HTML]{B3B3B3}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}
-        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}
-        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                  \\ \cline{3-6}
-        \rowcolor[HTML]{B3B3B3}
-        \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}
-        & Continuous update                                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}
-        & Dendritic error                                                                    \\ \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}}
-        & {\color[HTML]{FE0000} Required}                                                  &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
-        & {\color[HTML]{32CB00} Not required}
-        \\ \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}}
-        & {\color[HTML]{32CB00} Unconstrained}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}  & {\color[HTML]{FE0000}
-        Constrained}
-        \\ \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}}
-        & {\color[HTML]{32CB00} L-1}                                                       &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}}
-        & {\color[HTML]{32CB00} L-1}                                                         \\
-        \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
-        & {\color[HTML]{32CB00} Not required}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{FE0000}
-        Required}
-        \\ \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\ between
-        separate                           \\ phases\end{tabular}}        & \begin{tabular}[c]{@{}l@{}}Rate of change of
-        \\ activity\end{tabular}                                        &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
-                                                        neurons\end{tabular}}               &
-        \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}
-          \\
-        \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour in
-        a\\
-                                                        variety of tasks\end{tabular}} &
-        \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}
-          & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\ activity to\\
-                                                        unpredicted stimuli\end{tabular}} &
-        \begin{tabular}[c]{@{}l@{}}Properties of \\
-          pyramidal neurons\end{tabular} \\
-        \hline
-        \rowcolor[HTML]{D9D9D9}
-        \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}
-        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}
-        & -                                                                                &
-        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}
-        & $\sim$1.96                                                                         \\ \hline
-      \end{tabular}%
-    }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
-      \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
-      learing with continuous update \citep{Bengio2017}, Predictive Coding \citep{Whittington2017,rao1999predictive},
-      Dendritic error network \citep{sacramento2018dendritic}. All algorithms were selected due to them reflecting some
-      properties of biological brains, some of which are highlighted in the row "Data accounted for". To do this, all of
-      them need to make concessions. In the first few rows, desirable properties are highlighted in green, while
-      undesirable traits are highlighted in red.}
-  \end{table}
 
-}
+
+% \arrayrulecolor{white} % <--- {\renewcommand{\arraystretch}{1.45} \begin{table}[t] \resizebox{\textwidth}{!}{%
+% \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}} &
+% \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model} &
+% \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                  \\ \cline{3-6}
+% \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning} & Continuous update &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding} & Dendritic error \\ \hline \rowcolor[HTML]{D9D9D9}
+% \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}} & {\color[HTML]{FE0000} Required} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{32CB00} Not required}
+% \\ \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}} & {\color[HTML]{32CB00}
+% Unconstrained} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}  &
+% {\color[HTML]{FE0000} Constrained} \\ \hline \rowcolor[HTML]{D9D9D9}
+% \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}} & {\color[HTML]{32CB00} L-1} &
+% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}} & {\color[HTML]{32CB00} L-1} \\
+%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training} &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{32CB00} Not
+%         required} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} &
+%         {\color[HTML]{FE0000} Required} \\ \hline \rowcolor[HTML]{D9D9D9}
+%         \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in} &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\ between
+%         separate                           \\ phases\end{tabular}}        & \begin{tabular}[c]{@{}l@{}}Rate of change
+%         of \\ activity\end{tabular}                                     &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
+%                                                         neurons\end{tabular}}               &
+%         \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular} \\
+%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for} &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour in
+%         a\\
+%                                                         variety of tasks\end{tabular}} &
+%         \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular} &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\ activity to\\
+%                                                         unpredicted stimuli\end{tabular}}        &
+%         \begin{tabular}[c]{@{}l@{}}Properties of \\
+%           pyramidal neurons\end{tabular} \\
+%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance} &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3} & - &
+%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7} & $\sim$1.96 \\ \hline \end{tabular}% }\caption{
+%         Comparison between some leading biologically plausible approximations of Backprop, adapted from
+%         \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996},
+%         Contrastive learing with continuous update \citep{Bengio2017}, Predictive Coding
+%         \citep{Whittington2017,rao1999predictive}, Dendritic error network \citep{sacramento2018dendritic}. All
+%         algorithms were selected due to them reflecting some properties of biological brains, some of which are
+%         highlighted in the row "Data accounted for". To do this, all of them need to make concessions. In the first
+%         few rows, desirable properties are highlighted in green, while undesirable traits are highlighted in red.}
+%         \end{table}
+
+% }
 
 \section{Cortical microcircuits}
+
+Another feature of the brain which is often not considered in (biologically plausible) machine learning models is its
+intricate connectivity. This is quite understandable, as there is still some uncertainty about which parts of the brain
+are involved in generalized learning. It is also unclear, to what level of detail they need to be modeled. It has been
+shown that the connectivity patterns of cortical circuits are superior to amorphous networks in some cases
+\citep{haeusler2007statistical}, so there might be a computational gain from modeling network structure closer to
+biology. The question over network structure goes hand in hand with the choice of neuron models, as synaptic connections
+arrive at specific points of pyramidal neuron dendrites, depending on the origin of the connection
+\citep{felleman1991distributed,Ishizuka1995,Larkum2018}.
+
+Several theories of cortical funcition focus more on reinforcement \citep{Legenstein2008} or unsupervised learning
+\citep{George2009,haeusler2017}. Without dismissing these theories, this thesis will adopt the viewpoint that human
+brains require a form of gradient descent to successfully adapt to their ever changing environments. Furthermore, we
+shall assume for now that this kind of learning occurs predominantly in the neocortex \citep{Marblestone2016}.
+
+While many important exceptions have been published recently, the literature on the subject of learning historically
+appears to be somewhat split. On the one hand, the "machine-learning" point of view largely considers the utility of
+added network complexity first, with considerations of biology appearing as an afterthought\citeme. On the other hand,
+intricate models of cortical circuits exist, which can so far not be trained to perform tasks
+\cite{potjans2014cell,schmidt2018multi,van2022bringing}. Within this thesis, I hope to contribute to the body of
+literature between those extremes. For this, my approach will be to select a learning model that is already highly
+biologically plausible, and to attempt to improve its plausibility - without fully breaking the learning rule.
+
+\section{Model selection}
+
+The model selection progress was strongly influenced by a review article on biologically plausible approximations of
+Backprop \citep{whittington2019theories}. The authors narrow the wide range of proposed solution down to four algorithms
+that are both highly performant and largely biologically plausible. The algorithms are united by requiring minimal
+external control, and by the fact that they can all be described within a common framework of energy minimization
+\citep{Scellier2017}. The first two models are Contrastive learning \cite{OReilly1996}, and its extension to
+time-continuous updates \citep{Bengio2017}. Both of these encode neuron-specific errors in the change of neural activity
+over time. One of their appeals is the fact that they rely on Hebbian and Anti-Hebbian plasticity. Yet in the plasticity
+rule also lies their greatest weakness, as synapses need to switch between the two once the target for a given stimulus
+is provided. This switch requires a global signal that communicates the change in state to all neurons in the network
+simultaneously.
+
+The second class of models was more appealing to me, as both variants are based on the predictive coding account in
+Neuroscience \citep{rao1999predictive}, which deserves an introduction.
+
+\subsection{Predictive coding}
+
+In this seminal model of processing in the visual cortex, each level of the visual hierarchy represents the outside
+world at some level of abstraction. Recurrent connections then serve communicate prediction errors and predictions up
+and down the hierarchy respectively, which the network attempts to reconcile. The authors showed that through rather
+simple computations, these prediction errors can be minimized to obtain useful representations at each level of the
+hierarchy. They further showed that a predictive coding network trained on natural images exhibits end-stopping
+properties previously found in mammalian visual cortex neurons. This work was instrumental to shaping the modern
+neuroscientific perspective of perception and action as a unified process. The extension of predictive coding principles
+from visual processing to the entire living system is promising to revolutionize neuroscience under the name of
+\textit{Active inference} \citep{Friston2008,Friston2009,Adams2015}. By this view, the entire brain aims to minimize
+prediction errors with respect to an internal (generative) model of the world. A noteworthy property of this hypothesis
+is that it implies an agents action in the world as 'just another' way in which it can decrease discrepancies between
+its beliefs and sensory information. In a seminal paper, a model of the cortical microcircuit
+\citep{haeusler2007statistical} was shown to have a plausible way for performing the computations required by predictive
+coding \citep{bastos2012canonical}.
+
+While predictive coding was originally described for unsupervised learning, through a slight modification it is also
+capable of performing supervised learning \citep{Whittington2017}. This is the third model considered in the review
+paper, in which values (i.e. activations) and errors of a layer are encoded in separate, recurrently connected nodes. By
+employing only local Hebbian plasticity, this network is capable of approximating Backprop in multilayer perceptrons
+while conforming to the principles of predictive coding. The constraint on network topology was further relaxed by
+showing that the model is capable of approximating Backprop for arbitrary computation graphs \citep{Millidge2022}. The
+neuron-based predictive coding net was therefore an important contribution towards unifying the fields of Active
+inference and machine learning research. As noted in a recent review article:
+
+\begin{quotation}
+  Since predictive coding is largely biologically plausible, and has many potentially plausible process theories, this
+  close link between the theories provides a potential route to the development of a biologically plausible alternative to
+  backprop, which may be implemented in the brain. Additionally, since predictive coding can be derived as a variational
+  inference algorithm, it also provides a close and fascinating link between backpropagation of error and variational
+  inference. \citep{millidge2021predictive}
+\end{quotation}
+
+With this in mind, we turn to the final model discussed in the review paper.
+
+\subsection{The Dendritic error model}
+
+The predictive coding network stores local prediction errors in nodes (i.e. neurons) close to the nodes to which these
+errors relate. That errors may be represented within the activation of individual neurons is a promising hypothesis with
+some advandages, as well as results backing it up \citep{Hertaeg2022}. Yet there is a competing view, by which errors
+elicited by individual neurons may be stored in their dendritic compartments \citep{guerguiev2017towards}. The
+"Dendritic error model" \citep{sacramento2018dendritic} - as the name implies - follows this line of thought. It
+contains a highly recurrent network of both pyramidal- and interneurons, in which pyramidal neuron apical dendrites
+encode prediction errors. This view is supported by behavioral rodent experiments which show that stimulation to
+pyramidal neuron apical tufts in cortical layer 1 controls learning \citep{Doron2020}.
+
+For the errors to be encoded successfully, the model requires a symmetry between feedforward and feedback sets of
+weights, which it has to learn prior to training. After that, apical compartments behave like the error nodes in a
+predictive coding network. They are silent during a feedforward network pass, and encode local prediction errors in
+their membrane potential when a target is applied to the output layer. Since they are a part of the pyramidal neuron,
+only local information is required to minimize these prediction errors through a plasticity rule for multi-compartment
+neurons \citep{urbanczik2014learning}. A critical observation made in
+\citep{whittington2019theories} is that the dendritic error model is mathematically equivalent to their
+predictive coding network \todo{expand if I have time, otherwise this will be a ref.}. All of these factors combined
+make the dendritic error model a promising model to help us further understand both energy minimization and deep
+learning in cortical circuits. While both the employed neuron and connectivity model are far behind some of the more
+rigorous cortical simulations, it can be considered an important step towards integrating deep learning and neuroscience
+\citep{Marblestone2016}.
+
+Nevertheless, the model still suffers from some constraints with regard to its biological plausibility; Both the
+predictive coding network and the dendritic error network require strongly constrained connectivity schemes,
+whithout which they cannot learn. This kind of specificity (in particular one-to-one relationships between pairs of
+neurons) are highly untypical for cortical connections \citep{Thomson2003}. Hence, their exact network architectures are
+unlikely to be present in the cortex. The Dendritic error model additionally requires Pre-training to be capable of
+approximating Backprop. Both of these issues will be addressed in this thesis. Yet the most salient improvement to the
+network's biological plausibility is likely, to change neuron models from rate-based to spiking neurons. This
+improvement will be the starting point for this thesis, upon which further analysis will build.
+
