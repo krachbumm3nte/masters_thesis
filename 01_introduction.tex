@@ -111,11 +111,13 @@ biologically plausible learning rules which approximate Backprop to some degree.
 literature would be out of scope for this thesis, so only a few examples will be discussed in this section.
 
 One approach to solve the issues around local error representations is, to drive synaptic plasticity through a global
-error signal. The appeal of this solution is that this task could be plausibly performed by neuromodulators like
-dopamine \citep{Mazzoni1991,Seung2003,izhikevich2007solving}. While these solutions enable a kind of reinforcement
-learning, performance of global error/reward signalling stays far behind that of the exact credit assignment performed
-in Backprop. Additionally, this class of algorithms requires even more examples of a training dataset, and was shown to
-scale poorly with network size \citep{Werfel2003}.
+error signal \citeme. The appeal of this solution is that such signalling could be plausibly performed by
+neuromodulators like dopamine \citep{Mazzoni1991,Seung2003,izhikevich2007solving}. These types solutions to not
+approximate Backprop, but instead lead to a kind of reinforcement learning. While some consider this the most plausible
+way for brains to learn, performance of global error/reward signalling stays far behind that of the exact credit
+assignment performed in Backprop. Additionally, this class of algorithms requires even more examples of a training
+dataset, and was shown to scale poorly with network size \citep{Werfel2003}. Two prominent classes of algorithms
+encode errors in either activation changes over time \citep{}
 
 
 The weight transport problem was successfully adressed by a mechanism called \textit{Feedback Alignment} (FA)
@@ -136,12 +138,15 @@ transport problem, on more complex benchmark datasets like
 Numerous approaches for implementing Backprop in more plausible neuron models exist, most of which employ variants of
 the \textit{Leaky Integrate-and-fire} (LIF) neuron \citep{Sporea2013,Lee2016,Bengio2017,Lee2020}. The aforementioned
 issue of computing the derivative over spiketrains has been solved in several different ways, with the most prominent
-variant perhaps being \textit{SuperSpike} \citep{Zenke2018}. \newline
+variant perhaps being \textit{SuperSpike} \citep{Zenke2018}. One might therefore view this as the weakest criticism
+aimed at Backprop. Yet none of the employed neuron models come close to portraying the intricacies of biological
+neurons, and thus fail to provide explanations for their complexity.\newline
 
 All of these approaches successfully solve one or more concerns of biological plausibility, while still approximating
-Backprop to some degree. Yet none of them are able to solve all three of them, and some of them even rely on novel
-mechanisms that are themselves biologically questionable. Thus, whether Backprop could be implemented by biological
-neurons remains an open question.
+Backprop to some degree. Yet none of them are able to solve all three concerns, and some of them even rely on novel
+mechanisms that are themselves biologically questionable. It further appears that in all but a few cases, an increase in
+biological plausibility leads to a decrease in performance. Thus, whether Backprop could be implemented or approximate
+by biological neurons remains an open question.
 
 \subsection{Dendrites as computational elements}
 
@@ -327,11 +332,14 @@ rigorous cortical simulations, it can be considered an important step towards in
 \citep{Marblestone2016}.
 
 Nevertheless, the model still suffers from some constraints with regard to its biological plausibility; Both the
-predictive coding network and the dendritic error network require strongly constrained connectivity schemes,
-whithout which they cannot learn. This kind of specificity (in particular one-to-one relationships between pairs of
-neurons) are highly untypical for cortical connections \citep{Thomson2003}. Hence, their exact network architectures are
-unlikely to be present in the cortex. The Dendritic error model additionally requires Pre-training to be capable of
-approximating Backprop. Both of these issues will be addressed in this thesis. Yet the most salient improvement to the
-network's biological plausibility is likely, to change neuron models from rate-based to spiking neurons. This
-improvement will be the starting point for this thesis, upon which further analysis will build.
+predictive coding network and the dendritic error network require strongly constrained connectivity schemes, whithout
+which they cannot learn. This kind of specificity (in particular one-to-one relationships between pairs of neurons) are
+highly untypical for cortical connections \citep{Thomson2003}. Hence, their exact network architectures are unlikely to
+be present in the cortex. The Dendritic error model additionally requires Pre-training to be capable of approximating
+Backprop. Both of these issues will be discussed in this thesis. Yet the most salient improvement to the network's
+biological plausibility is likely, to change neuron models from rate-based to spiking neurons. It has been shown that
+the Plasticity rule employed by the network is capable of performing simple learning tasks when adapted to spiking
+neurons \citep{Stapmanns2021}. Yet, (to the best of my knowledge) there are no studies investigating if this variant is
+capable of learning tasks on a network-level. A spiking implementation of the dendritic error network will therefore be
+the starting point for this thesis, upon which further analysis shall build.
 
