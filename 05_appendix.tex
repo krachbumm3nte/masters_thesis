@@ -18,6 +18,108 @@ areas, which vastly differ in the case of pyramidal neurons. \todo{find a nice c
 will not be considered here. The motivation is, that dendritic membrane area is
 
 
+
+\section{Default parameters}
+\begin{table}
+  \fontsize{12pt}{12pt}\selectfont
+  \begin{center}
+    \begin{tabular}{p{0.25\textwidth}p{0.6\textwidth}p{0.15\textwidth}}    \hline
+      \textbf{Name}                & \textbf{Description}                                                        &
+      \textbf{Default}                                                                                                   \\
+      \hline
+
+      \\\textbf{Simulation} \\\hline
+      \texttt{n\_epochs}           & Number of training iterations                                               &
+      $1000$                                                                                                             \\
+      \texttt{delta\_t}            & Euler integration step in [ms]                                              & $0.1$
+      \\
+      \texttt{t\_pres}             & Stimulus presentation time during training [ms]                             & $50$
+      \\
+      \texttt{out\_lag}            & Lag before recording output during testing [ms]                             & $35$
+      \\
+      \texttt{dims}                & Network dimensions, i.e. pyramidal neurons per layer                        & [9,
+      30, 3]                                                                                                             \\
+      \texttt{threads}             & Number of threads for parallel processing                                   & $8$
+      \\
+      \texttt{test\_interval}      & Test the network every N epochs                                             & $10$
+      \\
+      \texttt{record\_interval}    & Interval for storing membrane potentials [ms]                               & $1$
+      \\
+      \texttt{init\_self\_pred}    & Flag to initialize weights to self-predicting state                         &
+      \texttt{True}                                                                                                      \\
+      \texttt{noise}               & Flag to apply noise to membrane potentials                                  &
+      \texttt{False}                                                                                                     \\
+      \texttt{sigma}               & Standard deviation for membrane potential noise                             & 0.3
+      \\
+      \texttt{mode}                & Which dataset to train on. Choice between (bars, mnist, self-pred, teacher) & bars
+      \\
+      \texttt{store\_errors}       & Flag to compute and store apical and interneuron errors during training     &
+      \texttt{False}                                                                                                     \\
+      \texttt{network\_type}       & Choice between (numpy, snest, rnest)                                        & snest
+      \\
+      \texttt{tau\_x}              & Network input filtering time constant [ms]                                  & 0.1   \\
+      \texttt{reset}               & Reset method between simulations (0:no reset, 1=soft reset, 2=hard reset)   & 2
+      \\
+
+      \\
+      \textbf{Neurons}
+      \\\hline
+      \texttt{latent\_equilibrium} & Flag for whether to use prospective transfer functions                      &
+      \texttt{True}                                                                                                      \\
+      \texttt{g\_l}                & Somatic leakage conductance [nS]                                            & 0.03
+      \\
+      \texttt{g\_a}                & Apical compartment coupling conductance [nS]                                & 0.06
+      \\
+      \texttt{g\_d}                & Basal compartment coupling conductance [nS]                                 & 0.1
+      \\
+      \texttt{g\_som}              & Output neuron nudging conductance [nS]                                      & 0.06
+      \\
+      \texttt{g\_l\_eff}           & Effective leakage conductance [nS]                                          &
+      \texttt{g\_l+g\_d+g\_a}                                                                                            \\
+      \\
+      \texttt{g\_lk\_dnd}          & Dendritic leakage [nS]                                                      &
+      \texttt{delta\_t}                                                                                                  \\
+      \texttt{t\_ref}              & Refractory period [ms]                                                      & 0.0   \\
+      \texttt{C\_m\_som}           & Somatic compartment membrane capacitance [pF]                               & 1.0
+      \\
+      \texttt{C\_m\_bas}           & Basal compartment membrane capacitance [pF]                                 & 1.0
+      \\
+      \texttt{C\_m\_api}           & Apical compartment membrane capacitance [pF]                                & 1.0
+      \\
+      \texttt{gamma}               & Linearly scales  activation function $\phi$                                 & 1.0
+      \\
+      \texttt{beta}                & Exponentially scales  activation function $\phi$                            & 1.0
+      \\
+      \texttt{theta}               & Shifts  activation function $\phi$                                          & 0.0
+      \\
+
+      \\
+      \textbf{Synapses}
+      \\\hline
+      \texttt{wmin\_init}          & Min. initial synaptic weight                                                & -1.0
+      \\
+      \texttt{wmax\_init}          & Max. initial synaptic weight                                                & 1.0
+      \\
+      \texttt{Wmin}                & Min. allowed synaptic weight                                                & -4.0
+      \\
+      \texttt{Wmax}                & Max. allowed synaptic weight                                                & 4.0
+      \\
+      \texttt{tau\_delta}          & Weight change filter time constant (NEST only) [ms]                         & 1.0
+      \\
+      
+      \texttt{p\_conn}             & Connection probability between populations                                  & 1.0
+      \\
+      \texttt{eta\_ip}             & Learning rate for $pyr\rightarrow intn$ synapses                            & 0.004
+      \\
+      \texttt{eta\_pi}             & Learning rate for $intn\rightarrow pyr$ synapses                            & 0.01
+      \\
+      \texttt{eta\_up}             & Learning rates for feedforwarsd $pyr\rightarrow pyr$ synapses               &
+      [0.01, 0.003]                                                                                                      \\
+      \texttt{eta\_down}           & Learning rate for feedback $pyr\rightarrow pyr$ synapses                    & 0.0
+      \\
+    \end{tabular}\caption{Default parameters used in all simulations. }\label{tab-params}
+  \end{center}
+\end{table}
 \section{Integration of the spike-based Urbanczik-Senn plasticity}
 
 
@@ -83,7 +185,7 @@ The simplified \cite{sacramento2018dendritic} case would be:
 
 Where $s_i$ is the postsynaptic spiketrain and $V_i^*$ is the error between dendritic prediction and somatic rate and
 $h( u )$. The additional nonlinearity $h( u ) = \frac{d}{du} ln \  \phi(u)$ is ommited in our model \todo{should it
-though?}.
+  though?}.
 
 
 
@@ -102,56 +204,6 @@ Antiderivatives:
 
 Writing membrane potential to history (happens at every update step of the postsynaptic neuron):
 
-\begin{lstlisting}[language=C++, directivestyle={\color{black}}
-                   emph={int,char,double,float,unsigned,exp},
-                   emphstyle={\color{blue}}]
-
-UrbanczikArchivingNode< urbanczik_parameters >::write_urbanczik_history(Time t, double V_W, int n_spikes, int comp)
-{
-	double V_W_star = ( ( E_L * g_L + V_W * g_D ) / ( g_D + g_L ) );
-	double dPI = ( n_spikes - phi( V_W_star ) * Time::get_resolution().get_ms() )
-      * h( V_W_star );
-}\end{lstlisting}
-
-I interpret this as:
-
-
-\begin{align}
-  \int_{t_{ls}}^T dt' \ V_i^* & = \int_{t_{ls}}^T dt' \  (s_i - \phi(V_i )) h(V_i),               \\
-  \int_{t_{ls}}^T dt' \ V_i^* & = \sum_{t=t_{ls}}^T \  (s_i(t) -  \phi(V_i^t ) \Delta t) h(V_i^t) \\
-\end{align}
-
-\begin{lstlisting}[language=C++, directivestyle={\color{black}}
-                   emph={int,char,double,float,unsigned,exp},
-                   emphstyle={\color{blue}}]
-for (t = t_ls; t< T; t = t + delta_t)
-{
-   	minus_delta_t = t_ls - t;
-    minus_t_down = t - T;
-    PI = ( kappa_l * exp( minus_delta_t / tau_L ) - kappa_s * exp( minus_delta_t / tau_s ) ) * V_star(t);
-    PI_integral_ += PI;
-    dPI_exp_integral += exp( minus_t_down / tau_Delta_ ) * PI;
-}  
-// I_2 (t,T) = I_2(0,t) * exp(-(T-t)/tau) + I_2(t,T)
-PI_exp_integral_ = (exp((t_ls-T)/tau_Delta_) * PI_exp_integral_ + dPI_exp_integral);
-W_ji = PI_integral_ - PI_exp_integral_;
-W_ji = init_weight_ + W_ji * 15.0 * C_m * tau_s * eta_ / ( g_L * ( tau_L - tau_s ) );    
-  
-kappa_l = kappa_l * exp((t_ls - T)/tau_L) + 1.0;
-kappa_s = kappa_s * exp((t_ls - T)/tau_s) + 1.0;
-  \end{lstlisting}
-
-
-\begin{align}
-  \int_{t_{ls}}^T dt' s_j^* & =  \tilde{\kappa_L}(t') * s_j -  \tilde{\kappa_s}(t') * s_j
-\end{align}
-
-$I_1$ in the code is computed as a sum:
-
-\begin{align}
-  I_1 (t,T) = \sum_{t'=t}^T \ (s_L^*(t') - s_s^*(t')) * V^*(t')
-\end{align}
-
 
 
 \section{Dendritic leakage conductance}\label{sec-gl-dend}
@@ -165,7 +217,7 @@ compartment evolves according to:
 
 Under the assumption that the activation of all presynaptic neurons $i$ remains static over time, we can replace the
 spontaneous activation $s_i(t)$ with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle =
-r_i \ \Delta t$ (cf Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but concern
+  r_i \ \Delta t$ (cf. Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but refer to
 individual neurons. Next, in order to find the convergence point of the ODE, we set the left side of the equation to $0$
 and to solve it:
 
@@ -174,21 +226,22 @@ and to solve it:
   g_l^{dend} \  v_j^{dend} & = W_{ji} \    r_i \ \Delta t
 \end{align}
 
-The desired dendritic potential of rate neurons is $v_j^{dend} = \sum_i W_{ji} \ r_i$, which occurs on both sides of the
-above equation. Assuming that our dendritic model fulfills this equality, both terms to drop out from the equation.
-Thus, the correct parametrization for the dendritic leakage conductance remains:
+The instantaneous dendritic potential of rate neurons is given by $v_j^{dend} = \sum_i W_{ji} \ r_i$. Since we are
+searching for a parametrization which fulfils this equality in the steady state, the terms drop out from the above
+equation. Thus, the correct parametrization for the dendritic leakage conductance remains:
 \begin{align}
   g_l^{dend} & = \Delta t
 \end{align}
 
-It was shown experimentally that for hight spike frequencies, this parameterization leads to an exact match of dendritic
+It was shown experimentally that for high values of $\psi$, this parameterization leads to an exact match of dendritic
 potentials between the neuron models. It will therefore be assumed as the default throughout all experiments where
 spiking neurons are used. \newline
 
-In order to keep the NEST models as similar as possible, rate neurons evolve according to the same dynamics. Like in the
-original implementation, dendrites of rate neurons are fully defined by their inputs at time $t$. This behaviour is
-acheived by setting the leakage conductance to $1$ for all dendritic compartments. During network initialization,
-dendritic leakage conductances are set to either one of these values depending on the type of neuron model employed.
+In order to keep the two NEST models as similar as possible, rate neurons evolve according to the same dynamics. Like in
+the original implementation, dendrites of rate neurons ought to be fully defined by their inputs at time $t$. This
+behaviour is achieved by setting the leakage conductance to $1$ for all dendritic compartments. During network
+initialization, dendritic leakage conductances are set to either one of these values depending on the type of neuron
+model employed.
 
 
 \section{Plasticity in feedback connections}\label{sec-feedback-plast}
@@ -211,38 +264,36 @@ was unable to find prior research supporting this type of plasticity \citeme.  A
 tree which resembles pyramidal neurons more closely could be a desirable extension to the model.
 
 While the plasticity was successfully implemented in all variants of the model, it did not prove useful for training the
-networks during my tests. A strong indicator to the reason behind this is the fact, that the dendritic error for this 
-rule is nonzero, even in the self-predicting state (cf. Figure \ref{fig-error-comp-le}). Making these connections non-plastic led to the best learning performance, and is therefore
-assumed as the default for all training simulations. This matches the previous implementations of this network too,
-which typically set learning rates of these connections to $0$ with the exception of a few experiments employing
-steady-state approximations. Note that feedback information is transmitted through fixed weights in this case.
-Feedforward weights in turn learn to match these, meaning that the network effectively implements a type of Feedback
-alignment \cite{Lillicrap2014}.
+networks during my tests. A strong indicator to the reason behind this is the fact, that the dendritic error for this
+rule is nonzero, even in the self-predicting state (cf. Fig. \ref{fig-error-comp-le}). Making these connections
+non-plastic led to the best learning performance, and is therefore assumed as the default for all training simulations.
+This matches the previous implementations of this network too, which typically set learning rates of these connections
+to $0$ with the exception of a few experiments employing steady-state approximations. Note that feedback information is
+transmitted through fixed weights in this case. Feedforward weights in turn learn to match these, meaning that the
+network effectively implements a type of Feedback alignment \cite{Lillicrap2014}.
+
+\newpage
+\section{Supplementary Figures}
 
 
-\section{Presentation times and Latent Equilibrium}\label{sec-appendix-t-pres}
-
-Exactly matching parameters and the training environment to those of existing implementations turned out to be a
-significant challenge. Particularly the way NEST handles signal transmissions made and exact numerical replication of
-results impossible, as discussed in Section \todo{talk about timing differences}. In order to validate, that
-
-
-
-\begin{figure}[t]
+\renewcommand{\thefigure}{S\arabic{figure}}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_3_numpy}
-  \caption{Replication of Figure \ref{fig-bars-le-snest} using a slightly modified version of the python code from
+  \caption{Replication of Fig. \ref{fig-bars-le-snest} using a slightly modified version of the python code from
     \cite{Haider2021}. Resulting performance matches the original results closely, showing that this version can serve
-    as a baseline for comparing performance of the NEST implementation to the original results.}
+    as a baseline for comparing performance of the NEST implementation to the original results. Note, how in this
+    implementation, presentation time has hardly any effect on the LE network because all updates are instantaneous.
+    At the lower end presentation time is only limited by simulation timestep $\Delta t$.}
   \label{fig-bars-le-numpy}
 \end{figure}
 
 
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_3_rnest}
-  \caption{Replication of Figure \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A notable
-    difference to the python implementation in Figure \ref{fig-bars-le-numpy} is, that this version does not handle very
+  \caption{Replication of Fig. \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A notable
+    difference to the python implementation in Fig. \ref{fig-bars-le-numpy} is, that this version does not handle very
     low presentation times as well. This can likely be traced back to the synaptic delay enforced by NEST, which imposes
     an upper bound on network relaxation time. Besides that, performance of the two variants is very similar.}
   \label{fig-bars-le-rnest}
