@@ -39,8 +39,7 @@ error metrics between networks is shown in Fig. \ref{fig-self-pred}.
         initialized with the same random weights for dimensions $[5, 8, 3]$, and stimulated with $5000$ samples of
         random input for $100ms$ each. As described in \cite{sacramento2018dendritic}, during this phase only
         Pyramidal-Interneuron and Interneuron-Pyramidal weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375,
-        \eta^{up}=\eta^{down}=0$). For spiking neurons, stability was increased by setting $\psi=150$.\todo{redo figure
-        with less smoothing and tighter yscale}}
+            \eta^{up}=\eta^{down}=0$). For spiking neurons, stability was increased by setting $\psi=150$.}
     \label{fig-self-pred}
 \end{figure}
 
@@ -78,7 +77,7 @@ to be encoded in a 'one-hot-vector' at the output layer. In the experiment, netw
 layer were trained for 1000 Epochs of 24 samples each. Networks were initialized to the self-predicting state and only
 feedforward $Pyr\rightarrow Pyr$ and $Pyr \rightarrow Intn$ synapses were plastic. Learning rates scaled inversely with
 presentation times: $\eta^{ip}_0 = \frac{0.2}{t_{pres}}, \eta^{up}_0 = \frac{0.5}{t_{pres}}, \eta^{up}_1 =
-\frac{0.1}{t_{pres}}$. The results for the spiking NEST network using spiking are shown in Fig. \ref{fig-bars-le-snest},
+    \frac{0.1}{t_{pres}}$. The results for the spiking NEST network using spiking are shown in Fig. \ref{fig-bars-le-snest},
 while the results for NumPy and Rate NEST variants are depicted in Supplementary Figures \ref{fig-bars-le-numpy} and
 \ref{fig-bars-le-rnest}, respectively.
 
@@ -98,7 +97,7 @@ For the original dendritic error model, performance in all three implementations
 important finding as it answers two open questions: Changes made for a NEST-compatible implementation were adequate and
 result in equal learning performance between rate-based implementations. Learning behaviour of the spiking model is the
 same, confirming the hypothesis that the spike-based dendritic plasticity model is capable of more complex credit
-assignment tasks than previously shown. In this regard, the implementation can be considered a success. 
+assignment tasks than previously shown. In this regard, the implementation can be considered a success.
 
 The results for the Latent equilibrium experiments are somewhat more interesting. For very long $t_{pres}$, both rate
 implementations behave the same. yet the NEST implementation requires considerably more epochs for training, as
@@ -154,14 +153,14 @@ Hence, another tradeoff between performance and training duration is introduced 
 Connectivity within cortical circuits, while structured, appears to subject to a high degree of randomness
 \citep{potjans2014cell} As noted before, one-to-one connections between pairs of neurons are therefore highly unlikely
 \citep{whittington2019theories}. On the other hand, 'fully connected' populations of neurons likewise have not been
-observed in electrophysiological \citep{thomson2002synaptic}\footnote and in-vitro \citep{binzegger2004quantitative} analyses of
+observed in electrophysiological \citep{thomson2002synaptic} and in-vitro \citep{binzegger2004quantitative} analyses of
 cortical neurons. Therefore, any network proclaiming to model the cortex must invariably be capable of handling this
-imperfect connectivity. 
+imperfect connectivity.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_dropout}
-    \caption{Error terms after training a network with dimensions [8, 8, 8] towards the self predicting states, with
+    \caption{Error terms after training a network with dimensions [8, 8, 8] towards the self-predicting state, with
         different percentages of synaptic connections randomly removed. Experiments were performed with the
         rate-based network in NEST, each network was trained for 2000 epochs of 50ms each. Errors are averaged over
         6 independent runs for each configuration.}
@@ -171,24 +170,66 @@ imperfect connectivity.
 To test if the dendritic error model fullfills this requirement, in a first step the self-prediction experiment was
 repeated with neuron dropout. To simulate connection probabilities $p_{conn} \in {0.6, 1.0}$, an appropriate number of
 synapses was deleted after network setup. To avoid completely separating two neuron populations, this deletion was
-performed separately for each of the four synaptic populations. 
+performed separately for each of the four synaptic populations.
 
 Even with only 60\% of synaptic connections present, the network architecture still achieves competetive values for all
-four error metrics. For the weight errors, which are mean squared errors over two matrices, missing synapses were filled
-with zeros. This choice was made under the assumption that a missing connection in an ideal self-predicting network
-would be matched by a zero-weight - or likewise absent - synapse. Results indicate that the dendritic error rule 
-is capable of compensating for absent \todo{finish}
+four error metrics. Weight errors, are calculated as mean squared errors over the two matrices, which requires matrices
+to contain data at every cell. Thus, to compute these errors, weights of deleted synapses were set to zero in these
+matrices. This choice was made under the assumption that a missing connection in an ideal self-predicting network would
+be matched by a zero-weight - or likewise absent - synapse. These results indicate that the dendritic error rule is capable of
+compensating for absent synapses by correctly identifying and depressing corresponding feedback connections. Through this 
+mechanism, the network is able to retain its self-predicting properties in spite of physiological constraints.
+
+
+The extent of this capability was confirmed in SNN, by comparing performance on the Bars dataset of a control network to
+a \textit{dropout network}. Both networks were initialized with random synaptic weights, and trained with full
+plasticity ($\eta^{ip}_0 = 0.004, \eta^{pi}_0 = 0.01, \eta^{up}_0 = 0.01, \eta^{up}_1 = 0.003$) to best enable the
+dropout network to compensate for missing synapses. The dropout network was initialized with $40$ instead of $30$ hidden
+layer pyramidal neurons to counteract the deletion of $15\%$ of synapses per synaptic population. Both networks
+performed very similarly, with the control network reaching perfect accuracy slightly faster (Epoch 140 vs. Epoch 200),
+while the dropout network exhibited slightly lower test loss at the end of training (results not shown). 
+
+These results prove that the dendritic error model is capable of learning in spite of imperfect connectivity, whic must be
+expected to occur in the cortex. This sets it apart from the previous implementation of a predictive coding network
+\citep{Whittington2017}, and further supports its biological plausibility.
+
+
+\subsection{Interneurons}
+
+An easily overlooked connection of this network is the nudging signal from pyramidal neurons to their interneuron
+sisters. These were deliberately not included in the previous dropout studies, as deleting any of them would break the
+foundation of the network's learning scheme. If any interneuron was to not receive its nudging signal, its incoming
+synapses would be unable to adapt their weights, as somatic activity would be exclusively driven by dendritic voltage.
+As a result, both interneuron- and Feedforward weight error would fail to converge, in turn impeding apical error
+reduction. These one-to- one connections can be considered the most important communication channels in the network. If
+there is no redundancy in the neurons, the deletion of any of them breaks learning in this network.
+
+
+Sacramento et al. proclaim that the interneurons of of the network resemble somatostatin-expressing (\textit{SST})
+neurons. This is a reasonable statement, as SST cells are ubiqutous in the cortex and inhibit the same layers as
+pyramidal neurons. Furthermore, they share dense and recurrent synaptic connections to these pyramidal neurons
+\citep{urban2016somatostatin}. Furthermore they have been shown to receive top-down instructive signals, which have 
+been hypothesized to transmit prediction errors \citep{Leinweber2017}. \todo{expand}
 
 
 \section{Separation of synaptic polarity}
-\todo{investigate dales law \citep{Barranca2022}}
 
-A key limitation of the present network model is the requirement that all synapses must be able to assume both positive
-and negative polarities. When restricting any synaptic population in the network to just one polarity, the network is
-unable to reach the self-predicting state \todo{expand?}. Thus, activity in any neuron must be able to have both
-excitatory and inhibitory postsynaptic effects facilitated by appropriate synaptic weights. This requirement is at odds
-with biology, which dictates a singular synaptic polarity for all outgoing connections of a neuron, determined by neuron
-type and its corresponding neurotransmitter \citeme.
+
+A dogma held in neuroscience for a long time now has been the notion that all neurons are either excitatory or
+inhibitory, as dictated by their type (also known as Dale's law \citep{Kandel1968}). Several studies have since shown
+that some neurons violate this law through co-transmission or specific release sites for different neurotransmitters
+\citep{Svensson2019,Barranca2022}. Despite these findings, pyramidal neurons are still regarded to release exclusively
+Glutamate, therefore being strictly excitatory \citep{gerfen2018long,spruston2008pyramidal,Eyal2018}.
+
+
+
+A key limitation of the present network model is the
+requirement that all synapses must be able to assume both positive and negative polarities. When restricting any
+synaptic population in the network to just one polarity, the network is unable to reach the self-predicting state
+\todo{expand?}. Thus, activity in any neuron must be able to have both excitatory and inhibitory postsynaptic effects
+facilitated by appropriate synaptic weights. This requirement is at odds with biology, which dictates a singular
+synaptic polarity for all outgoing connections of a neuron, determined by neuron type and its corresponding
+neurotransmitter \citeme.
 
 
 To investigate to what degree the plasticity rule can deal with this constraint, an experiment was conducted: A
@@ -198,7 +239,7 @@ inhibitory interneurons $B$ through excitatory synapses with random and non-plas
 were connected to $C$ through plastic, inhibitory connections. All incoming synapses at $C$ targeted the same dendritic
 compartment. When inducing a dendritic error in that compartment, all plastic synapses in the network collaborated in
 order to minimize that error. When injecting a positive basal error for example, the inhibitory weights ($C \rightarrow
-B$) decayed, while excitatory synaptic weights ($A \rightarrow B$) increased. Flipping the sign of that error injection
+    B$) decayed, while excitatory synaptic weights ($A \rightarrow B$) increased. Flipping the sign of that error injection
 had the opposite effect on weights, and likewise cancelled the artificial error. This shows that a separation of
 synaptic polarity does not interfere with the principles of the Urbanczik-Senn plasticity when depression is facilitated
 by interneurons.
@@ -260,23 +301,19 @@ populations as described in Fig. \ref{fig-exc-inh-split}.
 \end{figure}
 
 
-\section{In search of plausible spike frequencies}
-\todo{expand}
-
-
-
-\section{direct feedback connections to interneurons}\label{sec-electric-syns}
-
-\cite{Vaughn2022,Mancilla2007}
 
 
 
 \section{Performance of the different implementations}\label{sec-benchmark}
 
-As stated in \cite{Haider2021}, simulating the present network with many neurons or more than one hidden layer quickly
-becomes unfeasible when simulating the full leaky dynamics. To investigate how network size affects simulation time, all
-three implementations created for this project were trained on the bars dataset for a single epoch with different
-network sizes for a single epoch, in order to assess efficiency.
+As stated in \cite{Haider2021}, simulating large dendritic error networks with the full leaky dynamics quickly becomes
+unfeasable. While the NEST simulator can be regarded as rather fast \citep{albada2018performance}, simulations on it by
+design cannot employ batched matrix multiplication, as is typical in machine learning. Thus, by computing neuron updates
+individually even in highly structured networks like this one, NEST was expected to perform worse than previous
+implementations using PyTorch and dedicated GPUs. Not only did the NEST implementations perform rather poorly in terms
+of speed, the spiking variant was the worst performer across the board. To investigate the extent of this, as well as
+possible causes, several benchmark experiments were performed. Unless specified otherwise, these tests were run on
+an \textit{AMD Ryzen Threadripper 2990WX} using 8 cores at up to $3.0GHz$.
 
 
 \begin{figure}[t]
@@ -285,18 +322,21 @@ network sizes for a single epoch, in order to assess efficiency.
     \caption{Benchmark of the three different implementations using a network of $[9, n_{hidden}, 3]$ neurons per layer.
         $n_{hidden}=30$ was chosen as a baseline, as it is the default throughout all simulations on the Bars dataset.
         Networks were instantiated with the same synaptic weights and trained for a single epoch of 5 stimulus
-        presentations of $100ms$ each. Simulations were performed on an \textit{AMD Ryzen Threadripper 2990WX} using 8
-        cores for the NEST simulations at up to $3.0GHz$.}
+        presentations of $100ms$ each.}
     \label{fig-benchmark}
 \end{figure}
+
+
+To compare how network size affects simulation time, all three implementations created for this project were trained
+on the bars dataset for a single epoch (8 samples) with different network sizes.
 
 The result of this comparison is shown in Fig. \ref{fig-benchmark}. The NumPy network is slow at baseline, which is
 likely explained by the fact that it is the only variant which is running on a single thread. This is due to a
 limitation of NumPy, and could likely be improved greatly by using batched matrix multiplications, as are provided for
 example by \texttt{PyTorch}\footnote{It is also possible, that the network code surrounding the NumPy computations is
-less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
-dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
-investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
+    less efficient than the one for the NEST network. As this implementation was needed primarily to prove that neuron
+    dynamics and synaptic updates were ported correctly to NEST, efficiency was a minor concern here and this was not
+    investigated further.}.  Notably, this variant exhibits very little slowdown in response to an increase in network size.
 My assumption is, that the vectorization of synaptic updates on a single thread scales up better than the communication
 between threads that is required by most events in the NEST simulations. The NEST implementation using rate neurons
 performed best in terms of speed across the board. This result was slightly surprising, as the demand on the
@@ -306,7 +346,7 @@ targets at every time step.
 Finally, the novel spiking variant of this model performed substantially worse than anticipated. Particularly in
 comparison to the rate implementation, I initially expected substantial performance improvements. The Difference between
 the two was even greater when simulating on an office-grade processor (Benchmark was also run on an \textit{Intel Core
-i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
+    i5-9300H} at $2.40GHz$, results not shown). Three hints about the comparatively poor performance can be deduced: For
 one, both the rate and the spiking neuron model employ almost identical neuron models, with minor changes to
 parametrization and output generation. Thus, updates to the neuron state are unlikely to be responsible for the worse
 performance. Secondly, the number of Events transmitted between neurons is much lower for the SNN compared to
@@ -323,27 +363,32 @@ of total synapses in the network is given by
                  & = n_h (n_x + n_y^4)
 \end{align}
 
-with $|w|$ of a weight matrix $w$ in this case denoting the total number of elements in that matrix \what{Is there a
-    more conventional notation?}. Thus, the number of synapses in a network grows much faster than the number of total
-    neurons when increasing the size of the hidden layer.
+with $|w|$ of a weight matrix $w$ in this case denoting the total number of elements in that matrix. By contrast, in a
+strictly feedforwad network of three layers the number of synapses is given by $n_{synapses} = n_h (n_x + n_y)$. Thus,
+the number of synapses in a network grows exponentially faster than for the dendritic error network, making 
 
 availis given by the stark increase in
 
 \section{Response to unpredicted stimuli}
 
-The activity of many cortical neurons increases when a brain is presented with unpredicted stimuly that regard these
-neurons \todo{check out \cite{whittington2019theories} refs 50-54}. This property is prominently replicated by
-predictive coding networks, since activation of error nodes is a function of local prediction errors. Prediction errors
-in the present model on the other hand are encoded in both positive and negative potentials of apical dendrites. Hence,
-the
+One of the predictions about cortical activity made by predictive coding is an increased network activity in response to
+senesory input violating the generative model. This behaviour is to be expected, as local prediction errors in these
+networks are encoded in the activation of error neurons. A diverse set of studies has since independently reported
+behaviour consistent with this hypothesis in primate cortical neurons (see \citep{bastos2012canonical}[Table 1] for an
+extensive review). This property is also listed in Table \ref{tab-wb-models} in support of the predictive coding
+network, but not the dendritic error model. As this is an experimentally testable hypothesis, a simple experiment was
+conducted. A network with two hidden layers (dims=[9,30,10,3]) was presented with stimuli from the Bars-dataset. The
+number of spikes were recorded for three paradigms: Fully random weights, self-predicting weights, and post-training
+weights from a previous experiment. Results are shown in Figure \ref{fig-stimulus-response}
 
-\begin{figure}[t]
+\begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{fig_activity_unpredicted_stimulus}
-    \caption{Comparison of network response to stimuli from the Bars dataset.}
+    \includegraphics[width=0.9\textwidth]{fig_unpredicted_stimulus}
+    \caption{Comparison of neuron activation in response to stimuli based on current network weights.}
     \label{fig-stimulus-response}
 \end{figure}
 
+As the results show, the network does exhibit increased activation when stimuli are novel
 
 
 

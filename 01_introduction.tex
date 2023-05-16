@@ -179,58 +179,6 @@ strongly influenced by the recent excitement about dendrites.
 
 
 
-
-% \arrayrulecolor{white} % <--- {\renewcommand{\arraystretch}{1.45} \begin{table}[t] \resizebox{\textwidth}{!}{%
-% \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}} &
-% \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model} &
-% \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                  \\ \cline{3-6}
-% \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning} & Continuous update &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding} & Dendritic error \\ \hline \rowcolor[HTML]{D9D9D9}
-% \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}} & {\color[HTML]{FE0000} Required} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{32CB00} Not required}
-% \\ \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}} & {\color[HTML]{32CB00}
-% Unconstrained} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}  &
-% {\color[HTML]{FE0000} Constrained} \\ \hline \rowcolor[HTML]{D9D9D9}
-% \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}} & {\color[HTML]{32CB00} L-1} &
-% \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}} & {\color[HTML]{32CB00} L-1} \\
-%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training} &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} & {\color[HTML]{32CB00} Not
-%         required} & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}} &
-%         {\color[HTML]{FE0000} Required} \\ \hline \rowcolor[HTML]{D9D9D9}
-%         \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in} &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\ between
-%         separate                           \\ phases\end{tabular}}        & \begin{tabular}[c]{@{}l@{}}Rate of change
-%         of \\ activity\end{tabular}                                     &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
-%                                                         neurons\end{tabular}}               &
-%         \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular} \\
-%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for} &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour in
-%         a\\
-%                                                         variety of tasks\end{tabular}} &
-%         \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular} &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\ activity to\\
-%                                                         unpredicted stimuli\end{tabular}}        &
-%         \begin{tabular}[c]{@{}l@{}}Properties of \\
-%           pyramidal neurons\end{tabular} \\
-%         \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance} &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3} & - &
-%         \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7} & $\sim$1.96 \\ \hline \end{tabular}% }\caption{
-%         Comparison between some leading biologically plausible approximations of Backprop, adapted from
-%         \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996},
-%         Contrastive learing with continuous update \citep{Bengio2017}, Predictive Coding
-%         \citep{Whittington2017,rao1999predictive}, Dendritic error network \citep{sacramento2018dendritic}. All
-%         algorithms were selected due to them reflecting some properties of biological brains, some of which are
-%         highlighted in the row "Data accounted for". To do this, all of them need to make concessions. In the first
-%         few rows, desirable properties are highlighted in green, while undesirable traits are highlighted in red.}
-%         \end{table}
-
-% }
-
 \section{Cortical microcircuits}
 
 Another feature of the brain which is often not considered in (biologically plausible) machine learning models is its
@@ -258,23 +206,25 @@ biologically plausible, and to attempt to improve its plausibility - without ful
 \section{Model selection}
 
 The model selection progress was strongly influenced by a review article on biologically plausible approximations of
-Backprop \citep{whittington2019theories}. The authors narrow the wide range of proposed solution down to four algorithms
-that are both highly performant and largely biologically plausible. The algorithms are united by requiring minimal
-external control, and by the fact that they can all be described within a common framework of energy minimization
-\citep{Scellier2017}. The first two models are Contrastive learning \cite{OReilly1996}, and its extension to
-time-continuous updates \citep{Bengio2017}. Both of these encode neuron-specific errors in the change of neural activity
-over time. One of their appeals is the fact that they rely on Hebbian and Anti-Hebbian plasticity. Yet in the plasticity
-rule also lies their greatest weakness, as synapses need to switch between the two once the target for a given stimulus
-is provided. This switch requires a global signal that communicates the change in state to all neurons in the network
-simultaneously.
+Backprop \citep{whittington2019theories}. The authors narrow the wide range of proposed solutions down to four
+algorithms that are both highly performant and largely biologically plausible. Due to impact of the paper on this
+thesis, their model comparison is depicted in Supplementary Table \ref{tab-wb-models}. The algorithms were in part
+selected for requiring minimal external control during training, as well as by the fact that they can all be described
+within a common framework of energy minimization \citep{Scellier2017}. The first two models are Contrastive learning
+\cite{OReilly1996}, and its extension to time-continuous updates \citep{Bengio2017}. Both of these encode
+neuron-specific errors in the change of neural activity over time. One of their appeals is the fact that they rely on
+Hebbian (and Anti-Hebbian) plasticity, which are highly regarded in the neuroscience literature
+\citep{magee2020synaptic,Brea2016}. Yet in the plasticity rule also lies their greatest weakness, as synapses need to
+switch between the two opposing mechanisms once the target for a given stimulus is provided. This switch requires a
+global signal that communicates the change in state to all neurons in the network simultaneously.
 
 The second class of models was more appealing to me, as both variants are based on the predictive coding account in
-Neuroscience \citep{rao1999predictive}, which deserves an introduction.
+Neuroscience \citep{rao1999predictive}, which deserves its own introduction.
 
 \subsection{Predictive coding}
 
 In this seminal model of processing in the visual cortex, each level of the visual hierarchy represents the outside
-world at some level of abstraction. Recurrent connections then serve communicate prediction errors and predictions up
+world at some level of abstraction \todo{expand a little}. Recurrent connections then serve communicate prediction errors and predictions up
 and down the hierarchy respectively, which the network attempts to reconcile. The authors showed that through rather
 simple computations, these prediction errors can be minimized to obtain useful representations at each level of the
 hierarchy. They further showed that a predictive coding network trained on natural images exhibits end-stopping
