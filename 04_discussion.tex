@@ -26,25 +26,80 @@ introduced by \cite{Whittington2017}:
 
 
 
+\section{Should it be considered pre-training?}
+
+\todo{someone said this network needs pre-training and that made me sad :(}
+
 
 
 
 
 \section{Limitations}
 
-Network needs to be reset between stimuli
-original does not do that, in NEST it's kindof a big deal.
 
-Most experiments require repeats to confirm results across with multiple independent runs.
+\subsection{Computational efficiency}
+
+Computational efficiency has been a limiting factor for the kinds of tasks the dendritic error network
+could be trained on. This includes the work done in this thesis, as (once the implementation was ready) both time and
+computing resources were in limited supply.  
+
+In its current state, the implementation must be considered inefficient in comparison to other approximations of
+Backprop. This limitation existed in the original implementation and was largely dealt with through steady-state
+approximations and the addition of Latent equilibrium. The SNN implementation in the present work reintroduces this
+issue, and regrettably exacerbates the problem considerably. To a degree, decreased speed is an inadvertable price to be
+paid for a more exact modelling of neuronal processes. There is a high computational cost attached to more complex
+neuron dynamics, plasticity rules, network structures and so forth. In short, any attempt at introducing more features
+of biological brains into an existing model must be expected to decrease performance. Given the level of
+abstraction in the present model paired with its poor speed, this perspective is slightly concerning. Therefore, before
+developing this model further, it should be rigorously optimized. 
+
+Some initial directions for this are provided by the benchmarks performed in this study. The spike-based plasticity rule
+appears to be highly costly, and should be optimized or approximated. One possible optimization was already provided by
+\citep{Stapmanns2021}. In the paper, a third update variant for the dendritic plasticity rule is discussed. Instead of a
+strictly event-based or time-based update rule, a hybrid variant called "Event-based update with compression" is
+discussed. In this method, whenever a spike is received by the postsynaptic neuron, all incoming synapses are updated
+with the updated dendritic potentials. This variant trades an increased number of synapse updates for the removal of
+redundant computations. For this reason, it proved particularly advantageous for networks in which neurons had a large
+number of incoming synapses, and average spike frequencies were low. Pyramidal neurons are often innervated by thousands
+of neurons \citeme and reportedly have much lower spike frequencies than modeled here. Therefore, this alternative
+integration scheme can be expected to perform well for further experiments in this direction. Regrettably, it was not
+available in time for this thesis, so this remains speculative for now.
+
+Another alternative is, to approximate the full plasticity rule with the instantaneous error at the time of a spike.
+This would eliminate the requirement for both frequent updates, as well as for storing a history of dendritic error.
+Thus, a network employing this simplified plasticity rule would be much less computationally costly. As shown in Fig.
+\ref{fig-error-comp-le}, error terms in LE networks relax after only a few simulation steps. Therefore, under the
+condition that input remains static throughout, this crude approximation is expected to perform fairly well. \newline
+
+\noindent The neuron model should likewise be investigated for potential improvements in terms of efficiency. Modeling
+interneurons without an apical compartment might yield some improvements (although initials experiments have dampened
+expectations for this). It is also possible, that the network does not require integration timesteps as low as $0.1ms$,
+which has not been investigated yet. \newline
+
+\subsubsection*{Neuromorphic hardware}
+
+A prospect which likely would vastly improve simulation speed is a full re-implementation of the neuron model on
+neuromorphic hardware. This model fits the self-described niche of such systems almost perfectly; It employs strictly
+local plasticity rules, its nodes use leaky membrane dynamics and communicate through binary spikes. By a rough
+estimation, even the first generation of Intel's Loihi chips \citep{davies2018loihi} should be capable of simulating
+this neuron model. The chip is capable of modelling multiple dendritic trees per neuron, and the learning engine appears
+capable of communicating the dendritic error to all synapses. It is however possible that the learning rule would need
+to be approximated somewhat for Loihi 1, this requires further investigation. The publicly available information about
+the follow-up chip Loihi 2 \citep{Davies2021} is still somewhat sparse, but it claims to support a much more diverse set
+of learning rules. Thus, this is a promising direction for further development of this network. Of course, Loihi is only
+one of many neuromorphic systems \citep{rajendran2019low}. Another very promising system is \textit{BrainScaleS-2}, 
+which trades off some speed for substantially increased complexity in the neuron models. It appears to be spearheading
+the field with regard to simulating segregated dendrites \citep{Kaiser2022}, which might make it even more appealing
+for a re-implementation.
+
+Neuromorphic systems are unified in promising to vastly improve computational speed and energy efficience of large
+spiking neural networks. Furthermore, the vast majority of them provides a basis for leaky-, spiking-, and
+multi-compartment neuron models as core design pillars. Due to these properties, neuromorphic hardware is a good fit and
+a promising future direction for the dendritic error model.
 
 
-\subsection*{Efficiency}
-exposure time and training set still quite large
 
 
-\subsection*{Neuron model}
-
-non-resetting, non-refractory
 
 
 \subsection{In search of plausible spike frequencies}
@@ -85,10 +140,6 @@ data (Blundell et al., 2016)
 
 Where do targets come from? \cite{Bengio2015}
 
-\section{Should it be considered pre-training?}
-
-\todo{someone said this network needs pre-training and that made me sad :(}
-
 \section{Relation to energy minimization}
 
 
@@ -116,15 +167,34 @@ Someone should look into that!
 Different configurations for which synapses are plastic should be elaborated on.
 
 
-\subsection{improvements to the neuron models}
+\subsection{Neuron model}
 
 
-\todo{talk about ALIF neurons \citep{Gerstner2009} also reffed in
-e-prop\citep{bellec2019biologically,bellec2020solution}. look for sources}
+The neuron models employed in the network can be improved in several ways. Note, that this perspective is not made with
+learning performance in mind, but rather with increased correspondence to the cortical circuitry. 
+
+
+
+Two properties that are part of most spiking neuron models, but have not been investigated here, are membrane reset and
+refractory periods. The neuron model contains a mechanism for refractoriness after a spike, yet no experiments regarding
+the impact of this feature on learning have yet been performed. As a natural extension of this, resetting the membrane
+potential after eliciting a spike could likewise improve biological plausibility with simple changes to the model. These
+two changes together would change the spike generation process to that of a stochastic LIF neuron. These neurons have
+previously performed well for modelling sensory representations in the cortex \citep{Pillow2008}. Another neuron
+property considered in that study is \textit{spike-frequency-adaptation}. Neurons with this mechanism increase their
+threshold potential in response to previous activity. Such adaptability has been observed in $\tilde 20 \% $ of neurons
+in the mouse visual cortex \citep{allen2018}, and has been shown to lead to significant performance increases in
+recurrent SNN \citep{bellec2018long,bellec2020solution}. A neuron model capable of this has already been implemented in
+NEST, so extending the present model in this regard should be feasible. These three changes together would vastly
+improve correspondence of the neuron model to physiological insights. If successful, learning with such a model would
+lend further support to the model's claim of biological plausibility.
+
+
+
+
+
 
 pyr and intn are wayy to similar
-
-LIF, membrane reset and $t_{ref}$
 
 reward-modulated urbanczik-senn plasticity?
 
@@ -145,6 +215,7 @@ constants. SNN performs best when $\tau_x$ is greater than $\Delta_t$ by roughly
 
 
 
+\subsection{Improving efficiency}
 
 
 
