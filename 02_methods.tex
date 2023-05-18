@@ -585,7 +585,7 @@ prediction of future network states will henceforth be referred to as \textit{pr
   \centering
   \includegraphics[width=0.9\textwidth]{fig_le_response}
   \caption{Signal transmission between an input neuron $i$ and a hidden layer pyramidal neuron $j$. Depicted are
-    activations for the original Sacramento model and prospective activation using Latent Equilibrium. \textbf{A:}
+    activations for the original Sacramento model and prospective activation using LE. \textbf{A:}
     Current injected into the input neuron. Membrane potential slowly adapts to match this (not shown) \textbf{B:}
     Activation of the input neuron using instantaneous- $\phi(u_i)$ (blue), and prospective activation
     $\phi(\breve{u}_i)$ (orange). Note how strongly prospective activation reacts to changes in somatic voltage, leading
@@ -607,7 +607,8 @@ under careful parametrization it strongly decreases response time.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_le_dendritic_errors}
-  \caption{Effects of Latent equilibrium dynamics on the dendritic error terms from Equations
+  \caption{Effects of 
+   equilibrium dynamics on the dendritic error terms from Equations
     \ref{eq-delta_w_up}-\ref{eq-delta_w_down}. Depicted are error terms for individual spiking neurons in a network with
     one hidden layer (N=3). The network was fully trained on the Bars dataset (cf. Section \ref{sec-le-tpres}), so
     errors should ideally relax to zero. Note, that this does not happen here due to the fluctuations inherent to the

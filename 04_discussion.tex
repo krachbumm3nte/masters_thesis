@@ -26,6 +26,19 @@ introduced by \cite{Whittington2017}:
 
 
 
+One of the predictions about cortical activity made by predictive coding is an increased network activity in response to
+senesory input violating the generative model. This behaviour is to be expected, as local prediction errors in these
+networks are encoded in the activation of error neurons. A diverse set of studies has since independently reported
+behaviour consistent with this hypothesis in primate cortical neurons (see \citep{bastos2012canonical}[Table 1] for an
+extensive review). This property is also listed in Table \ref{tab-wb-models} in support of the predictive coding
+network, but not the dendritic error model. As this is an experimentally testable hypothesis, a simple experiment was
+conducted. A network with two hidden layers (dims=[9,30,10,3]) was presented with stimuli from the Bars-dataset. The
+number of spikes were recorded for three paradigms: Fully random weights, self-predicting weights, and post-training
+weights from a previous experiment. Results are shown in Figure \ref{fig-stimulus-response}
+
+
+
+
 \section{Should it be considered pre-training?}
 
 \todo{someone said this network needs pre-training and that made me sad :(}
@@ -41,7 +54,7 @@ introduced by \cite{Whittington2017}:
 
 Computational efficiency has been a limiting factor for the kinds of tasks the dendritic error network
 could be trained on. This includes the work done in this thesis, as (once the implementation was ready) both time and
-computing resources were in limited supply.  
+computing resources were in limited supply.
 
 In its current state, the implementation must be considered inefficient in comparison to other approximations of
 Backprop. This limitation existed in the original implementation and was largely dealt with through steady-state
@@ -51,7 +64,7 @@ paid for a more exact modelling of neuronal processes. There is a high computati
 neuron dynamics, plasticity rules, network structures and so forth. In short, any attempt at introducing more features
 of biological brains into an existing model must be expected to decrease performance. Given the level of
 abstraction in the present model paired with its poor speed, this perspective is slightly concerning. Therefore, before
-developing this model further, it should be rigorously optimized. 
+developing this model further, it should be rigorously optimized.
 
 Some initial directions for this are provided by the benchmarks performed in this study. The spike-based plasticity rule
 appears to be highly costly, and should be optimized or approximated. One possible optimization was already provided by
@@ -87,7 +100,7 @@ capable of communicating the dendritic error to all synapses. It is however poss
 to be approximated somewhat for Loihi 1, this requires further investigation. The publicly available information about
 the follow-up chip Loihi 2 \citep{Davies2021} is still somewhat sparse, but it claims to support a much more diverse set
 of learning rules. Thus, this is a promising direction for further development of this network. Of course, Loihi is only
-one of many neuromorphic systems \citep{rajendran2019low}. Another very promising system is \textit{BrainScaleS-2}, 
+one of many neuromorphic systems \citep{rajendran2019low}. Another very promising system is \textit{BrainScaleS-2},
 which trades off some speed for substantially increased complexity in the neuron models. It appears to be spearheading
 the field with regard to simulating segregated dendrites \citep{Kaiser2022}, which might make it even more appealing
 for a re-implementation.
@@ -111,7 +124,7 @@ Oversized networks have a higher tendency of failing on some tasks (results not 
 but plagued some of my experiments with no satisfactory explanation yet found.
 
 
- When injecting large currents (i.e. in func approx experiments), the network kinda shits itself. Somewhat
+When injecting large currents (i.e. in func approx experiments), the network kinda shits itself. Somewhat
 expected, somewhat annoying
 
 
@@ -139,8 +152,6 @@ data (Blundell et al., 2016)
 
 
 Where do targets come from? \cite{Bengio2015}
-
-\section{Relation to energy minimization}
 
 
 \section{Correspondence of the final model to cortical circuitry}
@@ -171,7 +182,7 @@ Different configurations for which synapses are plastic should be elaborated on.
 
 
 The neuron models employed in the network can be improved in several ways. Note, that this perspective is not made with
-learning performance in mind, but rather with increased correspondence to the cortical circuitry. 
+learning performance in mind, but rather with increased correspondence to the cortical circuitry.
 
 
 
