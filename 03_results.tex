@@ -3,9 +3,9 @@
 
 The following results are exploratory in nature, and After some poor initial results the focus was laid on proving that
 the network can perform at all, rather than fine-tuning hyperparameters towards optimal performance. This decision was
-in part motivated by a priorization of gaining neuroscientific insights over targeting minimal loss. It should be
-noted, that training the network is computationally quite costly (c.f. Section \ref{sec-benchmark}) which turned
-parameter studies into a time-consuming process. 
+in part motivated by a priorization of gaining neuroscientific insights over targeting minimal loss. It should be noted,
+that training the network is computationally quite costly (c.f. Section \ref{sec-benchmark}) which turned parameter
+studies into a time-consuming process.
 
 Early experiments showed that the network is rather sensitive to parameter changes. The search for default parameters
 took some effort, as a certain heterogeneity exists in the two existing implementations
@@ -15,28 +15,29 @@ neurons employ prospective activation functions in all simulations. So far, no d
 presented themseleves, and learning speed can be increased drastically compared to the original implementation. The full
 default parametrization is shown in Supplementary Table \ref{tab-params}. Since it was anticipated that the spiking
 implementation would perform worse than the rate-based variant, the first goal was to measure how big this difference in
-performance is. Furthermore, a relevant question was to what degree the synaptic delays enforced by NEST would
-influence performance of the rate model. These questions will be answered in the upcoming sections.
+performance is. Furthermore, a relevant question was to what degree the synaptic delays enforced by NEST would influence
+performance of the rate model. These questions will be answered in the upcoming sections. Note that not all experimental
+results were given their own Figures. In these cases, plots can be found in the electronic supplementary material.
 
 
 \section{The self-predicting state}
 
 As a first comparison between the three implmementations, the pre-training towards a self-predicting state (cf.
-\cite{sacramento2018dendritic}[Fig. S1]) was performed. For this experiment, no target signal is provided at the output
+\citep{sacramento2018dendritic}[Fig. S1]) was performed. For this experiment, no target signal is provided at the output
 layer, and the network is tasked with learning to self-predict top-down input. The network is initialized with fully
 random weights and stimulated with random inputs from a uniform distribution between 0 and 1. A comparison of the four
-error metrics between networks is shown in Fig. \ref{fig-self-pred}.
+error metrics between implementations is shown in Fig. \ref{fig-self-pred}.
 
 
 
-\begin{figure}[t]
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_self_prediction}
-    \caption{Different network types learn to predict self-generated activity in superficial layers. All networks were
-        initialized with the same random weights for dimensions $[5, 8, 3]$, and stimulated with $5000$ samples of
-        random input for $100ms$ each. As described in \cite{sacramento2018dendritic}, during this phase only
-        Pyramidal-Interneuron and Interneuron-Pyramidal weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375,
-        \eta^{up}=\eta^{down}=0$). For spiking neurons, stability was increased by setting $\psi=150$.}
+    \caption[Training towards the self-predicting state]{Training towards the self-predicting state. All implementations
+        learn to predict self-generated top-down signals. Networks were initialized with the same random weights for
+        dimensions $[5, 8, 3]$, and stimulated with $5000$ samples of random input for $100ms$ each. As described in
+        \citep{sacramento2018dendritic}, during this phase only $Pyr \rightarrow Intn$ and $Intn \rightarrow Pyr$
+        weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375, \eta^{up}_0=\eta^{up}_1=\eta^{down}=0$).}
     \label{fig-self-pred}
 \end{figure}
 
@@ -58,9 +59,9 @@ membrane capacitance of the apical compartment in order to smoothe out the fluct
 This will be discussed in Section \ref{sec-c-m-api}.
 
 In most simulations in the literature, the network is initialized to an ideal self-predicting state. Furthermore
-feedback weights are often non-plastic ($\eta^{pi}=\eta^{down}=0$). Therefore, a failure to learn the underlying weight
-symmetry should not fundamentally hinder learning. For the time being, showing that the network approaches a
-self-predicting state at all was deemed a sufficient result.
+feedback weights are non-plastic in many experiments ($\eta^{pi}=\eta^{down}=0$). Therefore, a failure to perfectly
+learn this weight symmetry should not fundamentally hinder learning. For the time being, showing that the network
+approaches a self-predicting state was deemed a sufficient result.
 
 
 \section{Presentation times and latent equilibrium}\label{sec-le-tpres}
@@ -75,7 +76,7 @@ encoded in a 'one-hot-vector' at the output layer. In the experiment, networks o
 were trained for 1000 Epochs of 24 samples each. Networks were initialized to the self-predicting state and only
 feedforward $Pyr\rightarrow Pyr$ and $Pyr \rightarrow Intn$ synapses were plastic. Learning rates scaled inversely with
 presentation times: $\eta^{ip}_0 = \frac{0.2}{t_{pres}}, \eta^{up}_0 = \frac{0.5}{t_{pres}}, \eta^{up}_1 =
-\frac{0.1}{t_{pres}}$. The results for the spiking NEST network are shown in Fig. \ref{fig-bars-le-snest}, while the
+    \frac{0.1}{t_{pres}}$. The results for the spiking NEST network are shown in Fig. \ref{fig-bars-le-snest}, while the
 results for NumPy and Rate NEST variants are depicted in Supplementary Figures \ref{fig-bars-le-numpy} and
 \ref{fig-bars-le-rnest}, respectively.
 
@@ -83,11 +84,11 @@ results for NumPy and Rate NEST variants are depicted in Supplementary Figures \
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_3_snest}
-    \caption{Replication of Fig. 3 from \cite{Haider2021} using networks of spiking neurons in the NEST simulator.
-        \textbf{A:} Comparison between Original dendritic error network by and an identical network employing Latent
-        equilibrium. Shown is the training of networks with 9-30-3 neurons on the Bars-dataset from with three different
-        stimulus presentation times. \textbf{B:} Test performance after 1000 Epochs as a function of stimulus
-        presentation time.}
+    \caption[Replication of Fig. 3 from \citep{Haider2021}]{Replication of Fig. 3 from \citep{Haider2021} using networks
+        of spiking neurons in the NEST simulator. \textbf{A:} Comparison between Original dendritic error network by and
+        an identical network employing Latent equilibrium. Shown is the training of networks with 9-30-3 neurons on the
+        Bars-dataset from with three different stimulus presentation times. \textbf{B:} Test performance after 1000
+        Epochs as a function of stimulus presentation time.}
     \label{fig-bars-le-snest}
 \end{figure}
 
@@ -117,7 +118,30 @@ also shows that the relaxation problem affects all communication schemes equally
 substantially higher for rate neurons, it does improve performance and efficiency of the spiking variant. For this
 reason, LE will be turned on in all upcoming simulations.
 
+\section{Approximating arbitrary functions}\label{sec-func-approx}
 
+To confirm that the spiking network is capable of learning more complex tasks, it was trained to match the input-output
+mapping of a separate teacher network. This is an established method for showing that a network can approximate
+arbitrary functions. A comparison between different 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{fig_function_approximator}
+    \caption[SNN learns to match separate teacher network]{SNN learns to match separate teacher network. Networks of
+    size $15-n_{hidden}-5$ neurons per layer were trained on input-output pairings of a randomly initialized feedforward
+    network of size $15-15-5$. Each network was trained on 300000 samples of the same teacher network while all somatic
+    compartments received background noise with a standard deviation of $0.01$.}
+    \label{fig-func-approx}
+\end{figure}
+
+As the task was too easy when inputs to the teacher network were strictly positive (as is the case in the
+self-prediction paradigm), inputs were drawn from a uniform distribution $U(-1,1)$. To facilitate inhibitory stimulation
+to the spiking network, a separate population was required at the input layer. This population was initialized with
+inverted weights compared to the excitatory population and received all negative values of a given input vector. Due to
+this necessity, the spiking network had to learn an additional set of weights, wich might be one of the reasons why
+overall performance stayed behind expectations.
+
+\todo{complete}
 
 \section{Apical compartment capacitance}\label{sec-c-m-api}
 
@@ -125,7 +149,7 @@ Next, an investigation was made into the apical- and feedback weight errors of t
 smoothing of apical compartment voltage would lead to a decrease in both errors. To test this, the Self-predicting
 experiment was repeated with numerous values for apical compartment capacitance $C_m^{api} \in \{ 1, 250 \} pF$ (results
 not shown). The experiment was a success and showed that for $C_m^{api} = 50pF$, apical error is almost halved ($0.0034
-\rightarrow 0.0019$), and FB error is decreased by $80\%$ ($0.15 \rightarrow 0.027$). These values are still at least an
+    \rightarrow 0.0019$), and FB error is decreased by $80\%$ ($0.15 \rightarrow 0.027$). These values are still at least an
 order of magnitude higher than the rate implementations, but mark a substantial improvement. Further increasing the
 parameter lead to a decreased apical error, but came at the cost of slower convergence. Higher membrane capacitances
 must in general be expected to increase the relaxation period of the entire network. Thus, they requiring a highly
@@ -134,7 +158,8 @@ undesirable increase in $t_{pres}$ for successful learning.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_c_m_psi}
-    \caption{Comparison of SNN performance along different values for $\psi$ and $C_m^{api}$.}
+    \caption[Comparison of performance for different configurations of $\psi$ and $C_m^{api}$]{Comparison of performance
+    for different  configurations of $\psi$ and $C_m^{api}$.}
     \label{fig-c-m-psi}
 \end{figure}
 
@@ -159,10 +184,11 @@ handling this imperfect connectivity.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_dropout}
-    \caption{Error terms after training a network with $8-8-8$ neurons per layer towards the self-predicting state, with
-        different percentages of synaptic connections randomly removed. Experiments were performed with the rate-based
-        network in NEST, each network was trained for 2000 epochs of 50ms each. Errors are averaged over 6 independent
-        runs for each configuration.}
+    \caption[Error terms after training with synapse dropout]{Error terms after training with synapse dropout. Networks
+        with $8-8-8$ neurons per layer were trained towards the self-predicting state, with different percentages of
+        synaptic connections randomly removed. Experiments were performed with the rate-based network in NEST, each
+        network was trained for 2000 epochs of 50ms each. Errors are averaged over 6 independent runs for each
+        configuration.}
     \label{fig-dropout}
 \end{figure}
 
@@ -186,8 +212,8 @@ a \textit{dropout network}. Both networks were initialized with random synaptic 
 plasticity ($\eta^{ip}_0 = 0.004, \eta^{pi}_0 = 0.01, \eta^{up}_0 = 0.01, \eta^{up}_1 = 0.003$) to best enable the
 dropout network to compensate for missing synapses. The dropout network was initialized with $40$ instead of $30$ hidden
 layer pyramidal neurons to counteract the deletion of $15\%$ of synapses per synaptic population. Both networks
-performed very similarly, with the control network reaching $100\%$ accuracy faster (Epoch 140 vs. Epoch 200), while the
-dropout network exhibited slightly lower test loss at the end of training (results not shown).
+performed very similarly, with the control network reaching $100\%$ accuracy somewhat faster (Epoch 140 vs. Epoch 200),
+while the dropout network exhibited slightly lower test loss at the end of training (results not shown).
 
 These results prove that the dendritic error model is capable of learning in spite of imperfect connectivity, which must
 be expected to occur in the cortex. This sets it apart from the previous implementation of a predictive coding network
@@ -221,12 +247,12 @@ inhibitory interneurons $B$ through excitatory synapses with random and non-plas
 were connected to $C$ through plastic, inhibitory connections. All incoming synapses at $C$ targeted the same dendritic
 compartment. When inducing a dendritic error in that compartment, all plastic synapses in the network collaborated in
 order to minimize that error. When injecting a positive basal error for example, the inhibitory weights ($C \rightarrow
-B$) decayed, while excitatory synaptic weights ($A \rightarrow B$) increased. Flipping the sign of that error injection
+    B$) decayed, while excitatory synaptic weights ($A \rightarrow B$) increased. Flipping the sign of that error injection
 had the opposite effect on weights, and likewise cancelled the artificial error. This shows that a separation of
 synaptic polarity does not interfere with the principles of the Urbanczik-Senn plasticity when depression is facilitated
 by interneurons.
 
-\begin{figure}[t]
+\begin{figure}[h]
     \centering
     \begin{minipage}{0.2\textwidth}
         \textbf{a)}\par\medskip
@@ -238,11 +264,12 @@ by interneurons.
         \centering
         \includegraphics[width=0.9\textwidth]{fig_exc_inh_split}
     \end{minipage}
-    \caption{Dendritic error minimization under biological constraints on synaptic polarity and network connectivity.
-        \textbf{a)} Network architecture. An excitatory population $A$ connects to a dendrite of Neuron $C$ both
-        directly and through inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$
-        are plastic through dendritic error rules. Populations $A$ and $B$ are fully connected with random weights.
-        \textbf{b)} \textit{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation
+    \caption[Error minimization under biological constraints on synaptic polarity and network connectivity]{Error
+        minimization under biological constraints on synaptic polarity and network connectivity. \textbf{a)} Network
+        architecture. An excitatory population $A$ connects to a dendrite of Neuron $C$ both directly and through
+        inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$ are plastic through
+        dendritic error rules. Populations $A$ and $B$ are fully connected with random weights. \textbf{b)}
+        \textit{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation
         \ref{eq-delta_w_pi}. \textit{Right:} Identical network setup, plasticity for synapses at basal dendrites
         (Equations \ref{eq-delta_w_up}, \ref{eq-delta_w_ip}). \textit{Top:} Dendritic error of a single target neuron.
         Errors of opposite signs are induced at $0$ and $500ms$ (vertical dashed line). \textit{Bottom:} Synaptic
@@ -281,10 +308,10 @@ The experiment was successful, as the network was able to learn successfully in 
 rule is capable of correctly assigning credit to two separate populations under much less sanitized inputs. Further
 experiments are required to show \textbf{A:} how large such an inhibitory interneuron population needs to be, and what
 role the dropout has to play, \textbf{B:} whether this capability extends to the spiking implementation and \textbf{C:}
-if all neuron populations in the network can be connected in this way to separate excitatory and inhibitory pathways. 
-Such experiments would allow for a closer investigation into how well the dendritic error network corresponds to 
-cortical connectivity - if at all. Furthermore, the added interneuron populations would themselves have to have
-some cortical equivalent which they are to represent.
+if all neuron populations in the network can be connected in this way to separate excitatory and inhibitory pathways.
+Such experiments would allow for a closer investigation into how well the dendritic error network corresponds to
+cortical connectivity - if at all. Furthermore, the added interneuron populations would themselves have to have some
+cortical equivalent which they are to represent.
 
 
 \subsection{Interneuron nudging}
@@ -299,7 +326,7 @@ of the network resemble somatostatin-expressing (\textit{SST}) neurons. This is 
 are ubiqutous in the cortex and inhabit the same layers as pyramidal neurons. Furthermore, they share dense and
 recurrent synaptic connections to these pyramidal neurons \citep{urban2016somatostatin}. Finally, they have been shown
 to receive top-down instructive signals, which have been hypothesized to transmit prediction errors
-\citep{Leinweber2017}. 
+\citep{Leinweber2017}.
 
 Several experiments similar to those on synaptic polarity were conducted in an attempt to replace these one-to-one
 connections with more plausible connectivity schemes. Regrettably, none of them were able to retain the learning
@@ -310,7 +337,7 @@ dendritic error network. Further work is required to investigate if and how this
 
 \section{Performance of the different implementations}\label{sec-benchmark}
 
-As stated in \cite{Haider2021}, simulating large dendritic error networks with the full leaky dynamics quickly becomes
+As stated in \citep{Haider2021}, simulating large dendritic error networks with the full leaky dynamics quickly becomes
 unfeasable. While the NEST simulator can be regarded as rather fast \citep{albada2018performance}, simulations on it by
 design cannot employ batched matrix multiplication, as is typical in machine learning. Thus, by computing neuron updates
 individually even in highly structured networks like this one, NEST was expected to perform worse than previous
@@ -324,10 +351,11 @@ time taken simulating without considering network initialization. \newline
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\textwidth]{fig_benchmark_n_hidden}
-    \caption{Benchmark of the three different implementations using a network of $[9, n_{hidden}, 3]$ neurons per layer.
-        $n_{hidden}=30$ was chosen as a baseline, as it is the default throughout all simulations on the Bars dataset.
-        Networks were instantiated with the same synaptic weights and trained for a single epoch of 10 stimulus
-        presentations of $50ms$ each.}
+    \caption[Benchmark of the three implementations under different network sizes]{Benchmark of the three
+        implementations under different network sizes. Networks of $[9, n_{hidden}, 3]$ neurons per layer  were
+        instantiated with the same synaptic weights and trained for a single epoch of 10 stimulus presentations of
+        $50ms$ each. $n_{hidden}=30$ was chosen as a baseline, as it is the default throughout all simulations on the
+        Bars dataset.}
     \label{fig-benchmark-n-hidden}
 \end{figure}
 
@@ -348,7 +376,7 @@ event-based communication performed by NEST.
 Not only is the spiking variant of this model slower than the rate version, it also scales worse with network size.
 Simulation time between $100$ and $250$ hidden layer neurons doubled, compared to an increase of $1.6$ for the rate
 network. The Difference between the two was even greater when simulating on an office-grade processor (\textit{Intel
-Core i5-9300H} @ $2.40GHz$, results not shown). Several insights about the comparatively poor performance can be deduced
+    Core i5-9300H} @ $2.40GHz$, results not shown). Several insights about the comparatively poor performance can be deduced
 from a first approximation: The most likely causes for increased compute speed are the communication of events and the
 synaptic plasticity rules. Updates to the neuron state are unlikely to be responsible for the worse performance, as both
 neuron models are modelled almost identically. These assumptions were tested experimentally.
@@ -358,11 +386,12 @@ neuron models are modelled almost identically. These assumptions were tested exp
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\textwidth]{fig_benchmark_plasticity}
-    \caption{Simulation time comparison of both NEST implementations with plastic and non-plastic synapse types. Deep
-        networks of $300-200-100-10$ pyramidal neurons per layer were stimulated with 5 samples of random input
-        $\in\{0,1\}$ for $10ms$ each. synaptic weights were initialized between $\{-0.1, 0.1 \}$ to avoid
-        overstimulation of individual neurons. In the plastic paradigm, all synapses except for feedback weights
-        $w^{down}$ were plastic with very low learning rates $\eta = 10^{-10}$.}
+    \caption[Benchmark of both NEST implementations with plastic and non-plastic synapse types]{Benchmark of both NEST
+        implementations with plastic and non-plastic synapse types. Deep networks of $300-200-100-10$ pyramidal neurons
+        per layer were stimulated with 5 samples of random input $\in\{0,1\}$ for $10ms$ each. synaptic weights were
+        initialized between $\{-0.1, 0.1 \}$ to avoid overstimulation of individual neurons. In the plastic paradigm,
+        all synapses except for feedback weights $w^{down}$ were plastic with very low learning rates $\eta =
+            10^{-10}$.}
     \label{fig-benchmark-plasticity}
 \end{figure}
 
@@ -389,17 +418,20 @@ parameter $\psi$, as well as with different numbers of threads were recorded. Re
 \begin{figure}[h]
     \centering
     \begin{minipage}{0.5\textwidth}
+        \textbf{a)}\par\medskip
         \centering
         \includegraphics[width=0.9\textwidth]{fig_benchmark_threads}
     \end{minipage}\hfill
     \begin{minipage}{0.5\textwidth}
+        \textbf{b)}\par\medskip
         \centering
         \includegraphics[width=0.9\textwidth]{fig_benchmark_psi}
     \end{minipage}
-    \caption{Simulation times for SNN experiments. \textbf{Left:} Simulation on the MNIST dataset for a network of
-    $784-300-100-10$ neurons and $\psi=250$ on different numbers of threads. 10 samples were presented for $50ms$ each,
-    and weights were drawn randomly from a uniform distribution $ \{-0.1, 0.1\}$. \textbf{Right:} Training of a default
-    network on the Bars dataset using different values of the scaling parameter $\psi$. All simulations use 8 threads.}
+    \caption[Benchmarks for the spiking implementation]{Benchmarks for the spiking implementation. \textbf{a)}
+        Simulation on the MNIST dataset for a network of $784-300-100-10$ neurons and $\psi=250$ on different numbers of
+        threads. 10 samples were presented for $50ms$ each, and weights were drawn randomly from a uniform distribution
+        $ \{-0.1, 0.1\}$. \textbf{b)} Training of a default network on the Bars dataset using different values of
+        the scaling parameter $\psi$. All simulations use 8 threads.}
     \label{fig-benchmark-threads-psi}
 \end{figure}
 
@@ -409,21 +441,41 @@ is counteracted by the need to communicate more events across threads. It is to 
 parallelization simulation time will begin to increase for this network size.
 
 The second figure shows that reducing $\psi$ much lower will likewise lead to diminishing returns. On the other hand,
-increasing it in the hopes of improving learning performance comes at a stark cost to simulation time. This results 
+increasing it in the hopes of improving learning performance comes at a stark cost to simulation time. This results
 should inform future experiments on increasing efficiency through parametrization.
+
+\section{Pre-training}
+
+One of the two major criticisms of the network noted in \citep{whittington2019theories} is the requirement for
+pre-training (cf. Supplementary Table \ref{tab-wb-models}). By this, the authors mean the initialization to the self-predicting
+state from which most simulations are started. The original paper implicitly considers three different learning
+configurations: In the first one, the network starts from the self-predicting state and only feedforward weights are
+plastic (cf. Sec. \ref{sec-le-tpres}). In the second one, the network starts from random weights and $Intn \rightarrow
+    Pyr$ synapses are plastic, so they can minimize feedback error. The third variant, in which feedback $Pyr \rightarrow
+    Pyr$ weights are plastic, is not considered here. An experiment was conducted comparing performance of the first two
+variants while training on the Bars dataset. This experiments showed that training was marginally slower, but led to
+identical loss (results not shown). While initializing the network to a self-predicting state does give it a slight
+'head-start', this is by no means a condition for learning.
+
+Furthermore, training the network towards the self-predicting state does not require any kind of structured input, let
+alone targets for activation. The network is driven towards this state purely by noise injection at the input layer. As
+background noise is trivial to generate (perhaps unavoidable) for any cortical circuit, the self-predicting state might
+be the default rather than the exception. For these reasons, I do not consider pre-training to be an issue that
+interferes with the model's biological plausibility.
 
 
 \section{Behavioral timescale learning}
 
-As a final experiment, it was investigated to what extent the network can handle learning on biological timescales. One
-critcism occasionally aimed at Backprop is the requirement for instructive signals to be available immediately. The
-assumption is, that an agent in the real world would would select an action, and be informed about the consequences
-only after some delay. Learning algorithms should therefore be capable of handling delayed instructive signals. 
+As a final experiment, the extent to which the network can handle learning on biological timescales was investigated.
+One critcism occasionally aimed at Backprop is the requirement for instructive signals to be available immediately
+\citep{Bartunov2018}. The assumption is, that an agent in the real world would would select an action, and be informed
+about the consequences only after some delay. Learning algorithms should therefore be capable of handling delayed
+instructive signals.
 
 Furthermore, all membrane potentials and synaptic weight derivatives of the dendritic error network are reset after each
 stimulus presentation. This procedure ensures that residuals from the previous run do not interfere with learning of a
 subsequent stimulus. It was confirmed experimentally that networks fail to learn when this reset is not performed after
-every training sample (results not shown). 
+every training sample (results not shown).
 
 Two additions were made to the model to confirm that it is capable of learning without these constraints. First, the
 target activation was delayed to be first injected $5ms$ after the stimulus. This serves to ensure that  that learning
@@ -436,11 +488,12 @@ a vanilla network and these two additions is shown in Fig. \ref{fig-idle-time}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{fig_idle_time}
-    \caption{Comparison of learning under minimal external control. \textbf{Blue:} default parametrization for the 
-    Bars dataset. \textbf{Orange:} during the first $5ms$ of a training pattern, no target is provided. Afterwards
-    training continues as usual for the remaining $45ms$. \textbf{Green:} Additionally, the network is not manually
-    reset after each training sample, but simulated for another $15ms$ without stimulation. Increased loss of the 
-    delayed target paradigms might be explained by the shorter effective training time per stimulus.}
+    \caption[Comparison of learning under minimal external control]{Comparison of learning under minimal external
+        control. \textbf{Blue:} default parametrization for the Bars dataset. \textbf{Orange:} during the first $5ms$ of
+        a training pattern, no target is provided. Afterwards training continues as usual for the remaining $45ms$.
+        \textbf{Green:} Additionally, the network is not manually reset after each training sample, but simulated for
+        another $15ms$ without stimulation. Increased loss of the delayed target paradigms might be explained by the
+        shorter effective training time per stimulus.}
     \label{fig-idle-time}
 \end{figure}
 
@@ -449,6 +502,11 @@ higher test loss. These results show that constraints like this have only minisc
 the dendritic error network. Thus, a cortical network of this kind can be expected to be indifferent to idle time in
 which it is only driven by white noise. Likewise, incoming sensory information in the self-predicting state does not
 cause plasticity which would drive weights away from what was previously learned. Only when a target is presented to the
-output layer will weights adapt. This insight shows that the network requires even less external control, which might
-be of use for improving its efficiency \todo{ref outlook}. More importantly, with the need to manually reset membrane 
-potentials, another biologically implausible mechanism is removed from the simulations.
+output layer will weights adapt. This insight shows that the network requires even less external control, which might be
+of use for improving its efficiency \todo{ref outlook}. More importantly, with the need to manually reset membrane
+potentials, another biologically implausible mechanism can be omitted from simulations of this network.
+
+It should be noted that this experiment makes the assumption that the brain is either capable of retaining an input
+sequence until feedback is available, or otherwise 'replay' the pattern at a later point. While both of these mechanisms
+are not completely implausible, they are much less elegant than trace-based solutions for delayed reward signalling
+\citep{bellec2020solution}. This constraint should be viewed critically.

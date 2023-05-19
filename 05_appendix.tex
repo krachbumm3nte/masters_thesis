@@ -5,7 +5,7 @@
 
 \section{Somato-dendritic coupling}\label{sec-somato-dendr}
 
-\cite{urbanczik2014learning} discuss a possible extension to their neuron- and plasticity model, in which the
+\citep{urbanczik2014learning} discuss a possible extension to their neuron- and plasticity model, in which the
 dendro-somatic coupling transmits voltages in both directions. They show that the plasticity rule requires only minor
 adaptations for successful learning under this paradigm. Yet, as described by passive cable theory, the flow between
 neuronal compartments is dictated by their respective membrane capacitances. These are calculated from their membrane
@@ -73,7 +73,7 @@ Using this we can rewrite the weight change from $t$ to $T$ as:
                      & = \eta [I_1(t,T) - I_2(t,T) + I_2(0,t)\left( 1 - e^{- \frac{T-t}{\tau_\kappa}} \right)]
 \end{align}
 
-The simplified \cite{sacramento2018dendritic} case would be:
+The simplified \citep{sacramento2018dendritic} case would be:
 
 \begin{align}
   \frac{dW_{ij}}{dt} & = \eta (\phi(u_i) - \phi(\hat{v_i})) \phi(u_j)                                         \\
@@ -171,7 +171,7 @@ non-plastic led to the best learning performance, and is therefore assumed as th
 This matches the previous implementations of this network too, which typically set learning rates of these connections
 to $0$ with the exception of a few experiments employing steady-state approximations. Note that feedback information is
 transmitted through fixed weights in this case. Feedforward weights in turn learn to match these, meaning that the
-network effectively implements a type of Feedback alignment \cite{Lillicrap2014}.
+network effectively implements a type of Feedback alignment \citep{Lillicrap2014}.
 
 \newpage
 \section{Supplementary Figures}
@@ -181,8 +181,9 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_3_numpy}
-  \caption{Replication of Fig. \ref{fig-bars-le-snest} using a slightly modified version of the python code from
-    \cite{Haider2021}. Resulting performance matches the original results closely, showing that this version can serve
+  \caption[Replication of Fig. \ref{fig-bars-le-snest} using the NumPy network]{Replication of Fig.
+    \ref{fig-bars-le-snest} using the NumPy network. This varaint is a slightly modified version of the python code from
+    \citep{Haider2021}. Resulting performance matches the original results closely, showing that this version can serve
     as a baseline for comparing performance of the NEST implementation to the original results. Note, how in this
     implementation, presentation time has hardly any effect on the LE network because all updates are instantaneous. At
     the lower end presentation time is only limited by simulation timestep $\Delta t$.}
@@ -193,10 +194,11 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_3_rnest}
-  \caption{Replication of Fig. \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A notable
-    difference to the python implementation in Fig. \ref{fig-bars-le-numpy} is, that this version does not handle very
-    low presentation times as well. This can likely be traced back to the synaptic delay enforced by NEST, which imposes
-    an upper bound on network relaxation time. Besides that, performance of the two variants is very similar.}
+  \caption[Replication of Fig. \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator]{Replication
+    of Fig. \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator. A notable difference to the
+    python implementation in Fig. \ref{fig-bars-le-numpy} is, that this version does not handle very low presentation
+    times as well. This can likely be traced back to the synaptic delay enforced by NEST, which imposes an upper bound
+    on network relaxation time. Besides that, performance of the two variants is very similar.}
   \label{fig-bars-le-rnest}
 \end{figure}
 
@@ -214,66 +216,130 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
 \arrayrulecolor{white} % <--- {\renewcommand{\arraystretch}{1.45} 
 \begin{table}[h]
   \resizebox{\textwidth}{!}{
-    \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}
-                                                                                                        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}
-                                                                                                        & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}
-      \\ \cline{3-6} \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}
-                                                                                                        & Continuous update                                                                                   &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}
-                                                                                                        & Dendritic error                                                                                                                                     \\ \hline
-      \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Required}}
-                                                                                                        & {\color[HTML]{FE0000} Required}                                                                     &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
-                                                                                                        & {\color[HTML]{32CB00} Not required}                                                                                                                 \\ \hline \rowcolor[HTML]{D9D9D9}
-      \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}                                        &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Unconstrained}}
-                                                                                                        & {\color[HTML]{32CB00} Unconstrained}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} Constrained}}                     &
-      {\color[HTML]{FE0000} Constrained}
-      \\ \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} L-1}}
-                                                                                                        & {\color[HTML]{32CB00} L-1}                                                                          &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000} 2L-1}}
-                                                                                                        & {\color[HTML]{32CB00} L-1}                                                                                                                          \\
-      \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}
-                                                                                                        & {\color[HTML]{32CB00} Not required}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00} Not required}}                    &
-      {\color[HTML]{FE0000} Required}
-      \\ \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference in activity \\
-                                                                                                                                                          between separate                   \\ phases\end{tabular}}    & \begin{tabular}[c]{@{}l@{}}Rate
-                                                                                                                                                                                                                        of change of \\ activity\end{tabular} &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
-                                                      neurons\end{tabular}} &
-      \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}
-      \\
-      \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and
-                                                                                                                                                          behaviour in a               \\
-                                                                                                                                                          variety of tasks\end{tabular}}      &
-      \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\ activity
-                                                                                                                                                          to                           \\
-                                                                                                                                                          unpredicted stimuli\end{tabular}} &
-      \begin{tabular}[c]{@{}l@{}}Properties of \\
-        pyramidal neurons\end{tabular}
-      \\
-      \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}
-                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}
-                                                                                                        & -                                                                                                   &
-      \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}                                            & $\sim$1.96
-      \\ \hline
+    \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}      &
+               \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error
+               model}                                                                                          &
+               \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error
+               model}                                                                                                           \\
+               \cline{3-6}
+               \rowcolor[HTML]{B3B3B3}
+               \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive
+               learning}                                                                                       &
+               Continuous
+               update
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive
+               coding}                                                                                         &
+               Dendritic error
+               \\ \hline
+               \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}            &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
+               Required}}                                                                                      &
+               {\color[HTML]{FE0000}
+                   Required}
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               Not required}}                                                                                  &
+               {\color[HTML]{32CB00}
+                   Not required}
+               \\ \hline
+               \rowcolor[HTML]{D9D9D9}
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+                   Unconstrained}}
+                                                                                                               &
+               {\color[HTML]{32CB00}
+               Unconstrained}                                                                                  &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
+                   Constrained}}
+                                                                                                               &
+               {\color[HTML]{FE0000}
+               Constrained}                                                                                                     \\
+               \hline
+               \rowcolor[HTML]{D9D9D9}
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation
+               time}                                                                                           &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               L-1}}                                                                                           &
+               {\color[HTML]{32CB00}
+                   L-1}
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
+               2L-1}}                                                                                          &
+               {\color[HTML]{32CB00}
+                   L-1}
+               \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}       &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               Not required}}                                                                                  &
+               {\color[HTML]{32CB00}
+               Not required}                                                                                   &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+                   Not required}}
+                                                                                                               &
+               {\color[HTML]{FE0000}
+               Required}                                                                                                        \\
+               \hline
+               \rowcolor[HTML]{D9D9D9}
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error
+               encoded in}                                                                                     &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference
+                                                                   in activity \\
+                                                                   between
+                                                                   separate
+                                                                   \\
+                                                                   phases\end{tabular}}
+                                                                                                               &
+               \begin{tabular}[c]{@{}l@{}}Rate
+                     of
+                     change
+                     of
+                     \\
+                     activity\end{tabular}
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity
+                                                                   of
+                                                                   specialised
+                                                                   \\
+                                                                   neurons\end{tabular}}                 &
+               \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}                  \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for} &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural
+                                                                   responses \\ and
+                                                                   behaviour in a
+                                                                   \\
+                                                                   variety
+                                                                   of
+                                                                   tasks\end{tabular}}
+                                                                                                               &
+               \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}             &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased
+                                                                   neural \\
+                                                                   activity to
+                                                                   \\
+                                                                   unpredicted
+                                                                   stimuli\end{tabular}}
+                                                                                                               &
+               \begin{tabular}[c]{@{}l@{}}Properties of \\
+                     pyramidal neurons\end{tabular}                                                          \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}  &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}
+                                                                                                               & -
+                                                                                                               &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}
+                                                                                                               & $\sim$1.96     \\
+               \hline
     \end{tabular}
-  }\caption{ Comparison between some leading biologically plausible approximations of Backprop, adapted from
-    \cite{whittington2019theories}. From left to right: Contrastive hebbian learning \citep{OReilly1996}, Contrastive
-    learing with continuous update \citep{Bengio2017}, Predictive coding network \citep{Whittington2017}, Dendritic
-    error network \citep{sacramento2018dendritic}. All algorithms were selected because they reflect some properties of
-    biological brains, some of which are highlighted in the row "Data accounted for". All of the algorithms need to make
-    concessions for this. In the first four rows, desirable properties are highlighted in green, while undesirable
-    traits are highlighted in red.}\label{tab-wb-models}
+  }\caption[Comparison between biologically plausible approximations of Backprop]{Comparison between biologically
+    plausible approximations of Backprop, adapted from \citep{whittington2019theories}. From left to right: Contrastive
+    hebbian learning \citep{OReilly1996}, Contrastive learing with continuous update \citep{Bengio2017}, Predictive
+    coding network \citep{Whittington2017}, Dendritic error network \citep{sacramento2018dendritic}. All algorithms were
+    selected because they reflect some properties of biological brains, some of which are highlighted in the row "Data
+    accounted for". All of the algorithms need to make concessions for this. In the first four rows, desirable
+    properties are highlighted in green, while undesirable traits are highlighted in red.}\label{tab-wb-models}
 
 \end{table}
 
@@ -289,17 +355,15 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
 
       \\\textbf{Simulation} \\\hline
       \texttt{n\_epochs}           & Number of training iterations                                               &
-      $1000$
-      \\
+      $1000$                                                                                                             \\
       \texttt{delta\_t}            & Euler integration step in [ms]                                              & $0.1$
       \\
       \texttt{t\_pres}             & Stimulus presentation time during training [ms]                             & $50$
       \\
-      \texttt{out\_lag}            & Delay before recording output during testing [ms]                           &
-      $35$                                                                                                                        \\
-      \texttt{dims}                & Network dimensions, i.e. pyramidal neurons per layer                        & [9,
-          30, 3]
+      \texttt{out\_lag}            & Delay before recording output during testing [ms]                           & $35$
       \\
+      \texttt{dims}                & Network dimensions, i.e. pyramidal neurons per layer                        & [9,
+      30, 3]                                                                                                             \\
       \texttt{threads}             & Number of threads for parallel processing                                   & $8$
       \\
       \texttt{test\_interval}      & Test the network every N epochs                                             & $10$
@@ -309,7 +373,8 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
       \texttt{init\_self\_pred}    & Flag to initialize weights to self-predicting state                         &
       \texttt{True}
       \\
-      \texttt{noise}               & Flag to apply noise to all somatic membrane potentials                      & \texttt{False} \\
+      \texttt{noise}               & Flag to apply noise to all somatic membrane potentials                      &
+      \texttt{False}                                                                                                     \\
       \texttt{sigma}               & Standard deviation for membrane potential noise                             & 0.3
       \\
       \texttt{mode}                & Which dataset to train on. Choice between (bars, mnist, self-pred, teacher) & bars
@@ -321,7 +386,8 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
       \\
       \texttt{tau\_x}              & Network input filtering time constant [ms]                                  & 0.1
       \\
-      \texttt{reset}               & Reset method between simulations (0=no reset, 1=soft reset, 2=hard reset)   & 2              \\
+      \texttt{reset}               & Reset method between simulations (0=no reset, 1=soft reset, 2=hard reset)   & 2
+      \\
 
       \\
       \textbf{Neurons}
@@ -380,8 +446,7 @@ network effectively implements a type of Feedback alignment \cite{Lillicrap2014}
       \texttt{eta\_pi}             & Learning rate for $intn\rightarrow pyr$ synapses                            & 0.01
       \\
       \texttt{eta\_up}             & Learning rates for feedforwarsd $pyr\rightarrow pyr$ synapses               &
-      [0.01, 0.003]
-      \\
+      [0.01, 0.003]                                                                                                      \\
       \texttt{eta\_down}           & Learning rate for feedback $pyr\rightarrow pyr$ synapses                    & 0.0
       \\
     \end{tabular}\caption{Default parameters for the dendritic error model. }\label{tab-params}

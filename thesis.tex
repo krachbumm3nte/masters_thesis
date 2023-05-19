@@ -20,6 +20,7 @@
 \usepackage{hyperref}
 \usepackage[noabbrev]{cleveref}
 \usepackage{tabularx}
+\usepackage[ngerman]{datetime}
 
 \DeclareSymbolFont{letters}{OML}{ztmcm}{m}{it}
 \DeclareSymbolFontAlphabet{\mathnormal}{letters}
@@ -69,7 +70,7 @@
 
 \newcommand{\what}[1] {\textcolor{red}{\textbf{#1} \addcontentsline{toc}{subsection}{\textcolor{orange}{#1}}}}
 
-\newcommand{\todo}[1] {\textcolor{orange}{\textbf{TODO: #1}}}
+\newcommand{\todo}[1] {\textcolor{orange}{\textbf{TODO: #1} \addcontentsline{toc}{subsection}{\textcolor{orange}{#1}}}}
 
 \newcommand{\citeme}{\textcolor{orange}{\textbf{TODO: cite}}}
 
@@ -77,38 +78,77 @@
 
 \newcommand{\intro}{\textcolor{blue}{\textbf{introduce term?}}}
 
-
-\newcommand{\image}[3][1]
-{
-\begin{figure}[t]
-	\centerline{\includegraphics[width={1\linewidth}]{#1}}
-	\caption{#2}
-	\label{#3}
-\end{figure}
-}
-
-
+\newdateformat{myformat}{\THEDAY{. }\monthnamengerman[\THEMONTH] \THEYEAR}
 
 \begin{document}
 
 \title{\textbf{Philipps-Universität Marburg}}
 
-\author{Johannes Gille}
 \date{\parbox{\linewidth}{\centering%
-    Fachbereich 17\endgraf
+Fachbereich 17\endgraf
     AG Allgemeine und Biologische Psychologie\endgraf
     AE Theoretische Kognitionswissenschaft\endgraf
     \bigskip
     \bigskip
     Learning in cortical microcircuits with multi-compartment pyramidal neurons\endgraf
-    \textbf{Supervisors:}\endgraf
     \bigskip
+    \bigskip
+    \bigskip
+    \textbf{Masterarbeit}\endgraf
+    zur Erlangung des Master of Science (M.Sc.)\endgraf
+    im interdisziplinären Master-Studiengang\endgraf
+    \textbf{„Kognitive und Integrative Systemneurowissenschaften“}\endgraf
+    \bigskip
+    \bigskip
+    \textbf{Betreut durch:}\endgraf
     Prof. Dr. Dominik Endres, Philipps-Universität Marburg\endgraf
+    Prof. Dr. Johan Kwisthout, Radboud University Nijmegen\endgraf
     \bigskip
-    Prof. Dr. Johan Kwisthout, Radboud University Nijmegen}}
-\maketitle
+    \bigskip
+    Vorgelegt von Johannes Gille\endgraf
+    im Mai 2023
+    }}
+    \maketitle
+    
+
+
+\noindent \textbf{Eidesstattliche Erklärung}
+
+
+\noindent Ich versichere hiermit, dass ich die vorliegende Arbeit mit dem Titel\newline
+
+\bigskip
+\noindent„Learning in cortical microcircuits with multi-compartment pyramidal neurons“\newline
+\bigskip
+
+\noindent selbständig verfasst und keine anderen als die im Text angegebenen Hilfsmittel verwendet habe. \smallskip
+
+\noindent Sämtliche Textstellen, die im Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind mit einer
+Quellenangabe kenntlich gemacht. Die Masterarbeit wurde in der jetzigen oder in ähnlicher Form noch bei keiner anderen
+Hochschule eingereicht und hat noch keinen sonstigen Prüfungszwecken gedient. \newline
+
+\noindent Experimentelle Daten wurden ordnungsgemäß
+und nachvollziehbar gesichert und dem Betreuer/der Betreuerin übergeben. \newline \bigskip
+
+\bigskip
+Marburg, den \myformat\today \hspace{4cm} Johannes Gille
+
+\cleardoublepage
+
+
+
+\pagenumbering{Roman}
+
 
 \tableofcontents
+
+
+\thispagestyle{empty}
+\listoffigures
+\listoftables
+\newpage
+\pagenumbering{arabic}
+
 
 \include{01_introduction.tex}
 \include{02_methods.tex}

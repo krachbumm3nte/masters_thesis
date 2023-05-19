@@ -11,7 +11,7 @@ connectivity.
 
 \subsection{Network architecture}
 
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
   \begin{minipage}{0.5\textwidth}
     \centering
@@ -21,13 +21,14 @@ connectivity.
     \centering
     \includegraphics[width=0.9\textwidth]{network_b}
   \end{minipage}
-  \caption{Network structure, from \cite{Haider2021}. \textbf{a:} pyramidal- (red) and interneurons (blue) in a network
-    of three layers. Note the fact that the number interneurons in a layer is equal to the number of pyramidal neurons
-    in the subsequent layer\protect\footnotemark. \textbf{b:} connectivity within the highlighted section. Feedback
-    pyramidal-to-interneuron connections (displayed with rectangular synapse) transmit pyramidal somatic potential
-    directly and connect to a single interneuron. This enables these interneurons to learn to match their corresponding
-    next-layer pyramidal neurons. All other synapses (circles) transmit the neuron somatic activation $\phi (u^{som})$
-    and fully connect their origin and target populations.}
+  \caption[Structure of the dendritic error network]{Structure of the dendritic error network, from \citep{Haider2021}.
+    \textbf{a:} pyramidal- (red) and interneurons (blue) in a network of three layers. Note the fact that the number
+    interneurons in a layer is equal to the number of pyramidal neurons in the subsequent layer\protect\footnotemark.
+    \textbf{b:} connectivity within the highlighted section. Feedback pyramidal-to-interneuron connections (displayed
+    with rectangular synapse) transmit pyramidal somatic potential directly and connect to a single interneuron. This
+    enables these interneurons to learn to match their corresponding next-layer pyramidal neurons. All other synapses
+    (circles) transmit the neuron's somatic activation $\phi (u^{som})$ and fully connect their origin and target
+    populations.}
   \label{fig-network}
 \end{figure}
 
@@ -107,7 +108,7 @@ matrices and presynaptic activities:
   v_l^{api}(t) & =  W_l^{pi} \ \phi(u_l^I(t)) \ + \  W_l^{down} \ \phi(u_{l+1}^P(t)) \label{eq-v-api-rate}
 \end{align}
 
-The nomenclature for weight matrices conforms to \cite{Haider2021} where they are indexed by the layer in which their
+The nomenclature for weight matrices conforms to \citep{Haider2021}, where they are indexed by the layer in which their
 target neurons lie, and belong to one of four populations: Feedforward and feedback pyramidal-to-pyramidal connections
 arriving at layer $l$ are denoted $W_l^{up}$ and $W_l^{down}$ respectively. Lateral pyramidal-to-interneuron connections
 are denoted with $W_l^{ip}$ and their corresponding feedback connections with $W_l^{pi}$.
@@ -132,14 +133,11 @@ receive no input to their apical compartment. Instead, the target  activation $u
 \end{align}
 
 
-These neuron dynamics correspond closely to those by \cite{urbanczik2014learning}, including the extension to more than
-two compartments which was proposed in the original paper. It should be noted however, that they are simplified in some
-ways. For example, dendritic couplings and nudging are not relative to the somatic or some reversal potential (i.e.
-$i^{nudge, tgt}= g^{nudge, tgt} (u^{tgt} - u_N^P )$), but are only dependent on absolute currents. Additionally, the
-strict separation of excitatory and inhibitory synaptic integration (cf. Section \todo{write about this}), as well as
-additional nonlinearities in the plasticity are omitted.  These simplifications do increase computational speed and
-allow for a much simpler approximation of network dynamics via a steady-state. Yet they do come at the cost of omitting
-neuroscientific insights from the model, which will be discussed later.
+These neuron dynamics correspond closely to those described in \citep{urbanczik2014learning}, including the extension to
+more than two compartments which was proposed in the original paper. It should be noted however, that they are
+simplified in some ways. These simplifications enabled the authors to prove analytically that this model approximates
+Backprop. Yet they do come at the cost of omitting neuroscientific insights from the model, which will be discussed
+later.
 
 \section{Urbanczik-Senn Plasticity}\label{sec-urb-senn-plast}
 
@@ -163,7 +161,7 @@ a synapse from neuron $j$ to the basal compartment of a pyramidal neuron $i$ is 
 with learning rate $\eta$, and $u^T$ denoting the transposition of the vector $u$ (which is by default assumed a column
 vector). The dendritic prediction $\hat{v}_i^{bas}$ is a scaled version of the dendritic potential by the constant
 factor $\alpha$, which is calculated from coupling and leakage conductances. As an example, basal dendrites of pyramidal
-neurons in \cite{sacramento2018dendritic} are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. A key
+neurons in \citep{sacramento2018dendritic} are attenuated by $\alpha = \frac{g^{bas}}{g_l + g^{bas} + g^{api}}$. A key
 property of this value for $\alpha$ is, that dendritic error is $0$ when the only input to a neuron stems from the given
 dendrite. In other words, the dendrite predicts somatic activity perfectly, and no change in synaptic weights is
 required. Neuron- and layer-specific differences in $\alpha$, as well as an analytical derivation are detailed in
@@ -265,7 +263,7 @@ errors arise. Synapses activate and drive to minimize the prediction errors, whi
 target activation from activations and weights of the last hidden layer. Note that this mechanism is not exclusive to
 the last two layers. Any Apical errors cause a change in somatic activity, which previous layers will fail to predict.
 Thus, errors are propagated backwards through the entire network, causing error minimization at every layer. See the
-Supplementary analysis of \cite{sacramento2018dendritic} for a rigorous proof that this type of network does indeed
+Supplementary analysis of \citep{sacramento2018dendritic} for a rigorous proof that this type of network does indeed
 approximate the Backpropagation algorithm.
 
 
@@ -326,7 +324,7 @@ period issue of this model (cf. Section \ref{sec-latent-eq}), it can be expected
 
 The spiking neuron models rely heavily on the NEST implementation from Stapmanns and colleagues \citep{Stapmanns2021},
 which was used show that spiking neurons are able to perform learning tasks that were designed for the rate neurons
-described in \cite{urbanczik2014learning}. The existing model is an exact replication of the Urbanczik-Senn neuron in
+described in \citep{urbanczik2014learning}. The existing model is an exact replication of the Urbanczik-Senn neuron in
 terms of membrane dynamics. The critical update of the NEST variant is that instead of transmitting their hypothetical
 rate $r = \phi(u)$ at every time step, these neurons emit spikes in a similar way to stochastic binary neurons
 \citep{Ginzburg1994}. The number of spikes to be generated during a simulation step $n$ is determined by drawing from a
@@ -409,7 +407,7 @@ al. propose a third solution, in which this integration is performed once whenev
 incoming connection, with the resulting weight change being applied to all synapses immediately. This approach proved to
 be even more efficient for some network configurations, but is incompatible with simulations where incoming synapses
 have heterogeneous synaptic delays due to the way that these delays are processed by the NEST simulator. See Section
-3.1.3 in \cite{Stapmanns2021} for a detailed explanation.}. During testing, the Event-based schemed proved substantially
+3.1.3 in \citep{Stapmanns2021} for a detailed explanation.}. During testing, the Event-based schemed proved substantially
 more efficient for many network types. This did however introduce the challenge of retroactively computing weight
 changes from the time of the last spike upon arrival of a new spike. \newline
 
@@ -517,13 +515,13 @@ not lend themselves well to an investigation of biological plausibility \citep{G
 approximation is unsuitable for and investigation of spike-based communication, since the steady state of both network
 ideally would be the same. Thus, neither the fully modeled neuron dynamics nor the steady-state approximation are suited
 for complex learning tasks. A substantial improvement to rate neurons which promises to solve this dilemma was developed
-by \cite{Haider2021}, and will be discussed here.
+by \citep{Haider2021}, and will be discussed here.
 \newline
 
 The requirement for long stimulus presentation times of the dendritic error network is caused by the slow development of
 leaky neuron dynamics, and is therefore not unique to this model. When a stimulus-target pair is presented to the
 network, membrane potentials in all neurons slowly evolve until a steady state is reached. The time until a network of
-has reached this state after a change in input is called the \textit{relaxation period} following \cite{Haider2021}.
+has reached this state after a change in input is called the \textit{relaxation period} following \citep{Haider2021}.
 Given a membrane time constant $\tau_m$, a feedforward network with $N$ layers of leaky neurons thus has a relaxation
 time constant of $N \tau_m$. Yet in our case, a target activation simultaneously injected into the output neurons slowly
 propagates backwards through the highly recurrent network. Neurons at early layers require all subsequent layers to be
@@ -581,13 +579,13 @@ prediction of future network states will henceforth be referred to as \textit{pr
 ($\breve{x}$).
 
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_le_response}
-  \caption{Signal transmission between an input neuron $i$ and a hidden layer pyramidal neuron $j$. Depicted are
-    activations for the original Sacramento model and prospective activation using LE. \textbf{A:}
-    Current injected into the input neuron. Membrane potential slowly adapts to match this (not shown) \textbf{B:}
-    Activation of the input neuron using instantaneous- $\phi(u_i)$ (blue), and prospective activation
+  \caption[Signal transmission of LE neurons]{Signal transmission between an input neuron $i$ and a hidden layer
+    pyramidal neuron $j$. Depicted are activations for the original Sacramento model and prospective activation using
+    LE. \textbf{A:} Current injected into the input neuron. Membrane potential slowly adapts to match this (not shown)
+    \textbf{B:} Activation of the input neuron using instantaneous- $\phi(u_i)$ (blue), and prospective activation
     $\phi(\breve{u}_i)$ (orange). Note how strongly prospective activation reacts to changes in somatic voltage, leading
     to 'bursts' in neuron output. After the input neuron has reached its relaxed state ($\dot{u}_i = 0$), both types of
     neuron evoke the same activation. \textbf{C:} Somatic potential $u_j$ of the pyramidal neuron responding to signals
@@ -604,11 +602,10 @@ in response to changes in the somatic membrane potential. While this can lead to
 under careful parametrization it strongly decreases response time.   
 
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_le_dendritic_errors}
-  \caption{Effects of 
-   equilibrium dynamics on the dendritic error terms from Equations
+  \caption[Effects of LE dynamics on dendritic error]{Effects of LE dynamics on the dendritic error terms from Equations
     \ref{eq-delta_w_up}-\ref{eq-delta_w_down}. Depicted are error terms for individual spiking neurons in a network with
     one hidden layer (N=3). The network was fully trained on the Bars dataset (cf. Section \ref{sec-le-tpres}), so
     errors should ideally relax to zero. Note, that this does not happen here due to the fluctuations inherent to the
@@ -637,12 +634,12 @@ this change serves to increase the responsiveness of the network to input change
 
 \section{Implementational details}
 
-Building on the neuron and plasticity model from \cite{Stapmanns2021}, a replicate model of the pyramidal neuron which
-employs spiking communication was developed in NEST. The existing Urbanczik-Senn neuron was expanded to three
-compartments, and storage and readout of dendritic errors were updated  to allow for compartment-specific plasticity
-rules. Interneurons were chosen to be modeled as pyramidal neurons with slightly updated parameters and apical
-conductance $g^{api}=0$. Since membrane dynamics of both neurons follow the same principles and additional compartments
-have minor impact on performance, this was deemed sufficient.
+Building on the neuron and plasticity model from \citep{Stapmanns2021}, a replicate model of the pyramidal neuron with
+spike-based communication was developed in NEST. The existing neuron model was expanded to three compartments, and
+storage and readout of dendritic errors were updated  to allow for compartment-specific plasticity rules. Interneurons
+were chosen to be modeled as pyramidal neurons with slightly updated parameters and apical conductance $g^{api}=0$.
+Since membrane dynamics of both neurons follow the same principles and additional compartments have minor impact on
+performance, this was deemed sufficient.
 
 After facing some setbacks when attempting to train the first spiking variant of the network, the decision was made to
 also implement a rate-based variant of the neuron in NEST.  While the additional effort required for another
@@ -672,7 +669,7 @@ plasticity through matrix multiplication. The two NEST variants will be referred
 
 \subsection{Neuron model Adaptations}
 
-The neuron model from \cite{Stapmanns2021} was modified in some ways in order to match the pyramidal neuron
+The neuron model from \citep{Stapmanns2021} was modified in several ways in order to match the pyramidal neuron
 implementation more closely. Both the inclusion of nonzero reversal potentials and the flow of currents from the soma to
 the dendrites were omitted in my model. Furthermore, the present network requires synapses to be able
 change the sign of their weight at runtime, which is not permitted in the original synapse model. For this reason, the
@@ -701,15 +698,13 @@ dendritic voltage. Hence, in this case $\eta^{pi} \leftarrow\frac{\eta^{pi}}{\ps
 spiking neuron model, one can observe that for $\psi \rightarrow \infty$, it approximates the rate-based implementation
 exactly at the steady state. Unsurprisingly therefore, increasing $\psi$ caused the spiking network to learn
 successfully with fewer samples and to a lower test loss. Yet, the argument against increasing $\psi$ is twofold:
-Initial experiments showed that with $\psi \in [0.1, 0.5]$, pyramidal and interneurons exhibit spike frequencies in
-biologically plausible range of less than $55Hz$ \cite{Kawaguchi2001,Eyal2018} \todo{reevaluate!}. Additionally, each
-transmitted \texttt{SpikeEvent} is computationally costly, which increases training time (cf. Fig.
-\ref{fig-benchmark}) and further makes high spike frequencies undesirable. As a middle ground, $\psi = 100$ proved
-useful during initial tests and will be assumed the default from here on out. Note that this parametrization was chosen
-primarily with efficiency in mind, and makes no claim towards biologically plausible spike frequency.
-
-With these adaptations, the network was able to perform supervised learning with spiking neurons, as will be discussed
-in the upcoming sections.
+Initial experiments showed that only for $\psi < 0.1$ did pyramidal and interneurons exhibit spike frequencies in
+biologically plausible range of less than $55Hz$ \citep{Kawaguchi2001,Eyal2018}. Additionally, each transmitted
+\texttt{SpikeEvent} is computationally costly, which increases training time (cf. Fig. \ref{fig-benchmark-threads-psi})
+and therefore further makes high spike frequencies undesirable. As a middle ground, $\psi = 100$ proved useful during
+initial tests and will be assumed the default from here on out. Note that this parametrization was chosen primarily with
+efficiency in mind, and is far removed from biologically plausible spike frequencies. With these adaptations, the
+network was able to perform supervised learning with spiking neurons, as will be discussed in the upcoming sections.
 
 \section{Error metrics and nomenclature}
 
@@ -717,8 +712,8 @@ In this thesis, the word 'error' is used frequently, which might understandably 
 questionable, this choice was made deliberately to conform to the main underlying works
 \citep{urbanczik2014learning,sacramento2018dendritic,whittington2019theories,Haider2021}. This section will provide a
 brief disambiguation. Firstly, there are four error metrics describing the network's deviation from the self-predicting
-state: \textit{Feedforward weight error, Feedback weight error, Apical error and interneuron error}. These were
-introduced in Section \ref{sec-selfpred}. Close observation of the network reveals that pairs of them are closely
+state: \textit{Feedforward weight error, Feedback weight error, Apical error and Interneuron error}. These were
+introduced in Section \ref{sec-selfpred}. Observation of the network dynamics reveals that pairs of them are closely
 related: Feedforward weight error drives interneuron error, and feedback weight error drives apical error (so long as
 interneuron error is minimal). An analytical upgrade to this model might include a way for unifying these pairs of
 metrics. Furthermore, three terms require elaboration:\newline

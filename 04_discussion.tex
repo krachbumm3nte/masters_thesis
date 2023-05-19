@@ -4,50 +4,66 @@
 
 \section{Contribution}
 
+In this project the capabilities and limitations of the dendritic error network and its underlying plasticity rule were
+further tested. While sensitive to certain parameter changes, the network was shown to be exceptionally capable of 
+handling various constraints that are imposed on biological neural networks. Furthermore, the performed experiments
+can be interpreted as dispelling some criticisms aimed at the model's biological plausibility. Here we summarize 
+most questions about the biological plausibility of Backprop and its approximations noted in the literature.
 
 
+\subsection*{Evaluation of biological plausibility}
 
-\subsection{criteria for biological plausibility}
+The original dendritic error network by design solves several biologically implausible mechanisms of Backprop. It
+\textit{\textbf{locally computes prediction errors}} and encodes them within membrane potentials of pyramidal neuron
+apical dendrites. Furthermore, it provides two separate solutions to the \textit{\textbf{weight transport problem}}:
+First, it is capable of learning through feedback alignment, as was used in all present simualtions. Secondly,
+experiments employing steady-state-approximations have been successful in training feedback weights through further
+variants of the dendritic error rules. Finally, the network relies strictly on \textit{\textbf{Local plasticity}}
+\citep{Whittington2017}, and models a (somewhat limited) variability in cell types \citep{Bartunov2018}.\newline
 
-In which we discuss, to what extent the network conforms to the criteria for biologically plausible learning rules
-introduced by \cite{Whittington2017}:
-\begin{enumerate}
-      \item Local computation. A neuron performs computation only on the basis
-            of the inputs it receives from other neurons weighted by the strengths
-            of its synaptic connections.
-      \item  Local plasticity. The amount of synaptic weight modification is dependent on only the activity of the two
-            neurons the synapse connects (and possibly a neuromodulator).
-      \item  Minimal external control. The neurons perform the computation autonomously with as little external control
-            routing information in different ways at different times as possible.
-      \item   Plausible architecture. The connectivity patterns in the model should
-            be consistent with basic constraints of connectivity in neocortex.
-\end{enumerate}
-
-
-
-
-One of the predictions about cortical activity made by predictive coding is an increased network activity in response to
-senesory input violating the generative model. This behaviour is to be expected, as local prediction errors in these
-networks are encoded in the activation of error neurons. A diverse set of studies has since independently reported
-behaviour consistent with this hypothesis in primate cortical neurons (see \citep{bastos2012canonical}[Table 1] for an
-extensive review). This property is also listed in Table \ref{tab-wb-models} in support of the predictive coding
-network, but not the dendritic error model. As this is an experimentally testable hypothesis, a simple experiment was
-conducted. A network with two hidden layers (dims=[9,30,10,3]) was presented with stimuli from the Bars-dataset. The
-number of spikes were recorded for three paradigms: Fully random weights, self-predicting weights, and post-training
-weights from a previous experiment. Results are shown in Figure \ref{fig-stimulus-response}
-
-
-
-
-\section{Should it be considered pre-training?}
-
-\todo{someone said this network needs pre-training and that made me sad :(}
+The present work further improves on the \textit{\textbf{neuron model}} by showing that spike-based communication does
+not interfere with the dendritic plasticity rule, or the intricate balance of excitation and inhibition demanded by the
+network. We also show that the network can be trained with absolutely \textit{\textbf{minimal external control}}
+\citep{Whittington2017}. The network requires no external interference such as manual resets or phased plasticity, and
+can handle background noise in between sample presentations. Exploratory experiments were conducted in support of the
+hypothesis that the plasticity rule is capable of credit assignment when the network conforms strictly to
+\textit{\textbf{Dale's law}} \citep{Bartunov2018}. In related experiments, the network proved very capable of
+Backprop-like learning when constrained by a more \textit{\textbf{plausible architecture}} \citep{Whittington2017} in
+which populations were connected imperfectly. Finally, the criticism that the network requires pre-training
+\citep{whittington2019theories} was argued to be immaterial. In spite of these advances, several limitations to the
+model remain.
 
 
 
 
 
 \section{Limitations}
+
+\subsection*{Response to unpredicted stimuli}
+One of the predictions about cortical activity made by predictive coding is an increased network activity in response to
+sensory input that violates expectations. A diverse set of studies has since independently reported behaviour consistent
+with this hypothesis in various primate cortical neurons (see Table 1 in \citep{bastos2012canonical} for an extensive
+review). This property is also listed in Supplementary Table \ref{tab-wb-models} in support of the predictive coding
+network, but not the dendritic error model. As this is an experimentally testable hypothesis, activity in the spiking
+dendritic error network was investigated. Samples from the Bars-dataset were presented to a network with random-,
+self-predicting- and post-training weights. As anticipated, the dendritic error network does not exhibit this property
+in any of its populations. In fact, overall network activity seemed to increase after training. In this way, the model
+conflicts with empirical data on cortical activity.
+
+
+\subsection*{Spike frequencies}
+
+As discussed in Section \ref{sec-c-m-api}, the network in its current state is unable to learn efficiently for low
+values of $\psi$. Thus, the implementation demands physiologically impossible spike frequencies from both pyramidal- and
+interneurons. While increasing membrane capacitances did relax this constraint somewhat, it in turn requires longer
+presentation times per stimulus. Further work is required to determine if the network is capable of learning when spike
+frequencies are as low as reported for cortical neurons.
+
+\subsection*{Plastic feedback weights}
+
+
+
+\subsection*{Constrained connectivity}
 
 
 \subsection{Computational efficiency}
@@ -101,22 +117,11 @@ to be approximated somewhat for Loihi 1, this requires further investigation. Th
 the follow-up chip Loihi 2 \citep{Davies2021} is still somewhat sparse, but it claims to support a much more diverse set
 of learning rules. Thus, this is a promising direction for further development of this network. Of course, Loihi is only
 one of many neuromorphic systems \citep{rajendran2019low}. Another very promising system is \textit{BrainScaleS-2},
-which trades off some speed for substantially increased complexity in the neuron models. It appears to be spearheading
-the field with regard to simulating segregated dendrites \citep{Kaiser2022}, which might make it even more appealing
-for a re-implementation.
-
-Neuromorphic systems are unified in promising to vastly improve computational speed and energy efficience of large
-spiking neural networks. Furthermore, the vast majority of them provides a basis for leaky-, spiking-, and
-multi-compartment neuron models as core design pillars. Due to these properties, neuromorphic hardware is a good fit and
-a promising future direction for the dendritic error model.
+which appears to be spearheading the field with regard to simulating segregated dendrites \citep{Kaiser2022}. This
+might make it even more appealing for a re-implementation.
 
 
 
-
-
-
-\subsection{In search of plausible spike frequencies}
-\todo{expand}
 
 \subsection*{Network}
 
