@@ -49,14 +49,14 @@ replicate the original model.
 
 For the spiking variant, Interneuron- and its corresponding feedfworward weight error are comparable to the other
 implementations. In fact these metrics appear to converge slightly faster to comparable values. The primary limitation
-of this version are the apical error and the closely correlated feedback weight error. After appearing to converge very
-quickly, the two metrics stagnate at very high levels. These high errors correlate with strong fluctuations of the
-apical compartment. These fluctuations can likely at least in part be attributed to low spike frequencies. This was
-confirmed by repeating the experiment with $\psi=1500$, which alleviated the issue to a degree (results not shown). Yet,
-error values were still inferior to the rate models, and this change came at the cost of substantially increased
-training time. Therefore, this approach was not pursued much further. A different possible solution is, to increase the
-membrane capacitance of the apical compartment in order to smoothe out the fluctuations induced by individual spikes.
-This will be discussed in Section \ref{sec-c-m-api}.
+of this version are the apical error and the closely correlated FB error. After appearing to converge very quickly, the
+two metrics stagnate at very high levels. These high errors correlate with strong fluctuations of the apical
+compartment. These fluctuations can likely at least in part be attributed to low spike frequencies. This was confirmed
+by repeating the experiment with $\psi=1500$, which alleviated the issue to a degree (results not shown). Yet, error
+values were still inferior to the rate models, and this change came at the cost of substantially increased training
+time. Therefore, this approach was not pursued much further. A different possible solution is, to increase the membrane
+capacitance of the apical compartment in order to smoothe out the fluctuations induced by individual spikes. This will
+be discussed in Section \ref{sec-c-m-api}.
 
 In most simulations in the literature, the network is initialized to an ideal self-predicting state. Furthermore
 feedback weights are non-plastic in many experiments ($\eta^{pi}=\eta^{down}=0$). Therefore, a failure to perfectly
@@ -122,11 +122,11 @@ reason, LE will be turned on in all upcoming simulations.
 
 To confirm that the spiking network is capable of learning more complex tasks, it was trained to match the input-output
 mapping of a separate teacher network. This is an established method for showing that a network can approximate
-arbitrary functions. A comparison between different 
+arbitrary functions. A comparison between different
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig_function_approximator}
+    \includegraphics[width=0.95\textwidth]{fig_function_approximator}
     \caption[SNN learns to match separate teacher network]{SNN learns to match separate teacher network. Networks of
     size $15-n_{hidden}-5$ neurons per layer were trained on input-output pairings of a randomly initialized feedforward
     network of size $15-15-5$. Each network was trained on 300000 samples of the same teacher network while all somatic
@@ -145,15 +145,15 @@ overall performance stayed behind expectations.
 
 \section{Apical compartment capacitance}\label{sec-c-m-api}
 
-Next, an investigation was made into the apical- and feedback weight errors of the SNN. The hypothesis was that a
-smoothing of apical compartment voltage would lead to a decrease in both errors. To test this, the Self-predicting
-experiment was repeated with numerous values for apical compartment capacitance $C_m^{api} \in \{ 1, 250 \} pF$ (results
-not shown). The experiment was a success and showed that for $C_m^{api} = 50pF$, apical error is almost halved ($0.0034
-    \rightarrow 0.0019$), and FB error is decreased by $80\%$ ($0.15 \rightarrow 0.027$). These values are still at least an
-order of magnitude higher than the rate implementations, but mark a substantial improvement. Further increasing the
-parameter lead to a decreased apical error, but came at the cost of slower convergence. Higher membrane capacitances
-must in general be expected to increase the relaxation period of the entire network. Thus, they requiring a highly
-undesirable increase in $t_{pres}$ for successful learning.
+Next, an investigation was made into lowering apical- and FB errors of the SNN. The hypothesis was that a smoothing of
+apical compartment voltage would lead to a decrease in both errors. To test this, the Self-predicting experiment was
+repeated with numerous values for apical compartment capacitance $C_m^{api} \in \{ 1, 250 \} pF$ (results not shown).
+The experiment showed that for $C_m^{api} = 50pF$, apical error is almost halved ($0.0034 \rightarrow 0.0019$), and FB
+error is decreased by $80\%$ ($0.15 \rightarrow 0.027$). These values are still at least an order of magnitude higher
+than the rate implementations, but mark a substantial improvement. Increasing the parameter beyond this point further
+decreased apical error, but came at the cost of slower convergence. Higher membrane capacitances in general increase the
+relaxation period of the entire network. Thus, they requiring a highly undesirable increase in $t_{pres}$ for successful
+learning.
 
 \begin{figure}[h]
     \centering
@@ -163,9 +163,9 @@ undesirable increase in $t_{pres}$ for successful learning.
     \label{fig-c-m-psi}
 \end{figure}
 
-A secondary objective of experimenting with apical capacitance was to enable learning with lower $\psi$ and therefore
-approach biologically plausible firing rates. To test this, training on the Bars dataset was performed under different
-combinations of apical capacitance and $\psi$. \todo{describe params and results}
+A secondary objective of training with different apical capacitances was to enable learning with lower $\psi$ and
+therefore approach biologically plausible firing rates. To test this, training on the Bars dataset was performed under
+different combinations of apical capacitance and $\psi$. \todo{describe params and results}
 
 
 
@@ -318,15 +318,14 @@ cortical equivalent which they are to represent.
 
 An easily overlooked connection of this network is the nudging signal from pyramidal neurons to their interneuron
 sisters. These were deliberately not included in the previous dropout studies. If any interneuron was to not receive its
-nudging signal, its incoming synapses would be unable to adapt their weights. As a result, both interneuron- and
-Feedforward weight error would fail to converge, in turn impeding apical error reduction. These one-to-one connections
-can  therefore be considered the most important communication channels in the network. If there is no redundancy in the
-neurons, the deletion of any of them breaks the network's learning scheme. Sacramento et al. claim that the interneurons
-of the network resemble somatostatin-expressing (\textit{SST}) neurons. This is a reasonable assumption, as SST cells
-are ubiqutous in the cortex and inhabit the same layers as pyramidal neurons. Furthermore, they share dense and
-recurrent synaptic connections to these pyramidal neurons \citep{urban2016somatostatin}. Finally, they have been shown
-to receive top-down instructive signals, which have been hypothesized to transmit prediction errors
-\citep{Leinweber2017}.
+nudging signal, its incoming synapses would be unable to adapt their weights. As a result, both interneuron- and FF
+error would fail to converge, in turn impeding apical error reduction. These one-to-one connections can  therefore be
+considered the most important communication channels in the network. If there is no redundancy in the neurons, the
+deletion of any of them breaks the network's learning scheme. Sacramento et al. claim that the interneurons of the
+network resemble somatostatin-expressing (\textit{SST}) neurons. This is a reasonable assumption, as SST cells are
+ubiqutous in the cortex and inhabit the same layers as pyramidal neurons. Furthermore, they share dense and recurrent
+synaptic connections to these pyramidal neurons \citep{urban2016somatostatin}. Finally, they have been shown to receive
+top-down instructive signals, which have been hypothesized to transmit prediction errors \citep{Leinweber2017}.
 
 Several experiments similar to those on synaptic polarity were conducted in an attempt to replace these one-to-one
 connections with more plausible connectivity schemes. Regrettably, none of them were able to retain the learning
@@ -430,8 +429,8 @@ parameter $\psi$, as well as with different numbers of threads were recorded. Re
     \caption[Benchmarks for the spiking implementation]{Benchmarks for the spiking implementation. \textbf{a)}
         Simulation on the MNIST dataset for a network of $784-300-100-10$ neurons and $\psi=250$ on different numbers of
         threads. 10 samples were presented for $50ms$ each, and weights were drawn randomly from a uniform distribution
-        $ \{-0.1, 0.1\}$. \textbf{b)} Training of a default network on the Bars dataset using different values of
-        the scaling parameter $\psi$. All simulations use 8 threads.}
+        $ \{-0.1, 0.1\}$. \textbf{b)} Training of a default network on the Bars dataset using different values of the
+        scaling parameter $\psi$. All simulations use 8 threads.}
     \label{fig-benchmark-threads-psi}
 \end{figure}
 
@@ -447,15 +446,15 @@ should inform future experiments on increasing efficiency through parametrizatio
 \section{Pre-training}
 
 One of the two major criticisms of the network noted in \citep{whittington2019theories} is the requirement for
-pre-training (cf. Supplementary Table \ref{tab-wb-models}). By this, the authors mean the initialization to the self-predicting
-state from which most simulations are started. The original paper implicitly considers three different learning
-configurations: In the first one, the network starts from the self-predicting state and only feedforward weights are
-plastic (cf. Sec. \ref{sec-le-tpres}). In the second one, the network starts from random weights and $Intn \rightarrow
-    Pyr$ synapses are plastic, so they can minimize feedback error. The third variant, in which feedback $Pyr \rightarrow
-    Pyr$ weights are plastic, is not considered here. An experiment was conducted comparing performance of the first two
-variants while training on the Bars dataset. This experiments showed that training was marginally slower, but led to
-identical loss (results not shown). While initializing the network to a self-predicting state does give it a slight
-'head-start', this is by no means a condition for learning.
+pre-training (cf. Supplementary Table \ref{tab-wb-models}). By this, the authors mean the initialization to the
+self-predicting state from which most simulations are started. The original paper implicitly considers three different
+learning configurations: In the first one, the network starts from the self-predicting state and only feedforward
+weights are plastic (cf. Sec. \ref{sec-le-tpres}). In the second one, the network starts from random weights and $Intn
+    \rightarrow Pyr$ synapses are plastic, so they can minimize FB error. The third variant, in which feedback $Pyr
+    \rightarrow Pyr$ weights are plastic, is not considered here. An experiment was conducted comparing performance of the
+first two variants while training on the Bars dataset. This experiments showed that training was marginally slower, but
+led to identical loss (results not shown). While initializing the network to a self-predicting state does give it a
+slight 'head-start', this is by no means a condition for learning.
 
 Furthermore, training the network towards the self-predicting state does not require any kind of structured input, let
 alone targets for activation. The network is driven towards this state purely by noise injection at the input layer. As
@@ -507,6 +506,6 @@ of use for improving its efficiency \todo{ref outlook}. More importantly, with t
 potentials, another biologically implausible mechanism can be omitted from simulations of this network.
 
 It should be noted that this experiment makes the assumption that the brain is either capable of retaining an input
-sequence until feedback is available, or otherwise 'replay' the pattern at a later point. While both of these mechanisms
-are not completely implausible, they are much less elegant than trace-based solutions for delayed reward signalling
-\citep{bellec2020solution}. This constraint should be viewed critically.
+sequence until feedback is available, or otherwise 'replay' the pattern at a later point. While such mechanisms are much
+less elegant than trace-based solutions for delayed reward signalling \citep{bellec2020solution}, the brain has been
+found capable of such replays \citep{Marblestone2016}.
