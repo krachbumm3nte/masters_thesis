@@ -112,7 +112,6 @@ The nomenclature for weight matrices conforms to \citep{Haider2021}, where they 
 target neurons lie, and belong to one of four populations: Feedforward and feedback pyramidal-to-pyramidal connections
 arriving at layer $l$ are denoted $W_l^{up}$ and $W_l^{down}$ respectively. Lateral pyramidal-to-interneuron connections
 are denoted with $W_l^{ip}$ and their corresponding feedback connections with $W_l^{pi}$.
-\newline
 
 Interneurons integrate synaptic information by largely the same principle, but instead of top-down signals from their
 sister neurons arriving at an apical compartment, it is injected directly into the soma.
@@ -184,7 +183,7 @@ weight matrices in a hidden layer $l$ of the dendritic error model are given by:
 Each set of connections is updated with a specific learning rate $\eta$ and a specific dendritic error term. The purpose
 of these particular dendritic errors will be explained in Section \ref{sec-selfpred}. Note that pyramidal-to-pyramidal
 feedback weights $w_l^{down}$ are not plastic in the present simulations and are only listed for completeness, see
-Section \ref{sec-feedback-plast} for an investigation into this.
+Section \ref{sec-feedback-plast} for more details on this case.
 
 \section{The self-predicting network state}\label{sec-selfpred}
 
@@ -469,11 +468,10 @@ as:
   V_i^\ast              & = (\phi(u_i^{som}) - \phi(\hat{v}_i^{dend}) )
 \end{align}
 
-\what{this notation seems slightly abusive, as neither side considers $t$, but it is taken precisely from
-  \cite{Stapmanns2021}} with learning rate $\eta$. $V_i^\ast$ then is the dendritic error of the dendrite that the
+with learning rate $\eta$. $V_i^\ast$ then is the dendritic error of the dendrite that the
 synapse between $j$ and $i$ is located at\footnote{The dendritic error here is defined as the difference between two
 hypothetical rates based on the arbitrary function $\phi$. The original implementation uses the difference between the
-actual postsynaptic spiketrain and this dendritic prediction ($V_i^\ast = (s_i - \phi(\hat{v}_i^{dend}) )$).
+true postsynaptic spiketrain and this dendritic prediction ($V_i^\ast = (s_i - \phi(\hat{v}_i^{dend}) )$).
 Furthermore, Stapmanns et al. show that generating a spiketrain from the dendritic potential ($V_i^\ast = (s_i -
   s_i^{dend})$) also results in successful learning, although at the cost of additional training time. The rate-based
 variant was chosen in order to not hinder learning performance any more than necessary.}. Writing out the convolutions
@@ -484,22 +482,21 @@ in Equation \ref{eq-delta-w-t-T} explicitly, we obtain
                      & =  \int_t^T dt' \  \eta\int_0^{t'} dt'' \ \kappa(t'-t'') V_i^\ast (t'') s_j^\ast (t'') \label{eq-delta-w-t-T-long}
 \end{align}
 
-Computing this Equation directly is inefficient due to the nested integrals. Yet, it is possible to break up the
-integrals into two simpler computations and rewrite the weight change as:
+Computing this Equation directly is somewhat inefficient due to the nested integrals. Yet, the authors show that it is
+possible to break up the integrals into two simpler computations and rewrite the weight change as:
 
 
 \begin{align}
-  \Delta W_{ij}(t, T) & = \eta \left[ I_1 (t, T) - I_2(t,T) + I_2(0,t)\left( 1- e^{-\frac{T-t}{\tau_\kappa}} \right) \right] \\
-  I_1(a, b)           & = \int_{a}^{b} dt \ V_i^\ast (t) s_j^\ast (t)                                                        \\
-  I_2(a, b)           & = \int_{a}^{b} dt \ e^{-\frac{b-t}{\tau_\kappa}} V_i^\ast (t) s_j^\ast (t)                           \\
+  \Delta W_{ij}(t, T) & = \eta \left[ I_1 (t, T) - I_2(t,T) + I_2(0,t)\left( 1- e^{-\frac{T-t}{\tau_\kappa}} \right) \right]\label{eq-proof-start} \\
+  I_1(a, b)           & = -\int_{a}^{b} dt \ V_i^\ast (t) s_j^\ast (t)                                                                             \\
+  I_2(a, b)           & = -\int_{a}^{b} dt \ e^{-\frac{b-t}{\tau_\kappa}} V_i^\ast (t) s_j^\ast (t)\label{eq-proof-end}                            \\
 \end{align}
 
-See Section \todo{ref} for a rigorous proof that this is in fact the desired integral. \what{That proof is currently
-  part of the appendix, as the original proof \citep{Stapmanns2021} has errors. Should I keep it or refer to the
-  original paper?} The resulting equations allow for a rather efficient computation of weight changes compared to the
-complex integral described in Equation \ref{eq-delta-w-t-T-long}. This integration is performed whenever a spike
-traverses a synapse. It generalizes to all special cases in Equations \ref{eq-delta_w_up}-\ref{eq-delta_w_down}, as
-long as the appropriate dendritic error is stored by the postsynaptic neuron.
+See Section 5.1 in \citep{Stapmanns2021} for a rigorous proof that this is in fact the desired integral. The resulting
+equations allow for a rather efficient computation of weight changes compared to the complex integral described in
+Equation \ref{eq-delta-w-t-T-long}. This integration is performed whenever a spike traverses a synapse. It generalizes
+to all special cases in Equations \ref{eq-delta_w_up}-\ref{eq-delta_w_down}, as long as the appropriate dendritic
+error is stored by the postsynaptic neuron.
 
 \section{Latent Equilibrium}\label{sec-latent-eq}
 
@@ -618,11 +615,11 @@ careful parametrization it strongly decreases response time.
 
 
 When employing prospective dynamics in the dendritic error networks, local error terms of pyramidal- and interneurons
-relax much faster, as shown in Fig. \ref{fig-error-comp-le}. These results highlight the superiority of LE for learning
-in this network, as the relaxation period is almost instantaneous. In contrast, the error terms in the original
+relax much faster, as shown in Fig. \ref{fig-error-comp-le}. These simulations highlight the superiority of LE for
+learning in this network, as the relaxation period is almost instantaneous. In contrast, the error terms in the original
 dendritic error network drive random synaptic plasticity even when the network is fully trained on a given dataset and
-is able to make accurate predictions. Thus, both the issue of redundant weight changes, as well as the concern over
-response and learning speed can be solved by LE. The authors furthermore show, that learning with this mechanism is
+is able to make accurate predictions. Thus, both the issue of redundant weight changes, as well as concerns over
+response time and learning speed can be solved by LE. The authors furthermore show, that learning with this mechanism is
 indifferent to presentation times or effective time constant for rate neurons. In addition to using the prospective
 somatic potential for the neuronal transfer function, it is also used in the plasticity rule of LE neurons. The
 Urbanczik-Senn plasticity is therefore updated to compute dendritic error from prospective somatic activations and a
@@ -673,7 +670,7 @@ the dendrites were omitted in my model. Furthermore, the present network require
 their weight at runtime, which is not permitted in the original synapse model. For this reason, the strict separation of
 excitatory and inhibitory synapses had to be removed from the synapse model. In order to compare the different
 implementations exactly, the ODE solver with variable stepsize was replaced with Euler integrations\footnote{This change
-  initially served debugging purposes, but turned out to have no negative effect on performance and was therefore kept}
+  initially served debugging purposes, but turned out to have no negative effect on performance and was therefore kept.}
 with step size $\Delta t$. For the spiking neuron model, dendritic compartments are modeled with leaky membrane dynamics
 in contrast to the rate variant. The choice of dendritic leakage conductance $g_l^{dend}=\Delta t=0.1$ is motivated in
 Section \ref{sec-gl-dend}.
@@ -732,14 +729,15 @@ accuracy.\newline
 \textbf{Loss}: Unless specified otherwise, train- and test loss are are computed through MSE between predicted and
 target output:
 \begin{align*}
-  MSE & = \frac{1}{N} \sum_{i=1}^N \left( y^{target}_i-y^{pred}_i \right)^2
+  MSE & = \frac{1}{M} \sum_{i=1}^M \left( y^{target}_i-y^{pred}_i \right)^2
 \end{align*}
-Due to the network's relaxation period, $y^{pred}$ can not be accurately computed instantaneously\footnote{Sacramento et
-  al. actually do exactly this. They compute $y^{pred}$ without neuron dynamics, only from the input, activation
-  function $\phi$, and feedforward weights. This approach makes the assumption that the network is permanently in a
-  perfect self-predicting state, in which feedback connections do not change the output. Particularly for the spiking
-  variant, this assumption is likely erroneous, leading to artificially inflated performance. Hence, all tests are
+With $M$ neurons in the output layer, which is again averaged over $N$ test samples. Due to the network's relaxation
+period, $y^{pred}$ can not be accurately computed instantaneously\footnote{Sacramento et al. actually do exactly this.
+  They compute $y^{pred}$ without neuron dynamics, only from the input, activation function $\phi$, and feedforward
+  weights. This approach makes the assumption that the network is permanently in a perfect self-predicting state, in
+  which lateral and feedback weights have no impact on pyramidal neuron activity. Particularly for the spiking variant,
+  this assumption was shown to be erroneous, leading to artificially inflated performance. Hence, all tests are
   performed by fully simulating networks with disabled plasticity.}. Instead, the network needs to be presented with the
-stimulus for a given time $t_{pres}$. Particularly for the SNN, as well as networks injected with noise, output
-fluctuates. therefore, $y^{pred}$ is an average over recorded somatic potentials for each output neuron. This
-recording typically starts after roughly $70\%$ of $t_{pres}$.
+stimulus for a given time $t_{pres}$. Particularly for the SNN, as well as networks injected with noise, output layer
+membranes fluctuate strongly. therefore, $y^{pred}$ is an average over recorded somatic potentials for each output
+neuron. This recording typically starts after $\sim 70\%$ of $t_{pres}$ has passed.

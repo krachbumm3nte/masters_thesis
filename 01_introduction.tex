@@ -1,22 +1,29 @@
 
-\begin{center}
+\pagenumbering{arabic}
+\begin{abstract}
+  \addcontentsline{toc}{chapter}{Abstract}
   
-  \chapter*{\centering{Abstract}}
+  The Backpropagation of errors algorithm is exceptionally capable of optimizing artificial neural networks and thus
+  forms the backbone of modern machine learning.  Despite its usefulness, it has long been regarded as impossible for
+  brains to implement, as it relies on multiple biologically implausible mechanisms. Several of these
+  have recently been overcome in models which could be replicated by biological neurons. After an extensive
+  review of the recent literature on such models, one of them was selected for further investigation. The model - called
+  the ``Dendritic error network`` - shows how a recurrently connected network of cortical neurons could approximate the
+  Backpropagation algorithm. What sets it apart from competing models is the inclusion of multi-compartment models of
+  pyramidal neurons and its close functional correspondence to predictive coding. The aim of this thesis
+  was, to investigate if this model is capable of learning under yet more constraints on its biological plausibility.
+  These include a transition to spike-based communication, as well as a strict segregation of excitatory and inhibitory
+  neuron populations - as demanded by Dale's law. Further experiments investigated if the network can handle network
+  topologies informed by the human neocortex which it professes to model. Results indicate that learning in the
+  dendritic error network is largely unobstructed by such constraints. Thus, the model is uniquely capable of performing
+  error-minimizing learning while conforming to many neuron- and network-properties informed by neuroscientific
+  insights. This study comes to the conclusion that the dendritic error network is one of the most promising
+  computational models for supervised learning in the neocortex and should therefore be investigated further.
+\end{abstract}
+  
 
-  The Backpropagation of errors algorithm is uniquely capable of optimizing artificial neural networks and forms the
-  backbone of modern machine learning. The algorithm is uniquels capable of optimally identifying those parameters of a
-  network that contribute to undesirable behaviour. Despite its usefulness, it has been almost unanimously regarded as
-  impossible for brains to implement due to several biologically implausible mechanisms. Several of these have since
-  been overcome in models which could plausibly be replicated with biological neurons. After an extensive review of the
-  recent literature on these models, this thesis develops improvements to one of them, further underscoring its
-  biological plausibility. The model - called the "Dendritic error network" - shows how a recurrently connected network
-  of cortical neurons could approximate the Backpropagation algorithm. The few biologically questionable which it relies
-  on are investigated,  
-  
-\end{center}
 
 \chapter{Introduction}
-
 
 
 \section{Motivation}
@@ -145,14 +152,13 @@ discussed further in Section \ref{sec-model-selection}.\newline
 \citep{Lillicrap2014}. This seminal paper shows that Backprop can still learn successfully when feedback weights are
 random. In addition to learning to represent an input-output mapping in forward weights, the network is trained to
 extract useful information from randomly weighted instructive pathways. The authors call this process \textit{learning
-  to learn}, and show that performance is even superior to classical Backprop for some tasks. This mechanism was further
+to learn}, and show that performance is even superior to classical Backprop for some tasks. This mechanism was further
 expanded to show that the principles of FA perform very well when biologically plausible plasticity rules are employed
 \citep{Liao2016,Zenke2018}. Another popular line of thought is - instead of computing local errors - to compute optimal
 activations for hidden layer neurons using autoencoders \citep{Bengio2014,Lee2015,Ahmad2020}. Approaches derived from
-this do not suffer from the weight transport problem, and by design does not require local error representations. While
-these solutions (summized as \textit{Target propagation} algorithms) solve the weight transport problem, they fall far
-behind traditional Backprop on more complex benchmark datasets like
-\textit{\href{https://www.cs.toronto.edu/~kriz/cifar.html}{CIFAR}} and
+this (summized as \textit{Target propagation} algorithms) by design do not require local error representations. While
+they therefore are not affected by the weight transport problem, they fall far behind traditional Backprop on more
+complex benchmark datasets like \textit{\href{https://www.cs.toronto.edu/~kriz/cifar.html}{CIFAR}} and
 \textit{\href{https://www.image-net.org/index.php}{ImageNet}} \citep{Bartunov2018}.\newline
 
 \noindent Numerous approaches for implementing Backprop with more plausible neuron models exist, most of which employ
@@ -177,7 +183,7 @@ fact that rate-based point neurons are employed in many of the most powerful art
 be taken as an argument that the simple summation of synaptic inputs is sufficient for powerful and generalized
 learning. Modelling neurons more closely to biology would by this view only increase mathematical complexity and
 computational cost without practical benefit. Another hypothesis states that the dominance of point neurons stems from a
-"somato-centric perspective" within neuroscience \citep{Larkum2018}, which stems from the technical challenges inherent
+``somato-centric perspective`` within neuroscience \citep{Larkum2018}, which stems from the technical challenges inherent
 to studying dendrites in vivo. The vastly different amount of available data regarding these two neuronal components
 might have induced a bias in how neurons are modelled computationally. Some researchers have even questioned whether
 dendrites should be seen as more of a 'bug' than a 'feature' \citep{Haeusser2003}, i.e.\ a biological necessity which
@@ -187,17 +193,17 @@ Yet in recent years, with novel mechanisms of dendritic computation being discov
 explicitly modelling dendrites has increased. Particularly the vast dendritic branches of pyramidal neurons found in the
 cerebral cortex, hippocampus and amygdala, were shown to perform complex integrations of their synaptic inputs
 \citep{spruston2008pyramidal}. These dendritic trees are capable of performing coincidence- \citep{Larkum1999} and
-sequence detection \citep{Branco2010}. The size of dendritic trees is also known to discriminate regular spiking from
-burst firing pyramidal neurons \citep{Elburg2010}. Furthermore, pyramidal neuron dendrites are capable of performing
-computations, which were previously assumed to require multi-layer neural networks \citep{Schiess2016,Gidon2020}. See
-\citep{Larkum2022} and \citep{Poirazi2020} for extensive reviews.
+sequence detection \citep{Branco2010} within their synaptic inputs. The size of dendritic trees is also known to
+discriminate regular spiking from burst firing pyramidal neurons \citep{Elburg2010}. Furthermore, pyramidal neuron
+dendrites are capable of performing computations, which were previously assumed to require multi-layer neural networks
+\citep{Schiess2016,Gidon2020}. See \citep{Larkum2022} and \citep{Poirazi2020} for extensive reviews.
 
 These neuroscientific insights have  sparked hope that modelling dendritic compartments explicitly might aid machine
 learning in terms in both learning performance and energy efficiency
 \citep{Chavlis2021,guerguiev2017towards,Richards2019,Eyal2018}. It appears that, if not for computational gains,
-dendrites should be considered essential for any model attempting to explain the power of human learning. While the
-network discussed in this thesis includes very simple multi-compartment models, the choice of model was strongly
-influenced by the fact that segregated dendrites were considered at all.
+dendrites should be considered in any model attempting to explain the power of human learning. While the network
+discussed in this thesis simulates dendrites with very simple dynamics, the choice of model was strongly influenced by
+the fact that segregated dendrites were considered at all.
 
 
 
@@ -213,15 +219,15 @@ biology. The question over network structure goes hand in hand with the choice o
 arrive at specific points of pyramidal neuron dendrites, depending on the origin of the connection
 \citep{felleman1991distributed,Ishizuka1995,Larkum2018}.
 
-Several theories of cortical funcition focus more on reinforcement \citep{Legenstein2008} or unsupervised learning
+Several theories of cortical function focus more on reinforcement \citep{Legenstein2008} or unsupervised learning
 \citep{George2009,hausler2017inhibitory}. Without dismissing these theories, this thesis will adopt the viewpoint that
 human brains require a form of gradient descent to successfully adapt to their ever-changing environments. Furthermore,
 we share the hypothesis that this kind of learning occurs predominantly in the neocortex \citep{Marblestone2016}.
 
-The literature on the subject of learning historically appears to be somewhat split (although several important
-exceptions have been published recently). On the one hand, the "machine-learning" point of view largely considers the
-utility of network changes first, with considerations of biology appearing as an afterthought\citeme. On the other hand,
-intricate models of cortical circuits exist, which can so far not be trained to perform tasks
+The literature on the subject of learning historically appears to be somewhat split (although important exceptions have
+been published recently). On the one hand, the ``machine-learning`` point of view largely considers the utility of network
+changes first, with considerations of biology appearing as an afterthought\citeme. On the other hand, intricate models
+of cortical circuits exist, which can so far not be trained to perform tasks
 \citep{potjans2014cell,schmidt2018multi,van2022bringing}. Within this thesis, I hope to contribute to the body of
 literature between those extremes. For this, my approach will be to select a learning model that is already highly
 biologically plausible, and to attempt to improve its plausibility - without breaking the learning rule.
@@ -286,7 +292,7 @@ The predictive coding network stores local prediction errors in nodes (i.e.\ neu
 errors relate. That errors may be represented within the activation of individual neurons is a promising hypothesis with
 some advantages, as well as results backing it up \citep{Hertaeg2022}. Yet there is a competing view, by which errors
 elicited by individual neurons may be represented by membrane potentials of their dendritic compartments
-\citep{guerguiev2017towards}. The "Dendritic error model" \citep{sacramento2018dendritic} - as the name implies -
+\citep{guerguiev2017towards}. The ``Dendritic error model`` \citep{sacramento2018dendritic} - as the name implies -
 follows this line of thought. It contains a highly recurrent network of both pyramidal- and interneurons, in which
 pyramidal neuron apical dendrites encode prediction errors. This view is supported by behavioral rodent experiments
 which show that stimulation to pyramidal neuron apical tufts in cortical layer 1 controls learning \citep{Doron2020}.
@@ -298,7 +304,7 @@ their membrane potential when a target is applied to the output layer. Since the
 only local information is required to minimize these prediction errors through a plasticity rule for multi-compartment
 neurons \citep{urbanczik2014learning}. A critical observation made in \citep{whittington2019theories} is that the
 dendritic error model is mathematically equivalent to their predictive coding network \todo{expand if I have time,
-  otherwise this will be a ref.}. All of these factors combined make the dendritic error model a promising model to help
+otherwise this will be a ref.}. All of these factors combined make the dendritic error model a promising model to help
 us further understand both predictive coding and deep learning in cortical circuits. While both the employed neuron and
 connectivity model are far behind some of the more rigorous cortical simulations, it is regarded in the literature as an
 important step towards integrating deep learning and neuroscience.

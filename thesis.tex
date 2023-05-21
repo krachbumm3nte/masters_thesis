@@ -22,6 +22,7 @@
 \usepackage{tabularx}
 \usepackage[ngerman]{datetime}
 
+
 \DeclareSymbolFont{letters}{OML}{ztmcm}{m}{it}
 \DeclareSymbolFontAlphabet{\mathnormal}{letters}
 \pagestyle{headings}
@@ -111,7 +112,7 @@ Fachbereich 17\endgraf
     \maketitle
     
 
-
+\pagenumbering{gobble}
 \noindent \textbf{Eidesstattliche Erklärung}
 
 
@@ -146,8 +147,10 @@ Marburg, den \myformat\today \hspace{4cm} Johannes Gille
 \thispagestyle{empty}
 \listoffigures
 \listoftables
-\pagenumbering{arabic}
 
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
 
 \include{01_introduction.tex}
 \include{02_methods.tex}
