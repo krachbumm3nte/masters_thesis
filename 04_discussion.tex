@@ -18,8 +18,11 @@ The original dendritic error network by design solves several biologically impla
 apical dendrites. Furthermore, it provides two separate solutions to the \textit{\textbf{weight transport problem}}:
 First, it is capable of learning through feedback alignment, as was used in all present simulations. Secondly,
 experiments employing steady-state-approximations have been successful in training feedback weights through variants of
-the dendritic error rule. Finally, the network relies strictly on \textit{\textbf{Local plasticity}}
-\citep{Whittington2017}, and models a (somewhat limited) variability in cell types \citep{Bartunov2018}.\newline
+the dendritic plasticity rule. An often overlooked property of biological networks is that feedback signals have an
+immediate impact on a neurons output \citep{Larkum2009,Gilbert2013}. This does not occur in Backprop, but is an
+essential feature of the dendritic error network. Finally, the network relies strictly on \textit{\textbf{Local
+plasticity}} \citep{Whittington2017}, and models a (somewhat limited) variability in cell types
+\citep{Bartunov2018}.\newline
 
 The present work further improves on the neuron model by showing that spike-based communication does
 not interfere with the dendritic plasticity rule, or the intricate balance of excitation and inhibition demanded by the
@@ -99,7 +102,7 @@ remains a serious drawback of this model, and has been a major limiting factor f
 \subsubsection*{Computational efficiency}
 
 The high computational demands of the network were first reported in the original paper. They were largely alleviated
-through steady-state approximations and the addition of Latent equilibrium. The present SNN implementation reintroduces
+through steady-state approximations and the addition of Latent Equilibrium. The present SNN implementation reintroduces
 this issue, and regrettably exacerbates it considerably. Some improvements can be expected by lowering stimulus
 presentation time and spike frequencies, or improving the plasticity rule. Yet to a degree, decreased speed is an
 inadvertible price to be paid for a more exact modelling of neuronal processes. Therefore, any attempt at introducing
@@ -177,6 +180,7 @@ dendritic spikes and plateau potentials in search of similar plasticity dynamics
 have recently been reported \citep{Bono2017,Schiess2016,magee2020synaptic}, and could potentially be integrated into
 the present neuron model.
 
+
 \subsection*{Cortical circuitry}
 
 The circuitry surrounding the dendritic error network is very simplistic compared to the intricate networks of cortical
@@ -193,6 +197,23 @@ We show that the plasticity rule is capable of assigning credit indirectly when 
 additional interneuron populations. Extending this principle to all sets of synapses in the network would introduce
 novel interneuron populations demanding to be identified. The extent to which the resulting network is compatible with
 cortical circuitry could prove valuable for further judging the plausibility of the dendritic error model.
+
+\subsubsection*{Deep Feedback Control}
+
+A completely novel solution to the credit assignment problem is provided by \textit{Deep Feedback
+control} \citep{Meulemans2021,Meulemans2022}. Instead of approximating Backprop, this algorithm performs Gauss-Newton
+optimization, thus employing a previously unexplored approach to training deep neural networks. While originally
+described as a purely mathematical model, it might be considered even more biologically plausible than the dendritic
+error network. It considers many features of pyramidal neuron dendrites without being held back by any of the common
+Backprop criticisms or the constrained connectivity of the present model. The authors also show that it shares a close
+mathematical relationship to the dendritic error network, incorporating some interneuron computations into the pyramidal
+neurons. Its connectivity however is therefore even further abstracted from the cortical circuitry than the one
+discussed here. Regardless of its exact details, this algorithm provides an important insight which was largely
+neglected in this thesis (and perhaps this niche of the neuroscience community) so far: Backprop is not the only
+competetive mechanism for assigning synaptic credit in neural networks. Therefore, focussing too narrowly on this
+singular solution might prevent us from considering viable alternatives.
+
+
 
 \section{Conclusion}
 
@@ -211,4 +232,4 @@ biologically plausible mechanism that replaces (or alternatively explains) the i
 arguably elevate it to a prime contender for explaining supervised learning in the cortex. Nevertheless, such optimism
 must be paired with restraint given the vast complexity of the cortex - and associated areas - which a general model
 would have to encompass. Either way, further research into the dendritic error network is likely to help us better
-understand the exciting capabilities of the human brain.
+understand the intriguing capabilities of the human brain.

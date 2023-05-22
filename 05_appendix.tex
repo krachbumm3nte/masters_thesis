@@ -12,7 +12,7 @@ compartment evolves according to:
 
 Under the assumption that the activation of all presynaptic neurons $i$ remains static over time, we can replace the
 spontaneous activation $s_i(t)$ with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle =
-r_i \ \Delta t$ (cf. Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but refer to
+  r_i \ \Delta t$ (cf. Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but refer to
 individual neurons. Next, in order to find the convergence point of the ODE, we set the left side of the equation to $0$
 and to solve it:
 
@@ -41,7 +41,7 @@ model employed.
 
 \section{Plasticity in feedback connections}\label{sec-feedback-plast}
 
-Within the dendritic error model, Pyramidal-to-pyramidal feedback weights evolve according to:
+Within the dendritic error model, pyramidal-to-pyramidal feedback weights evolve according to:
 
 \begin{align}
   \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(w_l^{down} r_{l+1}^P) )\ \phi(u_{l+1}^{P})^T
@@ -54,7 +54,7 @@ neuron apical dendrites into a proximal and a distal tree is well documented \ci
 that these different apical compartments are innervated by separate presynaptic populations is established
 \citep{Larkum2018}. A difference between plasticity mechanisms for synapses arriving at these two integration zones is
 likewise plausible, as vastly different membrane dynamics and ion concentrations have been measured between them
-\citep{Ishizuka1995,Larkum2022}. A more sophisticated model of the apical tree and its plasticity could therefore be a
+\citep{Ishizuka1995,Larkum2009}. A more sophisticated model of the apical tree and its plasticity could therefore be a
 desirable extension to the model.
 
 While the plasticity was successfully implemented in all variants of the model, it did not prove useful for training the
@@ -70,10 +70,10 @@ learning in the present model.
 
 Attached to this thesis is a thumb drive containing the electronic supplementary material, which will briefly be
 described here. The base directory contains a variant of the NEST simulator, which is published under the
-\href{https://www.gnu.org/licenses/old-licenses/gpl-2.0.html}{GPLv2+} license. The NEST version included here was last
-pulled from the public repository on December 20, 2022 and therefore lies somewhere between NEST 3.3 and 3.4. Under the
-\texttt{models} directory, the neuron (\texttt{pp\_\allowbreak cond\_\allowbreak exp\_\allowbreak mc\_\allowbreak pyr},
-\texttt{rate\_\allowbreak neuron\_\allowbreak pyr}) and synapse models (\texttt{pyr\_\allowbreak synapse},
+\href{https://www.gnu.org/licenses/old-licenses/gpl-2.0.html}{GPLv2+} license. The code included here was last pulled
+from the public repository on December 20, 2022 and therefore lies somewhere between NEST versions 3.3 and 3.4. Under
+the \texttt{models} directory, the neuron (\texttt{pp\_\allowbreak cond\_\allowbreak exp\_\allowbreak mc\_\allowbreak
+pyr}, \texttt{rate\_\allowbreak neuron\_\allowbreak pyr}) and synapse models (\texttt{pyr\_\allowbreak synapse},
 \texttt{pyr\_\allowbreak synapse\_\allowbreak rate}) are located with corresponding \texttt{.cpp} and \texttt{.h} files.
 Furthermore, the \texttt{pyr\_\allowbreak archiving\_\allowbreak node} responsible for storage and readout of dendritic
 error, is located in the \texttt{nestkernel} directory. Other changes to the simulator largely serve to embed these
@@ -86,29 +86,31 @@ with\newline
 \texttt{\$ conda create -n <environment-name> --file requirements.txt}\newline
 
 a \href{https://nest-simulator.readthedocs.io/en/v3.4/installation/condaenv_install.html#condaenv}{guide from the NEST
-documentation} should simplify setup of the simulator.
+  documentation} should simplify setup of the simulator.
 
 The project directory \texttt{dendritic\_\allowbreak error\_\allowbreak network} (roughly) follows the ``Good research
-handbook`` \citep{Mineault2021}:
+code handbook`` \citep{Mineault2021}:
 
 \begin{itemize}
-  \item \textbf{data} contains all figures included in this thesis, as well as some additional ones.
+  \item \textbf{data} contains all figures included in this thesis, as well as some additional ones which were not
+  included.
   \item \textbf{results} contains all relevant simulation results. Parameter studies have their own subfolders, titled
-  with the prefix \texttt{par\_study\_}. Each simulation stores its full parameter set (\texttt{params.json}), initial
-  weights (\texttt{init\_weights.json}), final weights (\texttt{weights.json}) and training progress
-  (\texttt{progress.json}). Intermediate weights are stored every few epochs during training in the \texttt{data}
-  subdirectory. If plots were created to validate training progress, they are found in the \texttt{plots} folder.
-  \item \textbf{experimental\_configs} contains JSON files to parameterize experiments. In these files, only the subset 
-  of parameters needs to be specified which deviates from the default (cf. Supplementary table \ref{tab-params}).
+        with the prefix \texttt{par\_study\_}. Each simulation stores its full parameter set (\texttt{params.json}), initial
+        weights (\texttt{init\_weights.json}), final weights (\texttt{weights.json}) and training progress
+        (\texttt{progress.json}). Intermediate weights are stored every few epochs during training in the \texttt{data}
+        subdirectory. If plots were created to validate training progress, they are found in the \texttt{plots} folder.
+  \item \textbf{experimental\_configs} contains JSON files to parameterize experiments. In these files, only the subset
+        of parameters needs to be specified which deviates from the default (cf. Supplementary table \ref{tab-params}).
   \item \textbf{scripts} contains scripts to be executed. The vast majority of them were written to validate individual
-  assumptions made in this thesis. Of interest to perform experiments are \texttt{train\_network.py} and
-  \texttt{parameter\_study.py}, which both support the \texttt{--help} parameter and will therefore not be detailed
-  here.
-  \item \textbf{src} contains a python module of reusable code (which should auto-install alongside the
-  conda-environment). This includes networks, datasets, default parameters and some utilities.
+        assumptions made in this thesis. Of interest to perform experiments are \texttt{train\_network.py} and
+        \texttt{parameter\_study.py}, which both support the \texttt{--help} parameter and will therefore not be detailed
+        here.
+  \item \textbf{src} contains a python module of reusable code, including networks, datasets, default parameters and
+        some utilities. It can be added to the conda environment via \texttt{\$ pip install -e .} from the project's base
+        directory.
   \item \textbf{tests} contains a test-suite which was used to validate the NEST implementation and fine-tune
-  parameters. As it was only strictly necessary during the initial stages, it has not been updated throughout. Therefore
-  most tests currently fail.
+        parameters. As it was only strictly necessary during the initial stages, it has not been updated throughout. Therefore
+        most tests currently fail.
 \end{itemize}
 
 
@@ -145,8 +147,12 @@ handbook`` \citep{Mineault2021}:
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\textwidth]{fig_reset_strategies}
-  \caption[Replication of Fig. \ref{fig-bars-le-snest} using networks of rate neurons in the NEST simulator]{\todo{ref this shit}}
-  \label{fig-bars-le-rnest}
+  \caption[Training performance without resetting the network.]{Training performance without resetting the network.
+    \textbf{Hard reset:} default from previous iterations of the model, in which membrane potentials and synaptic weight
+    deltas are manually reset after each stimulus presentation. \textbf{Soft reset:} After each stimulus presentation, the
+    network is allowed to relax during $5ms$ without stimulation. \textbf{No reset:} Stimuli are presented directly after
+    another without interference. \textbf{A:} Test error, \textbf{B:} Test loss. }
+  \label{fig-reset-strategies}
 \end{figure}
 
 
@@ -164,92 +170,68 @@ handbook`` \citep{Mineault2021}:
 \arrayrulecolor{white} % <--- {\renewcommand{\arraystretch}{1.45} 
 \begin{table}[h]
   \resizebox{\textwidth}{!}{
-    \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}
-               & \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model} &
-               \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model} \\
+    \begin{tabular}{|ll|ll|ll|} \hline \rowcolor[HTML]{B3B3B3} \multicolumn{2}{|l|}{\cellcolor[HTML]{B3B3B3}}               &
+               \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Temporal-error model}                                        &
+               \multicolumn{2}{l|}{\cellcolor[HTML]{B3B3B3}Explicit-error model}                                                                                                              \\
                \cline{3-6}
                \rowcolor[HTML]{B3B3B3}
-               \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}
-               & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning} & Continuous update
-               & \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding} & Dendritic error
-               \\
+               \multicolumn{2}{|l|}{\multirow{-2}{*}{\cellcolor[HTML]{B3B3B3}}}                                         &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Contrastive learning}                                        & Continuous update                                      &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{B3B3B3}Predictive coding}                                           & Dendritic error                                                     \\
                \hline
-               \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}
-               &
+               \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Control signal}                     &
                \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
-               Required}}
-               & {\color[HTML]{FE0000} Required}
-               &
+               Required}}                                                                                               & {\color[HTML]{FE0000} Required}                        &
                \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
-               Not required}}
-               & {\color[HTML]{32CB00} Not required}
-               \\ \hline
+               Not required}}                                                                                           & {\color[HTML]{32CB00} Not required}                                 \\ \hline
                \rowcolor[HTML]{D9D9D9}
-               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}
-               &
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Connectivity}                                               &
                \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
-               Unconstrained}}
+               Unconstrained}}                                                                                          & {\color[HTML]{32CB00} Unconstrained}                   &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
+               Constrained}}                                                                                            & {\color[HTML]{FE0000} Constrained}                                  \\
+               \hline
+               \rowcolor[HTML]{D9D9D9}
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time}                                           &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               L-1}}                                                                                                    & {\color[HTML]{32CB00} L-1}                             &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
+               2L-1}}                                                                                                   & {\color[HTML]{32CB00} L-1}                                          \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}                &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               Not required}}                                                                                           & {\color[HTML]{32CB00} Not required}                    &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
+               Not required}}                                                                                           & {\color[HTML]{FE0000} Required}                                     \\
+               \hline
+               \rowcolor[HTML]{D9D9D9}
+               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in}                                           &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference
+                                                                   in
+                                                                   activity
+                                                                   \\
+                                                                   between
+                                                                   separate
+                                                                   \\
+                                                                   phases\end{tabular}}
                                                                                                                         &
-                                                                                                                        {\color[HTML]{32CB00}
-                                                                                                                        Unconstrained}
-                                                                                                                        &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
-               Constrained}}
-               & {\color[HTML]{FE0000} Constrained} \\
-               \hline
-               \rowcolor[HTML]{D9D9D9}
-               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Propagation time} &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
-               L-1}}
-               & {\color[HTML]{32CB00} L-1}
-               &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{FE0000}
-               2L-1}}
-               & {\color[HTML]{32CB00} L-1}
-               \\
-               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Pre-training}
-               &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
-               Not required}}
-               & {\color[HTML]{32CB00} Not required} &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}{\color[HTML]{32CB00}
-               Not required}}
-               & {\color[HTML]{FE0000} Required} \\
-               \hline
-               \rowcolor[HTML]{D9D9D9}
-               \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Error encoded in} &
-                                                                                                                        \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Difference
-                                                                                                                        in
-                                                                                                                        activity
-                                                                                                                        \\
-                                                                                                                                                                              between
-                                                                                                                                                                              separate
-                                                                                                                                                                              \\
-                                                                                                                                                                              phases\end{tabular}}
-                                                                                                                                                                              &
                \begin{tabular}[c]{@{}l@{}}Rate of change of \\
                      activity\end{tabular}                                                          &
                \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Activity of specialised \\
-                                                                   neurons\end{tabular}}                          &
-               \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}
-               \\
-               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}
-               & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and
-               behaviour in a                         \\
+                                                                   neurons\end{tabular}}        &
+               \begin{tabular}[c]{@{}l@{}}Apical dendrites of \\ pyramidal neurons\end{tabular}                                                                                \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}Data accounted for}          &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Neural responses \\ and behaviour
+                                                                   in a                         \\
                                                                    variety of tasks\end{tabular}} &
-               \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}
-               & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\
+               \begin{tabular}[c]{@{}l@{}}Typical spike-time- \\ dependent plasticity\end{tabular}                      &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}\begin{tabular}[c]{@{}l@{}}Increased neural \\
                                                                    activity to                  \\
                                                                    unpredicted stimuli\end{tabular}}               &
                \begin{tabular}[c]{@{}l@{}}Properties of \\
-                     pyramidal neurons\end{tabular}
-                     \\
-               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}
-               & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}
-               & -                                                                                                &
-               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7}
-               & $\sim$1.96
-               \\
+                     pyramidal neurons\end{tabular}                                                                                                                        \\
+               \hline \rowcolor[HTML]{D9D9D9} \multicolumn{2}{|l|}{\cellcolor[HTML]{D9D9D9}MNIST performance}           &
+               \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$2-3}                                                   & -
+                                                                                                                        & \multicolumn{1}{l|}{\cellcolor[HTML]{D9D9D9}$\sim$1.7} & $\sim$1.96 \\
                \hline
     \end{tabular}
   }\caption[Comparison between biologically plausible approximations of Backprop]{Comparison between biologically
@@ -274,7 +256,7 @@ handbook`` \citep{Mineault2021}:
 
       \\\textbf{Simulation} \\\hline
       \texttt{n\_epochs}           & Number of training iterations                                               &
-      $1000$ \\
+      $1000$                                                                                                             \\
       \texttt{delta\_t}            & Euler integration step in [ms]                                              & $0.1$
       \\
       \texttt{t\_pres}             & Stimulus presentation time during training [ms]                             & $50$
@@ -282,7 +264,7 @@ handbook`` \citep{Mineault2021}:
       \texttt{out\_lag}            & Delay before recording output during testing [ms]                           & $35$
       \\
       \texttt{dims}                & Network dimensions, i.e. pyramidal neurons per layer                        & [9,
-          30, 3] \\
+      30, 3]                                                                                                             \\
       \texttt{threads}             & Number of threads for parallel processing                                   & $8$
       \\
       \texttt{test\_interval}      & Test the network every N epochs                                             & $10$
@@ -306,8 +288,7 @@ handbook`` \citep{Mineault2021}:
       \\
       \texttt{tau\_x}              & Network input filtering time constant [ms]                                  & 0.1
       \\
-      \texttt{reset}               & Reset method between simulations (0=no reset, 1=soft reset, 2=hard reset)   & 2
-      \\
+      \texttt{reset}               & Reset method between simulations (0=no reset, 1=soft reset, 2=hard reset)   & 2     \\
 
       \\
       \textbf{Neurons}
@@ -366,7 +347,7 @@ handbook`` \citep{Mineault2021}:
       \texttt{eta\_pi}             & Learning rate for $intn\rightarrow pyr$ synapses                            & 0.01
       \\
       \texttt{eta\_up}             & Learning rates for feedforwarsd $pyr\rightarrow pyr$ synapses               &
-      [0.01, 0.003] \\
+      [0.01, 0.003]                                                                                                      \\
       \texttt{eta\_down}           & Learning rate for feedback $pyr\rightarrow pyr$ synapses                    & 0.0
       \\
     \end{tabular}\caption{Default parameters for the dendritic error model. }\label{tab-params}
