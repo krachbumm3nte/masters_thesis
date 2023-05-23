@@ -2,13 +2,13 @@
 \chapter{Discussion}
 
 
-\section{Contribution}
+\section{Contribution}\label{sec-contribution}
 
-In this project the capabilities and limitations of the dendritic error network and its underlying plasticity rule were
+In this project, the capabilities and limitations of the dendritic error network and its underlying plasticity rule were
 further tested. While sensitive to certain parameter changes, the network was shown to be exceptionally capable of
-handling various constraints that are imposed on biological neural networks. Furthermore, the performed experiments can
-be interpreted as dispelling some criticisms aimed at the model's biological plausibility. Here we summarize many of the
-major questions about the biological plausibility of Backprop from the relevant literature.
+handling various constraints that affect biological neural networks. Furthermore, the performed experiments can be
+interpreted as dispelling some criticisms aimed at the model's biological plausibility. In the following section, 
+many of the major questions about the biological plausibility of Backprop from the relevant literature are summarized.
 
 
 \subsection*{Evaluation of biological plausibility}
@@ -16,17 +16,17 @@ major questions about the biological plausibility of Backprop from the relevant 
 The original dendritic error network by design solves several biologically implausible mechanisms of Backprop. It
 \textit{\textbf{locally computes prediction errors}} and encodes them within membrane potentials of pyramidal neuron
 apical dendrites. Furthermore, it provides two separate solutions to the \textit{\textbf{weight transport problem}}:
-First, it is capable of learning through feedback alignment, as was used in all present simulations. Secondly,
+First, it is capable of learning through Feedback Alignment, as was done in all present simulations. Secondly,
 experiments employing steady-state-approximations have been successful in training feedback weights through variants of
 the dendritic plasticity rule. An often overlooked property of biological networks is that feedback signals have an
-immediate impact on a neurons output \citep{Larkum2009,Gilbert2013}. This does not occur in Backprop, but is an
-essential feature of the dendritic error network. Finally, the network relies strictly on \textit{\textbf{Local
+immediate impact on a neurons output \citep{Larkum2009,Gilbert2013}. This does not occur in classical Backprop, but is
+an essential feature of the dendritic error network. Finally, the network relies strictly on \textit{\textbf{Local
 plasticity}} \citep{Whittington2017}, and models a (somewhat limited) variability in cell types
-\citep{Bartunov2018}.\newline
+\citep{Bartunov2018}.
 
-The present work further improves on the neuron model by showing that spike-based communication does
-not interfere with the dendritic plasticity rule, or the intricate balance of excitation and inhibition demanded by the
-network. We also show that the network can be trained with absolutely \textit{\textbf{minimal external control}}
+The present work further improves on the neuron model by showing that spike-based communication does not interfere with
+the dendritic plasticity rule, or the intricate balance of excitation and inhibition demanded by the network.
+Experiments also showed that the network can be trained with absolutely \textit{\textbf{minimal external control}}
 \citep{Whittington2017}. The network requires no external interference such as manual resets or phased plasticity, and
 can handle background noise in between sample presentations. Exploratory experiments were conducted in support of the
 hypothesis that the plasticity rule is capable of credit assignment when the network conforms strictly to
@@ -34,21 +34,20 @@ hypothesis that the plasticity rule is capable of credit assignment when the net
 Backprop-like learning when constrained by a more \textit{\textbf{plausible architecture}} \citep{Whittington2017} in
 which neuronal populations were connected imperfectly. Finally, the criticism that the network requires pre-training
 \citep{whittington2019theories} was found to be largely immaterial. The sum of these observations arguably makes the
-dendritic error model one of the most biologically plausible approximations of Backprop yet. In spite of these advances,
-several critical limitations remain.
+dendritic error model one of the most biologically plausible approximations of Backprop yet. 
 
 
 \section{Limitations}
 
-Some general concerns regarding Backprop were deliberately not addressed in this thesis, but should be noted
-nevertheless. It still remains unclear how an agent would come by the labels with which it might perform this type of
-Backprop approximation \citep{Bengio2015}. For this reason, some researchers question whether brains engage in any kind
-of supervised learning at all \citep{magee2020synaptic}. 
+In spite of these advances, several critical limitations remain. Some general concerns regarding Backprop were
+deliberately not addressed in this thesis; It still remains unclear how an agent would come by the labels with which it
+might perform this type of Backprop approximation \citep{Bengio2015}. For this reason, some researchers question whether
+brains engage in any kind of supervised learning at all \citep{magee2020synaptic}. 
 
 
 No attempts have yet been made to train the model on anything other than static inputs presented for $10-500ms$.
 Therefore, it remains to be seen whether the model is capable of handling the kind of temporal variations or sequences
-of patterns expected to stimulate the cortex.
+of patterns which the cortex is required to process \citep{Yamins2016}.
 
 \subsubsection*{Nudging signals}
 
@@ -57,13 +56,13 @@ Thus, one of the major criticisms from \citep{whittington2019theories} remains u
 that these nudging connections transmit somatic activation without any kind of nonlinearity or delay, further making
 them biologically questionable. This property is likely the largest limitation of the model, and further work is
 required if it is to be addressed. While most general criticisms of Backprop do not apply, the model in its current
-state does not plausibly conform to cortical connectivity by this requirement alone.
+state does not plausibly conform to cortical connectivity due to this singular feature.
 
 \subsubsection*{Response to unpredicted stimuli}
 One of the predictions about cortical activity made by predictive coding is an increased network activity in response to
-sensory input that violates expectations. A diverse set of studies has since reported behaviour consistent with this in
+sensory input that violates expectations. A diverse set of studies has since reported behavior consistent with this in
 various primate cortical neurons (see Table 1 in \citep{bastos2012canonical} for a review). As the dendritic error
-network encodes errors in dendritic potentials instead of neuron activations, experiments proved that it does not
+network encodes errors in dendritic potentials instead of neuron activations, experiments showed that it does not
 exhibit this property in any of its populations. In fact, overall network activity in response to a stimulus seems to
 increase after training. In this way, the model conflicts with empirical data on cortical activity.
 
@@ -71,58 +70,58 @@ increase after training. In this way, the model conflicts with empirical data on
 
 As discussed in Section \ref{sec-c-m-api}, the network in its current state is unable to learn efficiently for low
 values of $\psi$. As a result, the implementation demands physiologically impossible spike frequencies from both
-pyramidal- and interneurons. While increasing membrane capacitances did relax this constraint somewhat, it in turn
-requires longer presentation times per stimulus. Further work is required to determine if the network is capable of
-learning when spike frequencies are as low as reported for cortical neurons.
+pyramidal- and interneurons. While increasing membrane capacitances did relax this constraint somewhat, this change in
+turn demands an increase in presentation time per stimulus. Further work is required to determine if the network is
+capable of learning when spike frequencies are as low as reported for cortical neurons.
 
 \subsubsection*{Benchmark datasets}
 
 Training on a benchmark dataset would have been very desirable for comparing the spiking implementation to previous
 iterations of the dendritic error network. Yet as noted previously, the full network dynamics are prohibitively
 expensive for simulations of large networks. Extrapolating the results from Fig. \ref{fig-benchmark-threads-psi} shows
-that training on the MNIST dataset is currently unfeasible. A full training with $5.000.000$ sample
-presentations (cf. \cite{Haider2021}) would require over 1 year on 32 threads (excluding testing and validation) with
+that training on the MNIST dataset is currently unfeasible. A full training with $5,000,000$ sample
+presentations (cf. \cite{Haider2021}) would require over one year on 32 threads (excluding testing and validation) with
 the current configuration of parameters.
 
-Experiments with downscaled images and smaller network sizes were conducted. Yet training for these still took on the
+Experiments with subsampled images and smaller network sizes were conducted. Yet, training for these still took on the
 order of several days, making the search for suitable parameters very costly. While I am optimistic about the network's
 capability in general, no parametrization was found in time under which the network was capable of learning MNIST. 
 
 
 The challenge of identifying adequate parameters was hindered by training speed in multiple experiments. As the
 implementation of the spiking neuron model took much longer than initially anticipated, time was a limiting factor for
-all present experiments. Particularly the simulations described in Sections \ref{sec-c-m-api}, \ref{sec-func-approx} and
-\ref{sec-dales-law} should be repeated with much more varied sets of parameters. I expect results throughout to improve
-from this, and insights to be applicable to experiments on more complex learning tasks. Thus, computational efficiency
-remains a serious drawback of this model, and has been a major limiting factor for this thesis.
+all present experiments. Particularly the simulations described in Sections \ref{sec-func-approx}, \ref{sec-c-m-api} and
+\ref{sec-dales-law} should be repeated with much more varied sets of parameters. The reported results are expected
+improve from this, and insights to be applicable to experiments on more complex learning tasks. Thus, computational
+efficiency remains a serious drawback of this model, and has been a major limiting factor for this thesis.
 
 
 \section{Future directions}
 
 \subsubsection*{Computational efficiency}
 
-The high computational demands of the network were first reported in the original paper. They were largely alleviated
+The high computational demands of the network were first reported in the original paper \citep{sacramento2018dendritic}. They were largely alleviated
 through steady-state approximations and the addition of Latent Equilibrium. The present SNN implementation reintroduces
-this issue, and regrettably exacerbates it considerably. Some improvements can be expected by lowering stimulus
-presentation time and spike frequencies, or improving the plasticity rule. Yet to a degree, decreased speed is an
-inadvertible price to be paid for a more exact modelling of neuronal processes. Therefore, any attempt at introducing
-new properties of biological neurons must be expected to further increase computational demands. Given the (still very
-high) level of abstraction of the developed model paired with its poor speed, this perspective is slightly concerning.
-Therefore, the model requires rigorous optimization.
+this issue, and regrettably exacerbates it considerably. Some improvements can be expected by parameter optimizations
+such as lowering stimulus presentation time or spike frequencies. Yet to a degree, decreased speed is an inadvertible
+price to be paid for a more exact modelling of neuronal processes. Therefore, any attempt at introducing new properties
+of biological neurons must be expected to further increase computational demands. Given the (still very high) level of
+abstraction of the developed model paired with its poor speed, this perspective is slightly concerning. Hence, the
+model requires rigorous optimization.
 
 Some initial directions for this are provided by the benchmarks performed in this study. The spike-based plasticity rule
-for example is highly costly. One possible optimization was already provided by \citep{Stapmanns2021}. In the paper, an
-alternative variant for the dendritic plasticity rule is discussed. Instead of a strictly event-based or time-based
-update rule, a hybrid algorithm called ``Event-based update with compression`` is presented. This variant tolerates an
-increased number of synapse updates, but therefore removes redundant computations. In initial tests, it proved
-particularly advantageous for networks in which neurons had a large in-degree. Therefore, this alternative integration
-scheme can be expected to perform well for training in the larger networks demanded by more complex datasets.
-Regrettably, it was not available in time for this thesis, so potential gains remain speculative.
+for example is highly costly. One possible optimization was already provided by \citep{Stapmanns2021}. The authors
+discuss an alternative variant for implementing the dendritic plasticity rule. Instead of a strictly event-based or
+time-based update rule, a hybrid algorithm called ``Event-based update with compression`` is presented. This variant
+tolerates an increased number of synapse updates, but in exchange removes redundant computations. In initial tests, it
+proved particularly advantageous for networks in which neurons had a large in-degree. Therefore, this alternative
+integration scheme can be expected to perform well for training in the larger networks demanded by more complex
+datasets. Regrettably, it was not available in time for this thesis, so potential gains remain speculative.
 
-Another possible improvement is approximating the plasticity rule with the instantaneous error at the time of a spike.
-This would eliminate the requirement for both frequent updates, and for storing and reading a history of
+An alternative improvement to efficiency is approximating the plasticity rule with the instantaneous error at the time
+of a spike. This would eliminate the requirement for both frequent updates, and for storing and reading a history of
 dendritic error. Thus, a network employing this simplified plasticity rule would be much less computationally costly. As
-shown in Fig. \ref{fig-error-comp-le}, error terms in LE networks relax after only a few simulation steps. Therefore,
+shown in Fig. \ref{fig-error-comp-le}, error terms in LE networks relax after only a few simulation steps. Thus,
 under the condition that only static inputs are considered, this crude approximation is expected to perform fairly well.
 
 The neuron model should likewise be investigated for potential improvements in terms of efficiency. Modeling
@@ -130,16 +129,16 @@ interneurons without an apical compartment might yield some improvements (althou
 expectations for this). It is also possible, that the network does not require integration timesteps as low as $0.1ms$,
 which has not been investigated yet.
 
-Finally, a lot could likely be gained by further tuning the network's hyperparameters. Network relaxation time, stimulus
-presentation time, spiking frequencies and learning rates form a complex interplay in this model which has not yet been
-fully explored. It is therefore to be expected that further optimization of these might yield networks that are both
-more powerful and more efficient.
+Finally, further tuning the network's hyperparameters is expected to yield settings that are less computationally
+costly. Network relaxation time, stimulus presentation time, spiking frequencies and learning rates form a complex
+interplay in this model which has not yet been fully explored. It is therefore to be expected that further optimization
+of these might yield networks that can be trained with both lower computational time, and fewer training samples.
 
 
 \subsubsection*{Neuromorphic hardware}
 
 A different approach which likely would vastly improve simulation speed is a full re-implementation of the model on
-neuromorphic hardware. This network fits the self-described niche of such systems almost perfectly; It employs strictly
+neuromorphic hardware. This network fits the self-described niche of such systems almost perfectly; it employs strictly
 local plasticity rules, its nodes use leaky membrane dynamics and communicate through binary spikes. By a rough
 estimation, even the first generation of Intel's Loihi chips \citep{davies2018loihi} should be capable of simulating
 this neuron model. The chip is capable of modelling multiple dendritic trees per neuron, and the learning engine appears
@@ -166,19 +165,24 @@ computational power.
 Another point which has not yet been reviewed in terms of biological plausibility is the prospective firing rate in LE
 neurons. Haider et al.\ claim that it ``represents a known, though often neglected feature of (single) biological
 neurons'' \citep{Haider2021}. They partly base this assessment on the fact that neurons show an increased sensitivity to
-coincident spikes through Na channel responses \citep{Platkiewicz2011}. Further work is required to determine wether
+coincident spikes through Na channel responses \citep{Platkiewicz2011}. Further work is required to determine whether
 prospective activations - particularly as a basis for spike probabilities - appropriately model such processes.  
 
 \subsubsection*{Plasticity rule}
 
 The model of the dendritic trees described here is very rudimentary, which has implications for the plasticity
-mechanism. Reviewing the literature yielded no arguments that the Urbanczik-Senn plasticity requires any biologically
-implausible mechanisms. Yet given the extensive amount of data in support of STDP, the burden of proof is on the
-dendritic plasticity rule to override this dogma. This includes finding brain networks which can be modeled by using it,
-as have been found for STDP. A fruitful approach might be to investigate STDP in multi-compartment models which simulate
-dendritic spikes and plateau potentials in search of similar plasticity dynamics. Exciting advances in this direction
-have recently been reported \citep{Bono2017,Schiess2016,magee2020synaptic}, and could potentially be integrated into
-the present neuron model.
+mechanism. While the Urbanczik-Senn plasticity has been argued to be a type of Hebbian learning
+\citep{gerstner2018eligibility,urbanczik2014learning}, it leads to substantially different weight changes. Reviewing the
+literature further yielded no arguments that the Urbanczik-Senn plasticity relies on any biologically implausible
+mechanisms
+\citep{magee2020synaptic,Lillicrap2020,Poirazi2020,sacramento2018dendritic,guerguiev2017towards,Marblestone2016}. Yet
+given the extensive amount of data in support of STDP
+\citep{magee2020synaptic,gerstner2018eligibility,Bengio2015,Marblestone2016}, the burden of proof is on the dendritic
+plasticity rule to override this dogma. This includes finding brain networks which can be modeled by using it, as have
+been identified repeatedly for STDP. A fruitful approach might be to investigate STDP in multi-compartment models which
+simulate dendritic spikes and plateau potentials in search of similar plasticity dynamics. Exciting advances in this
+direction have recently been reported \citep{Bono2017,Schiess2016,magee2020synaptic}, and could potentially be
+integrated into the present neuron model.
 
 
 \subsection*{Cortical circuitry}
@@ -188,20 +192,20 @@ microcircuits - not to mention its numerous connections to other parts of the br
 holds much room for improvement. Furthermore, a seminal model for how the cortical microcircuit might be able to perform
 predictive coding \citep{bastos2012canonical} appears to conflict with the dendritic error model. While the resulting
 network has not yet been computationally modeled, it is backed by a vast amount of empirical data and regarded highly in
-the literature. One important hypothesis made by it, is that prediction errors are encoded in separate neuronal
+the literature \citep{Lillicrap2020,Park2013,whittington2019theories}. One important hypothesis made by it, is that prediction errors are encoded in separate neuronal
 populations, rather than dendritic compartments. This claim is shared by other works
-\citep{Hertaeg2022,Whittington2017}, and further work is required to find out if the two hypotheses ca be reconciled.
+\citep{Hertaeg2022,Whittington2017}, and further work is required to find out if the two hypotheses can be reconciled.
 
 A first step towards an integration of the dendritic error model and the cortical circuitry is provided in this thesis.
-We show that the plasticity rule is capable of assigning credit indirectly when dale's law is upheld via
-additional interneuron populations. Extending this principle to all sets of synapses in the network would introduce
+Present experiments show that the plasticity rule is capable of assigning credit indirectly when dale's law is upheld
+via additional interneuron populations. Extending this principle to all sets of synapses in the network would introduce
 novel interneuron populations demanding to be identified. The extent to which the resulting network is compatible with
 cortical circuitry could prove valuable for further judging the plausibility of the dendritic error model.
 
 \subsubsection*{Deep Feedback Control}
 
-A completely novel solution to the credit assignment problem is provided by \textit{Deep Feedback
-control} \citep{Meulemans2021,Meulemans2022}. Instead of approximating Backprop, this algorithm performs Gauss-Newton
+A completely novel solution to the credit assignment problem is provided by \textit{Deep Feedback control}
+\citep{Meulemans2021,Meulemans2022}. Instead of approximating Backprop, this algorithm performs Gauss-Newton
 optimization, thus employing a previously unexplored approach to training deep neural networks. While originally
 described as a purely mathematical model, it might be considered even more biologically plausible than the dendritic
 error network. It considers many features of pyramidal neuron dendrites without being held back by any of the common
@@ -209,8 +213,8 @@ Backprop criticisms or the constrained connectivity of the present model. The au
 mathematical relationship to the dendritic error network, incorporating some interneuron computations into the pyramidal
 neurons. Its connectivity however is therefore even further abstracted from the cortical circuitry than the one
 discussed here. Regardless of its exact details, this algorithm provides an important insight which was largely
-neglected in this thesis (and perhaps this niche of the neuroscience community) so far: Backprop is not the only
-competetive mechanism for assigning synaptic credit in neural networks. Therefore, focussing too narrowly on this
+neglected in this thesis (and perhaps the surrounding niche of the neuroscience community) so far: Backprop is not the
+only competitive mechanism for assigning synaptic credit in neural networks. Therefore, focussing too narrowly on this
 singular solution might prevent us from considering viable alternatives.
 
 
@@ -219,17 +223,17 @@ singular solution might prevent us from considering viable alternatives.
 
 This project further establishes the dendritic error network as one of the most biologically plausible mechanisms for
 approximating the Backpropagation of errors algorithm. As hypothesized, the spiking variant of the Urbanczik-Senn
-plasticity is capable of performing well in a much more demanding setting. The model furthermore proved to be largely
-unhindered by the vast majority of biological constraints which were imposed on it. Particularly constraints on
-connectivity and synaptic polarity were shown to impede learning to only minor degrees. The model overcomes all but a
-few of the general arguments for claiming that the Backpropagation algorithm could not plausibly be implemented by
-networks of biological neurons. Only when investigating the correspondence to cortical microcircuits more closely does
-the network exhibit serious limitations. 
+plasticity is capable of performing well in a much more demanding setting than previously shown. The model furthermore
+proved to be largely unhindered by the vast majority of biological constraints which were imposed on it. Particularly
+constraints on connectivity and synaptic polarity were shown to impede learning to only minor degrees. The model
+overcomes all but a few of the general arguments for claiming that the Backpropagation algorithm could not plausibly be
+implemented by networks of biological neurons. Only when investigating the correspondence to cortical microcircuits more
+closely does the network exhibit serious limitations. 
 
-The predictive coding hypothesis has had a substantial impact on the recent developments in cognitive science. While
-other implementations of predictive coding exist, this one stands out as one of the most promising models. Finding a
-biologically plausible mechanism that replaces (or alternatively explains) the inter-layer nudging signals would
-arguably elevate it to a prime contender for explaining supervised learning in the cortex. Nevertheless, such optimism
-must be paired with restraint given the vast complexity of the cortex - and associated areas - which a general model
-would have to encompass. Either way, further research into the dendritic error network is likely to help us better
-understand the intriguing capabilities of the human brain.
+The predictive coding hypothesis has had a substantial impact on the recent developments in cognitive science. The
+dendritic error network is a promising model for explaining how individual computations of this hypothesis could be
+distributed across cortical neurons. Finding a biologically plausible mechanism that replaces (or alternatively
+explains) the inter-layer nudging signals would arguably elevate it to a prime contender for explaining supervised
+learning in the cortex. Nevertheless, such optimism must be paired with restraint given the vast complexity of the
+cortex - and associated areas - which a general model would have to encompass. Either way, further research into the
+dendritic error network is likely to help us better understand the intriguing capabilities of the human brain.

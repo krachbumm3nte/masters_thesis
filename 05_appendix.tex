@@ -10,27 +10,27 @@ compartment evolves according to:
   C_m^{dend} \dot{v}_j^{dend} & = -g_l^{dend} \  v_j^{dend} + \sum_i W_{ji} \    \langle \textit{n}_i \rangle
 \end{align}
 
-Under the assumption that the activation of all presynaptic neurons $i$ remains static over time, we can replace the
-spontaneous activation $s_i(t)$ with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle =
-  r_i \ \Delta t$ (cf. Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but refer to
-individual neurons. Next, in order to find the convergence point of the ODE, we set the left side of the equation to $0$
-and to solve it:
+under the assumption that the activation of all presynaptic neurons $i$ remains static over time, the spontaneous
+activation $s_i(t)$ can be replaced with the expected number of spikes per simulation step $\langle \textit{n}_i \rangle
+= r_i \ \Delta t$ (cf. Equation \ref{eq-n-spikes}). Note that these values do not employ matrix notation, but refer to
+individual neurons. Next, in order to find the convergence point of the ODE, the left side of the equation is set to $0$:
+
 
 \begin{align}
   0                        & = -g_l^{dend} \  v_j^{dend} + \sum_i W_{ji} \    r_i \ \Delta t \\
   g_l^{dend} \  v_j^{dend} & = W_{ji} \    r_i \ \Delta t
 \end{align}
 
-The instantaneous dendritic potential of rate neurons is given by $v_j^{dend} = \sum_i W_{ji} \ r_i$. Since we are
-searching for a parametrization which fulfills this equality in the steady state, the terms drop out from the above
-equation. Thus, the correct parametrization for the dendritic leakage conductance remains:
+the instantaneous dendritic potential of rate neurons is given by $v_j^{dend} = \sum_i W_{ji} \ r_i$. As a
+parametrization is desired which fulfills this equality in the steady state, the terms drop out from the above equation.
+Thus, the correct parametrization for the dendritic leakage conductance remains:
 \begin{align}
   g_l^{dend} & = \Delta t
 \end{align}
 
-It was shown experimentally that for high values of $\psi$, this parametrization leads to an exact match of dendritic
+it was shown experimentally that for high values of $\psi$, this parametrization leads to an exact match of dendritic
 potentials between the neuron models. It will therefore be assumed as the default throughout all experiments where
-spiking neurons are used. \newline
+spiking neurons are used.
 
 In order to keep the two NEST models as similar as possible, rate neurons evolve according to the same dynamics. Like in
 the original implementation, dendrites of rate neurons ought to be fully defined by their inputs at time $t$. This
@@ -47,7 +47,7 @@ Within the dendritic error model, pyramidal-to-pyramidal feedback weights evolve
   \dot{w}_{l}^{down} & = \eta_l^{down} \ ( \phi(u_l^{P}) - \phi(w_l^{down} r_{l+1}^P) )\ \phi(u_{l+1}^{P})^T
 \end{align}
 
-The error term in this case differs slightly from the others, but could arguably still be implemented by biological
+the error term in this case differs slightly from the others, but could arguably still be implemented by biological
 neurons. An intuitive way to interpret the error term is as the difference between somatic activity and the activity of
 a distant apical compartment that is innervated only by superficial pyramidal neurons. The separation of pyramidal
 neuron apical dendrites into a proximal and a distal tree is well documented \citep{Ishizuka1995}. Likewise, the fact
@@ -66,18 +66,19 @@ alignment \citep{Lillicrap2014}. Further work is required to identify why plasti
 learning in the present model.
 
 \newpage
-\section{Electronic supplementary material}
+\section{Electronic supplementary material}\label{sec-suppl}
 
-Attached to this thesis is a thumb drive containing the electronic supplementary material, which will briefly be
+Attached to this thesis is a USB drive containing the electronic supplementary material, which will briefly be
 described here. The base directory contains a variant of the NEST simulator, which is published under the
-\href{https://www.gnu.org/licenses/old-licenses/gpl-2.0.html}{GPLv2+} license. The code included here was last pulled
-from the public repository on December 20, 2022 and therefore lies somewhere between NEST versions 3.3 and 3.4. Under
-the \texttt{models} directory, the neuron (\texttt{pp\_\allowbreak cond\_\allowbreak exp\_\allowbreak mc\_\allowbreak
-pyr}, \texttt{rate\_\allowbreak neuron\_\allowbreak pyr}) and synapse models (\texttt{pyr\_\allowbreak synapse},
-\texttt{pyr\_\allowbreak synapse\_\allowbreak rate}) are located with corresponding \texttt{.cpp} and \texttt{.h} files.
-Furthermore, the \texttt{pyr\_\allowbreak archiving\_\allowbreak node} responsible for storage and readout of dendritic
-error, is located in the \texttt{nestkernel} directory. Other changes to the simulator largely serve to embed these
-files and make them accessible from the PyNEST API.
+GPLv2+ license (\url{https://www.gnu.org/licenses/old-licenses/gpl-2.0.html}). The code included here was last pulled
+from the public repository on December 20, 2022 and therefore lies somewhere between NEST versions 3.3 and 3.4. 
+
+Under the \texttt{models} directory, the neuron (\texttt{pp\_\allowbreak cond\_\allowbreak exp\_\allowbreak
+mc\_\allowbreak pyr}, \texttt{rate\_\allowbreak neuron\_\allowbreak pyr}) and synapse models (\texttt{pyr\_\allowbreak
+synapse}, \texttt{pyr\_\allowbreak synapse\_\allowbreak rate}) are located with corresponding \texttt{.cpp} and
+\texttt{.h} files. Furthermore, the \texttt{pyr\_\allowbreak archiving\_\allowbreak node} responsible for storage and
+readout of dendritic error, is located in the \texttt{nestkernel} directory. Other changes to the simulator largely
+serve to embed these files and make them accessible from the PyNEST API.
 
 The easiest way to compile the NEST simulator (which is required to run the model) is through conda. The
 \texttt{requirements.txt} file in the base directory specifies the required packages. After creating a new environment
@@ -85,14 +86,14 @@ with\newline
 
 \texttt{\$ conda create -n <environment-name> --file requirements.txt}\newline
 
-a \href{https://nest-simulator.readthedocs.io/en/v3.4/installation/condaenv_install.html#condaenv}{guide from the NEST
-  documentation} should simplify setup of the simulator.
+a guide from the NEST
+  documentation (\url{https://nest-simulator.readthedocs.io/en/v3.4/installation/condaenv_install.html#condaenv}) should simplify setup of the simulator.
 
 The project directory \texttt{dendritic\_\allowbreak error\_\allowbreak network} (roughly) follows the ``Good research
 code handbook`` \citep{Mineault2021}:
 
 \begin{itemize}
-  \item \textbf{data} contains all figures included in this thesis, as well as some additional ones which were not
+  \item \textbf{data} contains all Figures in this thesis, as well as some additional ones which were not
   included.
   \item \textbf{results} contains all relevant simulation results. Parameter studies have their own subfolders, titled
         with the prefix \texttt{par\_study\_}. Each simulation stores its full parameter set (\texttt{params.json}), initial
@@ -146,16 +147,24 @@ code handbook`` \citep{Mineault2021}:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\textwidth]{fig_reset_strategies}
-  \caption[Training performance without resetting the network.]{Training performance without resetting the network.
+  \includegraphics[width=\textwidth]{fig_reset_strategies}
+  \caption[Learning performance with different reset strategies.]{Learning performance with different reset strategies.
     \textbf{Hard reset:} default from previous iterations of the model, in which membrane potentials and synaptic weight
-    deltas are manually reset after each stimulus presentation. \textbf{Soft reset:} After each stimulus presentation, the
-    network is allowed to relax during $5ms$ without stimulation. \textbf{No reset:} Stimuli are presented directly after
-    another without interference. \textbf{A:} Test error, \textbf{B:} Test loss. }
+    deltas are manually reset after each stimulus presentation. \textbf{Soft reset:} After each stimulus presentation,
+    the network is presented with 5 samples of random noise for $3ms$ each. No manual reset is performed. \textbf{No
+    reset:} Training samples are presented directly after another without external interference. }
   \label{fig-reset-strategies}
 \end{figure}
 
-
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{fig_pre_train}
+  \caption[Learning performance without pre-training.]{Learning performance without pre-training.
+    \textbf{Self-predicting weights:} Default parametrization. \textbf{Random weights:} Network is initialized with
+    fully random weights between -1 and 1 \textbf{Random weights + soft reset:} Same as before, but soft reset paradigm
+    is employed. }
+  \label{fig-pre-train}
+\end{figure}
 
 
 \clearpage

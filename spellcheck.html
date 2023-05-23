@@ -90,530 +90,244 @@ h1.textidote {
 <p>Found 45 warning(s)</p>
 <div class="original-file">
 <div class="linenb">&nbsp;&nbsp;1</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;2</div><div class="codeline">\chapter{Results}</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;2</div><div class="codeline">\chapter{Discussion}</div><div class="clear"></div>
 <div class="linenb">&nbsp;&nbsp;3</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;4</div><div class="codeline">The following results are exploratory in nature, and After some poor initial results the focus was laid on proving that</div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;5</div><div class="codeline">the network can perform at all, rather than fine-tuning hyperparameters towards optimal performance. This decision was</div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;6</div><div class="codeline">in part motivated by a prioritization of gaining neuroscientific insights over achieving minimal test loss. It should be</div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;7</div><div class="codeline">noted, that training the network is computationally quite costly (c.f. Section \ref{sec-benchmark}) which turned</div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;8</div><div class="codeline">parameter studies into a time-consuming process.</div><div class="clear"></div>
-<div class="linenb">&nbsp;&nbsp;9</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;10</div><div class="codeline">Early experiments showed that the network is rather sensitive to parameter changes. The search for default parameters</div><div class="clear"></div>
-<div class="linenb">&nbsp;11</div><div class="codeline">took some effort, as a certain heterogeneity exists in the two existing implementations</div><div class="clear"></div>
-<div class="linenb">&nbsp;12</div><div class="codeline"><span class="highlight-sh" title="Do not mix \cite with \citep or \citet in the same document. [sh:c:itemix]">\citep{</span>sacramento2018dendritic,Haider2021}, both in hyperparameters as in the simulation environment. This model</div><div class="clear"></div>
-<div class="linenb">&nbsp;13</div><div class="codeline">includes properties of both variants, while relying more strongly on the LE implementation. Unless stated otherwise,</div><div class="clear"></div>
-<div class="linenb">&nbsp;14</div><div class="codeline">neurons employ prospective activation functions in all simulations. So far, no drawbacks to this mechanism have</div><div class="clear"></div>
-<div class="linenb">&nbsp;15</div><div class="codeline">presented themselves, and learning speed can be increased drastically compared to the original implementation. The full</div><div class="clear"></div>
-<div class="linenb">&nbsp;16</div><div class="codeline">default parametrization is shown in Supplementary Table \ref{tab-params}. Since it was anticipated that the spiking</div><div class="clear"></div>
-<div class="linenb">&nbsp;17</div><div class="codeline">implementation would perform worse than the rate-based variant, the first goal was to measure how big this difference in</div><div class="clear"></div>
-<div class="linenb">&nbsp;18</div><div class="codeline">performance is. Furthermore, a relevant question was to what degree the synaptic delays enforced by NEST would influence</div><div class="clear"></div>
-<div class="linenb">&nbsp;19</div><div class="codeline">performance of the rate model. These questions will be answered in the upcoming sections. Note that not all experimental</div><div class="clear"></div>
-<div class="linenb">&nbsp;20</div><div class="codeline">results were given their own Figures. In these cases, plots can be found in the electronic supplementary material.</div><div class="clear"></div>
-<div class="linenb">&nbsp;21</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;22</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;23</div><div class="codeline"><span class="keyword1">\section</span>{The self-predicting state}</div><div class="clear"></div>
-<div class="linenb">&nbsp;24</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;25</div><div class="codeline">As a first comparison between the three implementations, the pre-training towards a self-predicting state (cf.</div><div class="clear"></div>
-<div class="linenb">&nbsp;26</div><div class="codeline">\citep{sacramento2018dendritic}[Fig. S1]) was performed. For this experiment, no target signal is provided at the output</div><div class="clear"></div>
-<div class="linenb">&nbsp;27</div><div class="codeline">layer, and the network is tasked with learning to self-predict top-down input. The network is initialized with fully</div><div class="clear"></div>
-<div class="linenb">&nbsp;28</div><div class="codeline">random weights and stimulated with random inputs from a uniform distribution between 0 and 1. A comparison of the four</div><div class="clear"></div>
-<div class="linenb">&nbsp;29</div><div class="codeline">error metrics between implementations is shown in Fig. \ref{fig-self-pred}.</div><div class="clear"></div>
-<div class="linenb">&nbsp;30</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;31</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;32</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;33</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">&nbsp;34</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">&nbsp;35</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_self_prediction}</div><div class="clear"></div>
-<div class="linenb">&nbsp;36</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Training towards the self-predicting state]{Training towards the self-predicting state. All implementations</div><div class="clear"></div>
-<div class="linenb">&nbsp;37</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;learn to predict self-generated top-down signals. Networks were initialized with the same random weights for</div><div class="clear"></div>
-<div class="linenb">&nbsp;38</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions $[5, 8, 3]$, and stimulated with $5000$ samples of random input for $100ms$ each. As described in</div><div class="clear"></div>
-<div class="linenb">&nbsp;39</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\citep{sacramento2018dendritic}, during this phase only $Pyr \rightarrow Intn$ and $Intn \rightarrow Pyr$</div><div class="clear"></div>
-<div class="linenb">&nbsp;40</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weights are plastic ($\eta^{pi}=0.05, \eta^{ip}=0.02375, \eta^{up}_0=\eta^{up}_1=\eta^{down}=0$).}</div><div class="clear"></div>
-<div class="linenb">&nbsp;41</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-self-pred}</div><div class="clear"></div>
-<div class="linenb">&nbsp;42</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">&nbsp;43</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;44</div><div class="codeline">Both rate neuron implementations were able to reach comparable values for all error metrics after roughly the same time.</div><div class="clear"></div>
-<div class="linenb">&nbsp;45</div><div class="codeline">The exact values that errors converge on differs slightly between implementations, with no implementation being clearly</div><div class="clear"></div>
-<div class="linenb">&nbsp;46</div><div class="codeline">superior. This is an important result for upcoming experiments, as it indicates that both training environment (current</div><div class="clear"></div>
-<div class="linenb">&nbsp;47</div><div class="codeline">injections, simulation time, membrane reset, readouts, etc.) and the actual neuron model of the NEST version adequately</div><div class="clear"></div>
-<div class="linenb">&nbsp;48</div><div class="codeline">replicate the original model.</div><div class="clear"></div>
-<div class="linenb">&nbsp;49</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;50</div><div class="codeline">For the spiking variant, Interneuron- and its corresponding <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [feedforward] (2826) [lt:en:MORFOLOGIK_RULE_EN_US]">feedfworward</span> weight error are comparable to the other</div><div class="clear"></div>
-<div class="linenb">&nbsp;51</div><div class="codeline">implementations. In fact these metrics appear to converge slightly faster to comparable values. The primary limitation</div><div class="clear"></div>
-<div class="linenb">&nbsp;52</div><div class="codeline">of this version are the apical error and the closely correlated FB error. After appearing to converge very quickly, the</div><div class="clear"></div>
-<div class="linenb">&nbsp;53</div><div class="codeline">two metrics stagnate at very high levels. These high errors correlate with strong fluctuations of the apical</div><div class="clear"></div>
-<div class="linenb">&nbsp;54</div><div class="codeline">compartment. These fluctuations can likely at least in part be attributed to low spike frequencies. This was confirmed</div><div class="clear"></div>
-<div class="linenb">&nbsp;55</div><div class="codeline">by repeating the experiment with $\psi=1500$, which alleviated the issue to a degree (results not shown). Yet, error</div><div class="clear"></div>
-<div class="linenb">&nbsp;56</div><div class="codeline">values were still inferior to the rate models, and this change came at the cost of substantially increased training</div><div class="clear"></div>
-<div class="linenb">&nbsp;57</div><div class="codeline">time. Therefore, this approach was not pursued much further. A different possible solution is, to increase the membrane</div><div class="clear"></div>
-<div class="linenb">&nbsp;58</div><div class="codeline">capacitance of the apical compartment in order to smooth out the fluctuations induced by individual spikes. This will be</div><div class="clear"></div>
-<div class="linenb">&nbsp;59</div><div class="codeline">discussed in Section \ref{sec-c-m-api}.</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;4</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;5</div><div class="codeline">\<span class="highlight-sh" title="Avoid stacked headings, i.e. consecutive headings without text in between. [sh:stacked]">section{</span>Contribution}<span class="keyword1">\label</span>{sec-contribution}</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;6</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;7</div><div class="codeline">In this project, the capabilities and limitations of the dendritic error network and its underlying plasticity rule were</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;8</div><div class="codeline">further tested. While sensitive to certain parameter changes, the network was shown to be exceptionally capable of</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;9</div><div class="codeline">handling various constraints that affect biological neural networks. Furthermore, the performed experiments can be</div><div class="clear"></div>
+<div class="linenb">&nbsp;10</div><div class="codeline">interpreted as dispelling some criticisms aimed at the model's biological plausibility. In the following section, </div><div class="clear"></div>
+<div class="linenb">&nbsp;11</div><div class="codeline">many of the major questions about the biological plausibility of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (559) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> from the relevant literature are summarized.</div><div class="clear"></div>
+<div class="linenb">&nbsp;12</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;13</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;14</div><div class="codeline"><span class="keyword1">\subsection</span>*{Evaluation of biological plausibility}</div><div class="clear"></div>
+<div class="linenb">&nbsp;15</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;16</div><div class="codeline">The original dendritic error network by design solves several biologically implausible mechanisms of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (755) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span>. It</div><div class="clear"></div>
+<div class="linenb">&nbsp;17</div><div class="codeline"><span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{locally computes prediction errors}} and encodes them within membrane potentials of pyramidal neuron</div><div class="clear"></div>
+<div class="linenb">&nbsp;18</div><div class="codeline">apical dendrites. Furthermore, it provides two separate solutions to the <span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{weight transport problem}}:</div><div class="clear"></div>
+<div class="linenb">&nbsp;19</div><div class="codeline">First, it is capable of learning through Feedback Alignment, as was done in all present simulations. Secondly,</div><div class="clear"></div>
+<div class="linenb">&nbsp;20</div><div class="codeline">experiments employing steady-state-approximations have been successful in training feedback weights through variants of</div><div class="clear"></div>
+<div class="linenb">&nbsp;21</div><div class="codeline">the dendritic plasticity rule. An often overlooked property of biological networks is that feedback signals have an</div><div class="clear"></div>
+<div class="linenb">&nbsp;22</div><div class="codeline">immediate impact on a neurons output <span class="highlight-sh" title="Do not mix \cite with \citep or \citet in the same document. [sh:c:itemix]">\citep{</span>Larkum2009,Gilbert2013}. This does not occur in classical <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (1388) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span>, but is</div><div class="clear"></div>
+<div class="linenb">&nbsp;23</div><div class="codeline">an essential feature of the dendritic error network. Finally, the network relies strictly on <span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{Local</div><div class="clear"></div>
+<div class="linenb">&nbsp;24</div><div class="codeline">plasticity}} \citep{Whittington2017}, and models a (somewhat limited) variability in cell types</div><div class="clear"></div>
+<div class="linenb">&nbsp;25</div><div class="codeline">\citep{Bartunov2018}.</div><div class="clear"></div>
+<div class="linenb">&nbsp;26</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;27</div><div class="codeline">The present work further improves on the neuron model by showing that spike-based communication does not interfere with</div><div class="clear"></div>
+<div class="linenb">&nbsp;28</div><div class="codeline">the dendritic plasticity rule, or the intricate balance of excitation and inhibition demanded by the network.</div><div class="clear"></div>
+<div class="linenb">&nbsp;29</div><div class="codeline">Experiments also showed that the network can be trained with absolutely <span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{minimal external control}}</div><div class="clear"></div>
+<div class="linenb">&nbsp;30</div><div class="codeline">\citep{Whittington2017}. The network requires no external interference such as manual resets or phased plasticity, and</div><div class="clear"></div>
+<div class="linenb">&nbsp;31</div><div class="codeline">can handle background noise in between sample presentations. Exploratory experiments were conducted in support of the</div><div class="clear"></div>
+<div class="linenb">&nbsp;32</div><div class="codeline">hypothesis that the plasticity rule is capable of credit assignment when the network conforms strictly to</div><div class="clear"></div>
+<div class="linenb">&nbsp;33</div><div class="codeline"><span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{Dale's law}} \citep{Bartunov2018}. In related experiments, the network proved very capable of</div><div class="clear"></div>
+<div class="linenb">&nbsp;34</div><div class="codeline"><span class="highlight-spelling" title="Possible spelling mistake found. (2309) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop-like</span> learning when constrained by a more <span class="keyword1">\textit</span>{<span class="keyword1">\textbf</span>{plausible architecture}} \citep{Whittington2017} in</div><div class="clear"></div>
+<div class="linenb">&nbsp;35</div><div class="codeline">which neuronal populations were connected imperfectly. Finally, the criticism that the network requires pre-training</div><div class="clear"></div>
+<div class="linenb">&nbsp;36</div><div class="codeline">\citep{whittington2019theories} was found to be largely immaterial. The sum of these observations arguably makes the</div><div class="clear"></div>
+<div class="linenb">&nbsp;37</div><div class="codeline">dendritic error model one of the most biologically plausible approximations of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (2674) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> yet. </div><div class="clear"></div>
+<div class="linenb">&nbsp;38</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;39</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;40</div><div class="codeline"><span class="keyword1">\section</span>{Limitations}</div><div class="clear"></div>
+<div class="linenb">&nbsp;41</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;42</div><div class="codeline">In spite of these advances, several critical limitations remain. Some general concerns regarding <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (2801) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> were</div><div class="clear"></div>
+<div class="linenb">&nbsp;43</div><div class="codeline">deliberately not addressed in this thesis; It still remains unclear how an agent would come by the labels with which it</div><div class="clear"></div>
+<div class="linenb">&nbsp;44</div><div class="codeline">might perform this type of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (2962) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> approximation \citep{Bengio2015}. For this reason, some researchers question whether</div><div class="clear"></div>
+<div class="linenb">&nbsp;45</div><div class="codeline">brains engage in any kind of supervised learning at all \citep{magee2020synaptic}. </div><div class="clear"></div>
+<div class="linenb">&nbsp;46</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;47</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;48</div><div class="codeline">No attempts have yet been made to train the model on anything other than static inputs presented for $10-500ms$.</div><div class="clear"></div>
+<div class="linenb">&nbsp;49</div><div class="codeline">Therefore, it remains to be seen whether the model is capable of handling the kind of temporal variations or sequences</div><div class="clear"></div>
+<div class="linenb">&nbsp;50</div><div class="codeline">of patterns which the cortex is required to process \citep{Yamins2016}.</div><div class="clear"></div>
+<div class="linenb">&nbsp;51</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;52</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Nudging signals}</div><div class="clear"></div>
+<div class="linenb">&nbsp;53</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;54</div><div class="codeline">The requirement for one-to-one connections between pyramidal- and interneurons could not be overcome in this thesis.</div><div class="clear"></div>
+<div class="linenb">&nbsp;55</div><div class="codeline">Thus, one of the major criticisms from \citep{whittington2019theories} remains unaccounted for. It should also be noted</div><div class="clear"></div>
+<div class="linenb">&nbsp;56</div><div class="codeline">that these nudging connections transmit somatic activation without any kind of nonlinearity or delay, further making</div><div class="clear"></div>
+<div class="linenb">&nbsp;57</div><div class="codeline">them biologically questionable. This property is likely the largest limitation of the model, and further work is</div><div class="clear"></div>
+<div class="linenb">&nbsp;58</div><div class="codeline">required if it is to be addressed. While most general criticisms of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (3910) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> do not apply, the model in its current</div><div class="clear"></div>
+<div class="linenb">&nbsp;59</div><div class="codeline">state does not plausibly conform to cortical connectivity due to this singular feature.</div><div class="clear"></div>
 <div class="linenb">&nbsp;60</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;61</div><div class="codeline">In most simulations in the literature, the network is initialized to an ideal self-predicting state. Furthermore,</div><div class="clear"></div>
-<div class="linenb">&nbsp;62</div><div class="codeline">feedback weights are non-plastic in many experiments ($\eta^{pi}=\eta^{down}=0$). Therefore, a failure to perfectly</div><div class="clear"></div>
-<div class="linenb">&nbsp;63</div><div class="codeline">learn this weight symmetry should not fundamentally hinder learning. For the time being, showing that the network</div><div class="clear"></div>
-<div class="linenb">&nbsp;64</div><div class="codeline">approaches a self-predicting state was deemed a sufficient result.</div><div class="clear"></div>
-<div class="linenb">&nbsp;65</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;66</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;67</div><div class="codeline"><span class="keyword1">\section</span>{Presentation times and latent equilibrium}<span class="keyword1">\label</span>{sec-le-tpres}</div><div class="clear"></div>
+<div class="linenb">&nbsp;61</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Response to unpredicted stimuli}</div><div class="clear"></div>
+<div class="linenb">&nbsp;62</div><div class="codeline">One of the predictions about cortical activity made by predictive coding is an increased network activity in response to</div><div class="clear"></div>
+<div class="linenb">&nbsp;63</div><div class="codeline">sensory input that violates expectations. A diverse set of studies has since reported <span class="highlight-spelling" title="Possible spelling mistake. 'behaviour' is British English.. Suggestions: [behavior] (4286) [lt:en:MORFOLOGIK_RULE_EN_US]">behaviour</span> consistent with this in</div><div class="clear"></div>
+<div class="linenb">&nbsp;64</div><div class="codeline">various primate cortical neurons (see <span class="highlight-sh" title="Do not refer to tables using hard-coded numbers. Use \ref instead. [sh:hctab]">Table 1</span> in \citep{bastos2012canonical} for a review). As the dendritic error</div><div class="clear"></div>
+<div class="linenb">&nbsp;65</div><div class="codeline">network encodes errors in dendritic potentials instead of neuron activations, experiments showed that it does not</div><div class="clear"></div>
+<div class="linenb">&nbsp;66</div><div class="codeline">exhibit this property in any of its populations. In fact, overall network activity in response to a stimulus seems to</div><div class="clear"></div>
+<div class="linenb">&nbsp;67</div><div class="codeline">increase after training. In this way, the model conflicts with empirical data on cortical activity.</div><div class="clear"></div>
 <div class="linenb">&nbsp;68</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;69</div><div class="codeline">In order to validate the performance of the NEST implementations on a learning task, the parameter study from</div><div class="clear"></div>
-<div class="linenb">&nbsp;70</div><div class="codeline">\citep{Haider2021}[Fig. 3] was replicated. In this experiment, the network is trained with different stimulus</div><div class="clear"></div>
-<div class="linenb">&nbsp;71</div><div class="codeline">presentation times $t_{pres} \in \{0.3,\ 500\}ms$. Performance of the original Dendritic error network is compared to</div><div class="clear"></div>
-<div class="linenb">&nbsp;72</div><div class="codeline">the improved model which employs LE. Due to the costly computation of the network under such long $t_{pres}$, a simple</div><div class="clear"></div>
-<div class="linenb">&nbsp;73</div><div class="codeline">artificial classification dataset was used. The <span class="keyword1">\textit</span>{Bars-dataset} is defined for $3\times3$ input- and $3$ output</div><div class="clear"></div>
-<div class="linenb">&nbsp;74</div><div class="codeline">neurons. It consists of three horizontal, three vertical, and two diagonal bars in the $3\times3$ grid, which are to be</div><div class="clear"></div>
-<div class="linenb">&nbsp;75</div><div class="codeline">encoded in a 'one-hot-vector' at the output layer. In the experiment, networks of $9-30-3$ pyramidal neurons per layer</div><div class="clear"></div>
-<div class="linenb">&nbsp;76</div><div class="codeline">were trained for 1000 Epochs of 24 samples each. Networks were initialized to the self-predicting state and only</div><div class="clear"></div>
-<div class="linenb">&nbsp;77</div><div class="codeline">feedforward $Pyr\rightarrow Pyr$ and $Pyr \rightarrow Intn$ synapses were plastic. Learning rates scaled inversely with</div><div class="clear"></div>
-<div class="linenb">&nbsp;78</div><div class="codeline">presentation times: $\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Étaín] (5208) [lt:en:MORFOLOGIK_RULE_EN_US]">eta^{ip</span>}_0 = \frac{0.2}{t_{pres}}, \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [teacup] (5231) [lt:en:MORFOLOGIK_RULE_EN_US]">eta^{up</span>}_0 = \frac{0.5}{t_{pres}}, \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [teacup] (5254) [lt:en:MORFOLOGIK_RULE_EN_US]">eta^{up</span>}_1 =</div><div class="clear"></div>
-<div class="linenb">&nbsp;79</div><div class="codeline">\frac{0.1}{t_{<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [press, Pres, pres, PRESO] (5270) [lt:en:MORFOLOGIK_RULE_EN_US]">pres}}$</span>. The results for the spiking NEST network are shown in Fig. \ref{fig-bars-le-snest}, while the</div><div class="clear"></div>
-<div class="linenb">&nbsp;80</div><div class="codeline">results for NumPy and Rate NEST variants are depicted in Supplementary Figures \ref{fig-bars-le-numpy} and</div><div class="clear"></div>
-<div class="linenb">&nbsp;81</div><div class="codeline">\ref{fig-bars-le-rnest}, respectively.</div><div class="clear"></div>
-<div class="linenb">&nbsp;82</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;83</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;84</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">&nbsp;85</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">&nbsp;86</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_3_snest}</div><div class="clear"></div>
-<div class="linenb">&nbsp;87</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-sh" title="A caption should end with a period [sh:capperiod]"><span class="keyword1">\caption</span>[Replication of Fig. 3 from \citep{Haider2021}</span>.]{Replication of Fig. 3 from \citep{Haider2021} using</div><div class="clear"></div>
-<div class="linenb">&nbsp;88</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;networks of spiking neurons in the NEST simulator. <span class="keyword1">\textbf</span>{A:} Comparison between Original dendritic error</div><div class="clear"></div>
-<div class="linenb">&nbsp;89</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;network by and an identical network employing Latent equilibrium. Shown is the training of networks with 9-30-3</div><div class="clear"></div>
-<div class="linenb">&nbsp;90</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;neurons on the Bars-dataset from with three different stimulus presentation times. <span class="keyword1">\textbf</span>{B:} Test performance</div><div class="clear"></div>
-<div class="linenb">&nbsp;91</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after 1000 Epochs as a function of stimulus presentation time.}</div><div class="clear"></div>
-<div class="linenb">&nbsp;92</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-bars-le-snest}</div><div class="clear"></div>
-<div class="linenb">&nbsp;93</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">&nbsp;94</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">&nbsp;95</div><div class="codeline">For the original dendritic error model, performance in all three implementations is close to being identical. This is an</div><div class="clear"></div>
-<div class="linenb">&nbsp;96</div><div class="codeline">important finding as it answers two open questions: Changes made for a NEST-compatible implementation were adequate and</div><div class="clear"></div>
-<div class="linenb">&nbsp;97</div><div class="codeline">result in identical learning between the rate-based implementations. Learning performance of the spiking model is</div><div class="clear"></div>
-<div class="linenb">&nbsp;98</div><div class="codeline">competitive, confirming the hypothesis that the spike-based dendritic plasticity model is capable of more complex credit</div><div class="clear"></div>
-<div class="linenb">&nbsp;99</div><div class="codeline">assignment tasks than previously shown. In this regard, the implementation can be considered a success.</div><div class="clear"></div>
+<div class="linenb">&nbsp;69</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Spike frequencies}</div><div class="clear"></div>
+<div class="linenb">&nbsp;70</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;71</div><div class="codeline">As discussed in Section \ref{sec-c-m-api}, the network in its current state is unable to learn efficiently for low</div><div class="clear"></div>
+<div class="linenb">&nbsp;72</div><div class="codeline">values of $\psi$. As a result, the implementation demands physiologically impossible spike frequencies from both</div><div class="clear"></div>
+<div class="linenb">&nbsp;73</div><div class="codeline">pyramidal- and interneurons. While increasing membrane <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [capacitance] (5025) [lt:en:MORFOLOGIK_RULE_EN_US]">capacitances</span> did relax this constraint somewhat, <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [this, Thai, AHSI, IHSI, MHSI, THS, TSI] (5074) [lt:en:MORFOLOGIK_RULE_EN_US]">thsi</span> change in</div><div class="clear"></div>
+<div class="linenb">&nbsp;74</div><div class="codeline">turn demands an increase in presentation time per stimulus. Further work is required to determine if the network is</div><div class="clear"></div>
+<div class="linenb">&nbsp;75</div><div class="codeline">capable of learning when spike frequencies are as low as reported for cortical neurons.</div><div class="clear"></div>
+<div class="linenb">&nbsp;76</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;77</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Benchmark datasets}</div><div class="clear"></div>
+<div class="linenb">&nbsp;78</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;79</div><div class="codeline">Training on a benchmark dataset would have been very desirable for comparing the spiking implementation to previous</div><div class="clear"></div>
+<div class="linenb">&nbsp;80</div><div class="codeline">iterations of the dendritic error network. Yet as noted previously, the full network dynamics are prohibitively</div><div class="clear"></div>
+<div class="linenb">&nbsp;81</div><div class="codeline">expensive for simulations of large networks. Extrapolating the results from Fig. \ref{fig-benchmark-threads-psi} shows</div><div class="clear"></div>
+<div class="linenb">&nbsp;82</div><div class="codeline">that training on the <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [MOIST, MIST, MONIST, MN IST, NIST] (5652) [lt:en:MORFOLOGIK_RULE_EN_US]">MNIST</span> dataset is currently unfeasible. A full training with<span class="highlight" title="In English-speaking countries (except for South Africa), the correct thousands separator is a comma.. Suggestions: [5,000,000] (5712) [lt:en:COMMA_PERIOD_CONFUSION]"> $5.000.000$</span> sample</div><div class="clear"></div>
+<div class="linenb">&nbsp;83</div><div class="codeline">presentations (cf. \cite{Haider2021}) would require over one year on 32 threads (excluding testing and validation) with</div><div class="clear"></div>
+<div class="linenb">&nbsp;84</div><div class="codeline">the current configuration of parameters.</div><div class="clear"></div>
+<div class="linenb">&nbsp;85</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;86</div><div class="codeline">Experiments with <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [downscale, down scaled] (5894) [lt:en:MORFOLOGIK_RULE_EN_US]">downscaled</span> images and smaller network sizes were conducted. Yet, training for these still took on the</div><div class="clear"></div>
+<div class="linenb">&nbsp;87</div><div class="codeline">order of several days, making the search for suitable parameters very costly. While I am optimistic about the network's</div><div class="clear"></div>
+<div class="linenb">&nbsp;88</div><div class="codeline">capability in general, no parametrization was found in time under which the network was capable of learning <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [MOIST, MIST, MONIST, MN IST, NIST] (6224) [lt:en:MORFOLOGIK_RULE_EN_US]">MNIST</span>. </div><div class="clear"></div>
+<div class="linenb">&nbsp;89</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;90</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;91</div><div class="codeline">The challenge of identifying adequate parameters was hindered by training speed in multiple experiments. As the</div><div class="clear"></div>
+<div class="linenb">&nbsp;92</div><div class="codeline">implementation of the spiking neuron model took much longer than initially anticipated, time was a limiting factor for</div><div class="clear"></div>
+<div class="linenb">&nbsp;93</div><div class="codeline">all present experiments. Particularly the simulations described in Sections \ref{sec-func-approx}, \ref{sec-c-m-api} and</div><div class="clear"></div>
+<div class="linenb">&nbsp;94</div><div class="codeline">\ref{sec-dales-law} should be repeated with much more varied sets of parameters. The reported results are expected</div><div class="clear"></div>
+<div class="linenb">&nbsp;95</div><div class="codeline">improve from this, and insights to be applicable to experiments on more complex learning tasks. Thus, computational</div><div class="clear"></div>
+<div class="linenb">&nbsp;96</div><div class="codeline">efficiency remains a serious drawback of this model, and has been a major limiting factor for this thesis.</div><div class="clear"></div>
+<div class="linenb">&nbsp;97</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;98</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">&nbsp;99</div><div class="codeline"><span class="keyword1">\section</span>{Future directions}</div><div class="clear"></div>
 <div class="linenb">100</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">101</div><div class="codeline">The results for the LE network experiments are somewhat more interesting. For very long $t_{pres}$, both rate</div><div class="clear"></div>
-<div class="linenb">102</div><div class="codeline">implementations behave the same. Yet the NEST implementation requires considerably more epochs for training, as</div><div class="clear"></div>
-<div class="linenb">103</div><div class="codeline">$t_{pres}$ is reduced. For very low presentation times, this behavior was somewhat expected, due to the synaptic delay</div><div class="clear"></div>
-<div class="linenb">104</div><div class="codeline">enforced by NEST. The NumPy variant computes a full forward pass of the network during a single simulation step, as all</div><div class="clear"></div>
-<div class="linenb">105</div><div class="codeline">layers are processed in sequence. Only feedback signals from pyramidal neurons are delayed by one <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [time step] (6576) [lt:en:MORFOLOGIK_RULE_EN_US]">timestep</span> in this</div><div class="clear"></div>
-<div class="linenb">106</div><div class="codeline">simulation backend. In NEST, all connections have a minimum synaptic delay of $\Delta t$. Therefore, for very short</div><div class="clear"></div>
-<div class="linenb">107</div><div class="codeline">presentation times the NEST network can not be expected to perform well, as signals have no time to traverse the</div><div class="clear"></div>
-<div class="linenb">108</div><div class="codeline">network. It remains an open question whether this feature alone explains the gradual decrease in performance observed</div><div class="clear"></div>
-<div class="linenb">109</div><div class="codeline">here, or if there is an undiscovered error within the novel neuron models or simulation environment. The exceptionally</div><div class="clear"></div>
-<div class="linenb">110</div><div class="codeline">short stimulus presentation times investigated by \citep{Haider2021} are themselves questionable in terms of biological</div><div class="clear"></div>
-<div class="linenb">111</div><div class="codeline">plausibility, as they are much lower than pyramidal neuron time constants \citep{McCormick1985}. Thus, no attempts were</div><div class="clear"></div>
-<div class="linenb">112</div><div class="codeline">made to improve performance for very low $t_{pres}$.</div><div class="clear"></div>
-<div class="linenb">113</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">114</div><div class="codeline">The spiking variant proved similarly sensitive to presentation times as the other NEST variant. While obtaining similar</div><div class="clear"></div>
-<div class="linenb">115</div><div class="codeline">final accuracy, it required - at best - twice as many stimulus presentations as its direct competitor. This result,</div><div class="clear"></div>
-<div class="linenb">116</div><div class="codeline">while somewhat expected, shows that for low $t_{pres}$, spiking communication leads to worse learning performance. It</div><div class="clear"></div>
-<div class="linenb">117</div><div class="codeline">also shows that the relaxation problem affects all communication schemes equally. While the utility of LE is</div><div class="clear"></div>
-<div class="linenb">118</div><div class="codeline">substantially higher for rate neurons, it does improve performance and efficiency of the spiking variant. For this</div><div class="clear"></div>
-<div class="linenb">119</div><div class="codeline">reason, LE will be turned on in all upcoming simulations.</div><div class="clear"></div>
+<div class="linenb">101</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Computational efficiency}</div><div class="clear"></div>
+<div class="linenb">102</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">103</div><div class="codeline">The high computational demands of the network were first reported in the original paper \citep{sacramento2018dendritic}. They were largely alleviated</div><div class="clear"></div>
+<div class="linenb">104</div><div class="codeline">through steady-state approximations and the addition of Latent Equilibrium. The present SNN implementation reintroduces</div><div class="clear"></div>
+<div class="linenb">105</div><div class="codeline">this issue, and regrettably exacerbates it considerably. Some improvements can be expected by parameter optimizations</div><div class="clear"></div>
+<div class="linenb">106</div><div class="codeline">such as lowering stimulus presentation time or spike frequencies. Yet to a degree, decreased speed is an <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [invertible] (7382) [lt:en:MORFOLOGIK_RULE_EN_US]">inadvertible</span></div><div class="clear"></div>
+<div class="linenb">107</div><div class="codeline">price to be paid for a more exact modelling of neuronal processes. Therefore, any attempt at introducing new properties</div><div class="clear"></div>
+<div class="linenb">108</div><div class="codeline">of biological neurons must be expected to further increase computational demands. Given the (still very high) level of</div><div class="clear"></div>
+<div class="linenb">109</div><div class="codeline">abstraction of the developed model paired with its poor speed, this perspective is slightly concerning. Hence, the</div><div class="clear"></div>
+<div class="linenb">110</div><div class="codeline">model requires rigorous optimization.</div><div class="clear"></div>
+<div class="linenb">111</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">112</div><div class="codeline">Some initial directions for this are provided by the benchmarks performed in this study. The spike-based plasticity rule</div><div class="clear"></div>
+<div class="linenb">113</div><div class="codeline">for example is highly costly. One possible optimization was already provided by \citep{Stapmanns2021}. The authors</div><div class="clear"></div>
+<div class="linenb">114</div><div class="codeline">discuss an alternative variant for implementing the dendritic plasticity rule. Instead of a strictly event-based or</div><div class="clear"></div>
+<div class="linenb">115</div><div class="codeline">time-based update rule, a hybrid algorithm called ``Event-based update with compression`` is presented. This variant</div><div class="clear"></div>
+<div class="linenb">116</div><div class="codeline">tolerates an increased number of synapse updates, but in exchange removes redundant computations. In initial tests, it</div><div class="clear"></div>
+<div class="linenb">117</div><div class="codeline">proved particularly advantageous for networks in which neurons had a large in-degree. Therefore, this alternative</div><div class="clear"></div>
+<div class="linenb">118</div><div class="codeline">integration scheme can be expected to perform well for training in the larger networks demanded by more complex</div><div class="clear"></div>
+<div class="linenb">119</div><div class="codeline">datasets. Regrettably, it was not available in time for this thesis, so potential gains remain speculative.</div><div class="clear"></div>
 <div class="linenb">120</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">121</div><div class="codeline"><span class="keyword1">\section</span>{Approximating arbitrary functions}<span class="keyword1">\label</span>{sec-func-approx}</div><div class="clear"></div>
-<div class="linenb">122</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">123</div><div class="codeline">To confirm that the spiking network is capable of learning more complex tasks, it was trained to match the input-output</div><div class="clear"></div>
-<div class="linenb">124</div><div class="codeline">mapping of a separate teacher network. This is an established method for showing that a network can approximate</div><div class="clear"></div>
-<div class="linenb">125</div><div class="codeline">arbitrary functions. A performance comparison of several networks with different numbers of neurons in their hidden</div><div class="clear"></div>
-<div class="linenb">126</div><div class="codeline">layers is depicted in Fig. \ref{fig-func-approx}.</div><div class="clear"></div>
-<div class="linenb">127</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">128</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">129</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">130</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">131</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.95\textwidth]{fig_function_approximator}</div><div class="clear"></div>
-<div class="linenb">132</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[SNN learns to match separate teacher network.]{SNN learns to match separate teacher network. Networks of</div><div class="clear"></div>
-<div class="linenb">133</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;size $15-n_{hidden}-5$ neurons per layer were trained on input-output pairings of a randomly initialized feedforward</div><div class="clear"></div>
-<div class="linenb">134</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;network of size $15-15-5$. Each network was trained on 500000 samples of the same teacher network while all somatic</div><div class="clear"></div>
-<div class="linenb">135</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;compartments received background noise with a standard deviation of $0.01$. To measure how much of the teacher</div><div class="clear"></div>
-<div class="linenb">136</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;network's variance is predicted by the dendritic error network, the $R^2$-score</div><div class="clear"></div>
-<div class="linenb">137</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;(\href{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html}{sklearn.metrics.r2\_score})</div><div class="clear"></div>
-<div class="linenb">138</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;was measured for a large final test run over 500 samples.}</div><div class="clear"></div>
-<div class="linenb">139</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-func-approx}</div><div class="clear"></div>
-<div class="linenb">140</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">141</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">142</div><div class="codeline">As the task was found to be too easy when inputs to the teacher network were strictly positive (as is the case in the</div><div class="clear"></div>
-<div class="linenb">143</div><div class="codeline">self-prediction paradigm), inputs were drawn from a uniform distribution $U(-1,1)$. Note that (as is typical for many</div><div class="clear"></div>
-<div class="linenb">144</div><div class="codeline">neural networks), input neurons do not employ the nonlinearity $\phi$. Thus, in rate neurons inhibitory inputs are</div><div class="clear"></div>
-<div class="linenb">145</div><div class="codeline">transmitted directly and multiplied with synaptic weights. For spiking neurons, any negative injected current will</div><div class="clear"></div>
-<div class="linenb">146</div><div class="codeline">effectively inhibit spike generation. Thus, negative inputs can not be transmitted. To facilitate inhibitory stimulation</div><div class="clear"></div>
-<div class="linenb">147</div><div class="codeline">to the spiking network, a separate input layer population was required. This population was initialized with the</div><div class="clear"></div>
-<div class="linenb">148</div><div class="codeline">inverted weights of the excitatory population. An input vector was then separated, with positive values stimulating the</div><div class="clear"></div>
-<div class="linenb">149</div><div class="codeline">excitatory population and negative values stimulating inhibitory neurons. Due to this necessity, the spiking network</div><div class="clear"></div>
-<div class="linenb">150</div><div class="codeline">effectively had to learn an additional set of weights, which must be considered when assessing these results. </div><div class="clear"></div>
+<div class="linenb">121</div><div class="codeline">An alternative improvement to efficiency is approximating the plasticity rule with the instantaneous error at the time</div><div class="clear"></div>
+<div class="linenb">122</div><div class="codeline">of a spike. This would eliminate the requirement for both frequent updates, and for storing and reading a history of</div><div class="clear"></div>
+<div class="linenb">123</div><div class="codeline">dendritic error. Thus, a network employing this simplified plasticity rule would be much less computationally costly. As</div><div class="clear"></div>
+<div class="linenb">124</div><div class="codeline">shown in Fig. \ref{fig-error-comp-le}, error terms in LE networks relax after only a few simulation steps. Thus,</div><div class="clear"></div>
+<div class="linenb">125</div><div class="codeline">under the condition that only static inputs are considered, this crude approximation is expected to perform fairly well.</div><div class="clear"></div>
+<div class="linenb">126</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">127</div><div class="codeline">The neuron model should likewise be investigated for potential improvements in terms of efficiency. Modeling</div><div class="clear"></div>
+<div class="linenb">128</div><div class="codeline">interneurons without an apical compartment might yield some improvements (although initial experiments have dampened</div><div class="clear"></div>
+<div class="linenb">129</div><div class="codeline">expectations for this). It is also possible, that the network does not require integration <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [time steps] (9580) [lt:en:MORFOLOGIK_RULE_EN_US]">timesteps</span> as low as $0.1ms$,</div><div class="clear"></div>
+<div class="linenb">130</div><div class="codeline">which has not been investigated yet.</div><div class="clear"></div>
+<div class="linenb">131</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">132</div><div class="codeline">Finally, further tuning the network's hyperparameters is expected to yield settings that are less computationally</div><div class="clear"></div>
+<div class="linenb">133</div><div class="codeline">costly. Network relaxation time, stimulus presentation time, spiking frequencies and learning rates form a complex</div><div class="clear"></div>
+<div class="linenb">134</div><div class="codeline">interplay in this model which has not yet been fully explored. It is therefore to be expected that further optimization</div><div class="clear"></div>
+<div class="linenb">135</div><div class="codeline">of these might yield networks that can be trained with both lower computational time, and fewer training samples.</div><div class="clear"></div>
+<div class="linenb">136</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">137</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">138</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Meromorphic, Neurotrophic] (10110) [lt:en:MORFOLOGIK_RULE_EN_US]">Neuromorphic</span> hardware}</div><div class="clear"></div>
+<div class="linenb">139</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">140</div><div class="codeline">A different approach which likely would vastly improve simulation speed is a full re-implementation of the model on</div><div class="clear"></div>
+<div class="linenb">141</div><div class="codeline"><span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [meromorphic, neurotrophic] (10249) [lt:en:MORFOLOGIK_RULE_EN_US]">neuromorphic</span> hardware. This network fits the self-described niche of such systems almost perfectly; it employs strictly</div><div class="clear"></div>
+<div class="linenb">142</div><div class="codeline">local plasticity rules, its nodes use leaky membrane dynamics and communicate through binary spikes. By a rough</div><div class="clear"></div>
+<div class="linenb">143</div><div class="codeline">estimation, even the first generation of Intel's <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lois, Luigi, Loire, Loki, Lori, Loci, Lodi, Loin, Loins, Loewi, LHI, LIH, LOI, OHI, Lii, Lvii, Lxii, Joshi, LOIs, Loïc, Sochi, Lo-fi] (10530) [lt:en:MORFOLOGIK_RULE_EN_US]">Loihi</span> chips \citep{davies2018loihi} should be capable of simulating</div><div class="clear"></div>
+<div class="linenb">144</div><div class="codeline">this neuron model. The chip is capable of modelling multiple dendritic trees per neuron, and the learning engine appears</div><div class="clear"></div>
+<div class="linenb">145</div><div class="codeline">capable of <span class="highlight-spelling" title="Possible spelling mistake found. (10710) [lt:en:MORFOLOGIK_RULE_EN_US]">Urbanczik-Senn-like</span> <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [plasticity It] (10730) [lt:en:MORFOLOGIK_RULE_EN_US]">plasticity\footnote{It</span> is possible that the plasticity rule would need to be approximated</div><div class="clear"></div>
+<div class="linenb">146</div><div class="codeline">somewhat for <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lois, Luigi, Loire, Loki, Lori, Loci, Lodi, Loin, Loins, Loewi, LHI, LIH, LOI, OHI, Lii, Lvii, Lxii, Joshi, LOIs, Loïc, Sochi, Lo-fi] (10823) [lt:en:MORFOLOGIK_RULE_EN_US]">Loihi</span> 1. The publicly available information about the follow-up chip <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lois, Luigi, Loire, Loki, Lori, Loci, Lodi, Loin, Loins, Loewi, LHI, LIH, LOI, OHI, Lii, Lvii, Lxii, Joshi, LOIs, Loïc, Sochi, Lo-fi] (10892) [lt:en:MORFOLOGIK_RULE_EN_US]">Loihi</span> 2 \citep{Davies2021} is still</div><div class="clear"></div>
+<div class="linenb">147</div><div class="codeline">somewhat sparse, but it claims to support a much more diverse set of learning rules<span class="highlight" title="Two consecutive dots. Suggestions: [., …] (10996) [lt:en:DOUBLE_PUNCTUATION]">.}.</span> Of course, <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lois, Luigi, Loire, Loki, Lori, Loci, Lodi, Loin, Loins, Loewi, LHI, LIH, LOI, OHI, Lii, Lvii, Lxii, Joshi, LOIs, Loïc, Sochi, Lo-fi] (11010) [lt:en:MORFOLOGIK_RULE_EN_US]">Loihi</span> is only one of</div><div class="clear"></div>
+<div class="linenb">148</div><div class="codeline">many <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [meromorphic, neurotrophic] (11036) [lt:en:MORFOLOGIK_RULE_EN_US]">neuromorphic</span> systems. Another popular system is <span class="keyword1">\textit</span>{BrainScaleS-2}, which appears to be spearheading the field</div><div class="clear"></div>
+<div class="linenb">149</div><div class="codeline">with regard to simulating segregated dendrites \citep{Kaiser2022}. Regardless of the exact system used, <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [meromorphic, neurotrophic] (11231) [lt:en:MORFOLOGIK_RULE_EN_US]">neuromorphic</span></div><div class="clear"></div>
+<div class="linenb">150</div><div class="codeline">hardware promises to reduce the high computation time which currently obstructs further research into the model.</div><div class="clear"></div>
 <div class="linenb">151</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">152</div><div class="codeline">Results show that surprisingly small networks are capable of matching the teacher network approximately. However,</div><div class="clear"></div>
-<div class="linenb">153</div><div class="codeline">particularly for explaining the variance in the teacher network's output, an equally sized network is required. While</div><div class="clear"></div>
+<div class="linenb">152</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">153</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Neuron model}</div><div class="clear"></div>
 <div class="linenb">154</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">155</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">156</div><div class="codeline"><span class="keyword1">\section</span>{Apical compartment capacitance}<span class="keyword1">\label</span>{sec-c-m-api}</div><div class="clear"></div>
-<div class="linenb">157</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">158</div><div class="codeline">Next, an investigation was made into lowering apical- and FB errors of the spiking implementation. The hypothesis was</div><div class="clear"></div>
-<div class="linenb">159</div><div class="codeline">that a smoothing of apical compartment voltage would lead to a decrease in both errors. To test this, the</div><div class="clear"></div>
-<div class="linenb">160</div><div class="codeline">Self-predicting experiment was repeated with numerous values for apical compartment capacitance <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [BC, PC, JC, QC, WC, AC, C, CC, DC, EC, FC, KC, LC, MC, NC, RC, SC, TC, UC, VC, ZC, °C, GC, HC, IC, OC, YC] (9968) [lt:en:MORFOLOGIK_RULE_EN_US]">$C</span>_<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [MAPI] (9971) [lt:en:MORFOLOGIK_RULE_EN_US]">m^{api</span>} \in \{ 1, 250</div><div class="clear"></div>
-<div class="linenb">161</div><div class="codeline">\} <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [PFC, Pfc] (9990) [lt:en:MORFOLOGIK_RULE_EN_US]">pF$ (results not shown). The experiment showed that for $C</span>_<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [MAPI] (9995) [lt:en:MORFOLOGIK_RULE_EN_US]">m^{api</span>} = 50pF$, apical error is almost halved ($0.0034</div><div class="clear"></div>
-<div class="linenb">162</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (10016) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span> 0.0019$), and FB error is decreased by $80\%$ ($0.15 \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (10045) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span> <span class="highlight" title="The currency mark is usually put at the beginning of the number.. Suggestions: [$0.027] (10056) [lt:en:CURRENCY]">0.027$</span><span class="highlight" title="Unpaired symbol: '(' seems to be missing (10062) [lt:en:EN_UNPAIRED_BRACKETS]">)</span>. These values are still at least an</div><div class="clear"></div>
-<div class="linenb">163</div><div class="codeline">order of magnitude higher than those in the rate implementations, but mark a substantial improvement. Increasing the</div><div class="clear"></div>
-<div class="linenb">164</div><div class="codeline">parameter beyond this point further decreased apical error, but came at the cost of slower convergence. Higher membrane</div><div class="clear"></div>
-<div class="linenb">165</div><div class="codeline"><span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [capacitance] (10337) [lt:en:MORFOLOGIK_RULE_EN_US]">capacitances</span> in general increase the relaxation period of the entire network. Thus, they require a highly undesirable</div><div class="clear"></div>
-<div class="linenb">166</div><div class="codeline">increase in $t_{pres}$ for successful learning.</div><div class="clear"></div>
-<div class="linenb">167</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">168</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">169</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">170</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_c_m_psi}</div><div class="clear"></div>
-<div class="linenb">171</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-sh" title="A caption should end with a period [sh:capperiod]"><span class="keyword1">\caption</span>[Comparison of performance for different configurations of $\psi$ and $C_m^{api}</span>$.]{Comparison of</div><div class="clear"></div>
-<div class="linenb">172</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;performance for different  configurations of $\psi$ and $C_m^{api}$. Networks were initialized with random weights,</div><div class="clear"></div>
-<div class="linenb">173</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;and trained for 500 epochs. Plasticity was enabled in all synapses ($\eta^{pi}=0.0025, \eta^{ip}=0.001,</div><div class="clear"></div>
-<div class="linenb">174</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\eta^{up}_0=0.0025, \eta^{up}_1=0.00075, \eta^{down}=0$). Stimuli were presented for $t_{pres}=100ms$ to ensure that</div><div class="clear"></div>
-<div class="linenb">175</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;networks with higher apical capacitance (and therefore longer relaxation periods) were not disadvantaged too much.</div><div class="clear"></div>
-<div class="linenb">176</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;}</div><div class="clear"></div>
-<div class="linenb">177</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{<span class="highlight-sh" title="Figure fig-c-m-psi is never referenced in the text [sh:figref]">fig-c-m-psi</span>}</div><div class="clear"></div>
-<div class="linenb">178</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">179</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">180</div><div class="codeline">A secondary objective of training with different apical <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [capacitance] (10552) [lt:en:MORFOLOGIK_RULE_EN_US]">capacitances</span> was to enable learning with lower $\psi$ and</div><div class="clear"></div>
-<div class="linenb">181</div><div class="codeline">therefore approach biologically plausible firing rates. To test this, training on the <span class="highlight" title="An apostrophe may be missing.. Suggestions: [Bars', Bar's] (10691) [lt:en:POSSESSIVE_APOSTROPHE]">Bars</span> dataset was performed under</div><div class="clear"></div>
-<div class="linenb">182</div><div class="codeline">different combinations of apical capacitance and $\psi$. </div><div class="clear"></div>
-<div class="linenb">183</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">184</div><div class="codeline">While overall </div><div class="clear"></div>
-<div class="linenb">185</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">186</div><div class="codeline">Hence, another tradeoff between performance and training duration is introduced by this parameter.</div><div class="clear"></div>
+<div class="linenb">155</div><div class="codeline">Two properties that are part of most spiking neuron models, but have not been investigated here, are membrane reset and</div><div class="clear"></div>
+<div class="linenb">156</div><div class="codeline">refractory periods. Combined, these modifications would change the spike generation process to that of a stochastic <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [IF, LIFE, LIE, LIFT, LID, LIP, LIN, LIZ, AIF, LEIF, LIB, LIFO, RIF, LIT, LIQ, BIF, CIF, DIF, FIF, GIF, HIF, IIF, LBF, LCF, LDIF, LEF, LFI, LGF, LI, LIA, LIH, LIM, LIR, LIX, LOF, LPF, LRF, LSF, LTF, LUF, MIF, NIF, PIF, WIF, ZIF, LIEF, LII, L IF, LI F, L&amp;F, LDF, LF, LIC, LIU, LIV, TIF] (11609) [lt:en:MORFOLOGIK_RULE_EN_US]">LIF</span></div><div class="clear"></div>
+<div class="linenb">157</div><div class="codeline">neuron. Such neuron models have previously performed well for modelling sensory representations in the cortex</div><div class="clear"></div>
+<div class="linenb">158</div><div class="codeline">\citep{Pillow2008}. Another neuron property considered in that study is <span class="keyword1">\textit</span>{spike-frequency-adaptation}. Neurons</div><div class="clear"></div>
+<div class="linenb">159</div><div class="codeline">with this mechanism increase their threshold potential in response to previous activity. Such adaptability has been</div><div class="clear"></div>
+<div class="linenb">160</div><div class="codeline">observed in $\sim 20 \% $ of neurons in the mouse visual cortex \citep{allen2018}, and has been shown to significantly</div><div class="clear"></div>
+<div class="linenb">161</div><div class="codeline">improve performance in recurrent SNN \citep{bellec2018long,bellec2020solution}. These three changes together would</div><div class="clear"></div>
+<div class="linenb">162</div><div class="codeline">significantly improve correspondence of the neuron model to physiological data, while potentially also improving their</div><div class="clear"></div>
+<div class="linenb">163</div><div class="codeline">computational power.</div><div class="clear"></div>
+<div class="linenb">164</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">165</div><div class="codeline">Another point which has not yet been reviewed in terms of biological plausibility is the prospective firing rate in LE</div><div class="clear"></div>
+<div class="linenb">166</div><div class="codeline">neurons. <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Harder, Raider, Hider, Aider] (12371) [lt:en:MORFOLOGIK_RULE_EN_US]">Haider</span> et al.\ claim that it ``represents a known, though often neglected feature of (single) biological</div><div class="clear"></div>
+<div class="linenb">167</div><div class="codeline">neurons'' \citep{Haider2021}. They partly base this assessment on the fact that neurons show an increased sensitivity to</div><div class="clear"></div>
+<div class="linenb">168</div><div class="codeline">coincident spikes through Na channel responses \citep{Platkiewicz2011}. Further work is required to determine <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [whether, weather, ether, tether, wetter, wither, nether, w ether, wet her] (12672) [lt:en:MORFOLOGIK_RULE_EN_US]">wether</span></div><div class="clear"></div>
+<div class="linenb">169</div><div class="codeline">prospective activations - particularly as a basis for spike probabilities - appropriately model such processes.  </div><div class="clear"></div>
+<div class="linenb">170</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">171</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Plasticity rule}</div><div class="clear"></div>
+<div class="linenb">172</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">173</div><div class="codeline">The model of the dendritic trees described here is very rudimentary, which has implications for the plasticity</div><div class="clear"></div>
+<div class="linenb">174</div><div class="codeline">mechanism. While the <span class="highlight-spelling" title="Possible spelling mistake found. (12943) [lt:en:MORFOLOGIK_RULE_EN_US]">Urbanczik-Senn</span> plasticity has been argued to be a type of <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Serbian, Lesbian, Debian, Hessian] (13001) [lt:en:MORFOLOGIK_RULE_EN_US]">Hebbian</span> learning</div><div class="clear"></div>
+<div class="linenb">175</div><div class="codeline">\citep{gerstner2018eligibility,urbanczik2014learning}, it leads to substantially different weight changes. Reviewing the</div><div class="clear"></div>
+<div class="linenb">176</div><div class="codeline">literature further yielded no arguments that the <span class="highlight-spelling" title="Possible spelling mistake found. (13138) [lt:en:MORFOLOGIK_RULE_EN_US]">Urbanczik-Senn</span> plasticity relies on any biologically implausible</div><div class="clear"></div>
+<div class="linenb">177</div><div class="codeline">mechanisms</div><div class="clear"></div>
+<div class="linenb">178</div><div class="codeline">\citep{magee2020synaptic,Lillicrap2020,Poirazi2020,sacramento2018dendritic,guerguiev2017towards,Marblestone2016}. Yet</div><div class="clear"></div>
+<div class="linenb">179</div><div class="codeline">given the extensive amount of data in support of STDP</div><div class="clear"></div>
+<div class="linenb">180</div><div class="codeline">\citep{magee2020synaptic,gerstner2018eligibility,Bengio2015,Marblestone2016}, the burden of proof is on the dendritic</div><div class="clear"></div>
+<div class="linenb">181</div><div class="codeline">plasticity rule to override this dogma. This includes finding brain networks which can be modeled by using it, as have</div><div class="clear"></div>
+<div class="linenb">182</div><div class="codeline">been identified repeatedly for STDP. A fruitful approach might be to investigate STDP in multi-compartment models which</div><div class="clear"></div>
+<div class="linenb">183</div><div class="codeline">simulate dendritic spikes and plateau potentials in search of similar plasticity dynamics. Exciting advances in this</div><div class="clear"></div>
+<div class="linenb">184</div><div class="codeline">direction have recently been reported \citep{Bono2017,Schiess2016,magee2020synaptic}, and could potentially be</div><div class="clear"></div>
+<div class="linenb">185</div><div class="codeline">integrated into the present neuron model.</div><div class="clear"></div>
+<div class="linenb">186</div><div class="codeline"></div><div class="clear"></div>
 <div class="linenb">187</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">188</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">189</div><div class="codeline"><span class="keyword1">\section</span>{Imperfect connectivity}</div><div class="clear"></div>
-<div class="linenb">190</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">191</div><div class="codeline">Connectivity within cortical circuits, while structured, appears to subject to a high degree of randomness</div><div class="clear"></div>
-<div class="linenb">192</div><div class="codeline">\citep{potjans2014cell}. As noted before, one-to-one connections between pairs of neurons are therefore highly unlikely</div><div class="clear"></div>
-<div class="linenb">193</div><div class="codeline">\citep{whittington2019theories}. On the other hand, 'fully connected' populations of neurons likewise have not been</div><div class="clear"></div>
-<div class="linenb">194</div><div class="codeline">observed in <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [electrophysiologist, electrophysiologists] (11226) [lt:en:MORFOLOGIK_RULE_EN_US]">electrophysiological</span> \citep{thomson2002synaptic} and <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [invited, intro, invite, invites, nitro, invitee, initio, inviter, inviters] (11255) [lt:en:MORFOLOGIK_RULE_EN_US]">in-vitro</span> \citep{binzegger2004quantitative} analyses of</div><div class="clear"></div>
-<div class="linenb">195</div><div class="codeline"><span class="highlight-spelling" title="Possible spelling mistake found. (11280) [lt:en:MORFOLOGIK_RULE_EN_US]">cortico-cortical</span> connectivity. Therefore, any network proclaiming to model the cortex must invariably be capable of</div><div class="clear"></div>
-<div class="linenb">196</div><div class="codeline">handling this imperfect connectivity.</div><div class="clear"></div>
-<div class="linenb">197</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">198</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">199</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">200</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_dropout}</div><div class="clear"></div>
-<div class="linenb">201</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Error terms after training with synapse dropout]{Error terms after training with synapse dropout. Networks</div><div class="clear"></div>
-<div class="linenb">202</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with $8-8-8$ neurons per layer were trained towards the self-predicting state, with different percentages of</div><div class="clear"></div>
-<div class="linenb">203</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;synaptic connections randomly removed. Experiments were performed with the rate-based network in NEST, each</div><div class="clear"></div>
-<div class="linenb">204</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;network was trained for 2000 epochs of 50ms each. Errors are averaged over 6 independent runs for each</div><div class="clear"></div>
-<div class="linenb">205</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;configuration.}</div><div class="clear"></div>
-<div class="linenb">206</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{<span class="highlight-sh" title="Figure fig-dropout is never referenced in the text [sh:figref]">fig-dropout</span>}</div><div class="clear"></div>
-<div class="linenb">207</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">208</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">209</div><div class="codeline">To test if the dendritic error model fulfills this requirement, in a first step the self-prediction experiment was</div><div class="clear"></div>
-<div class="linenb">210</div><div class="codeline">repeated with neuron dropout. To simulate connection probabilities $p_{conn} \in {0.6, 1.0}$, an appropriate number of</div><div class="clear"></div>
-<div class="linenb">211</div><div class="codeline">synapses was deleted after network setup. To avoid completely separating two neuron populations, this deletion was</div><div class="clear"></div>
-<div class="linenb">212</div><div class="codeline">performed separately for each of the four synaptic populations.</div><div class="clear"></div>
-<div class="linenb">213</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">214</div><div class="codeline">As expected, removing synapses caused an increase in all four error metrics. Yet even with only 60\% of synaptic</div><div class="clear"></div>
-<div class="linenb">215</div><div class="codeline">connections present, the network manages to vastly improve from its random initialization. Weight errors are calculated</div><div class="clear"></div>
-<div class="linenb">216</div><div class="codeline">as mean squared errors over the two matrices, which requires matrices to contain data at every cell. Thus, to compute</div><div class="clear"></div>
-<div class="linenb">217</div><div class="codeline">these errors, weights of deleted synapses were set to zero in these matrices. This choice was made under the assumption</div><div class="clear"></div>
-<div class="linenb">218</div><div class="codeline">that a missing connection in an ideal self-predicting network would be matched by a zero-weight - or likewise absent -</div><div class="clear"></div>
-<div class="linenb">219</div><div class="codeline">synapse. These results indicate that the dendritic error rule is capable of compensating for absent synapses by</div><div class="clear"></div>
-<div class="linenb">220</div><div class="codeline">correctly identifying and depressing corresponding feedback connections (and vice versa). Through this mechanism, the</div><div class="clear"></div>
-<div class="linenb">221</div><div class="codeline">network is able to retain its self-predicting properties in spite of physiological constraints.</div><div class="clear"></div>
-<div class="linenb">222</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">188</div><div class="codeline"><span class="keyword1">\subsection</span>*{Cortical circuitry}</div><div class="clear"></div>
+<div class="linenb">189</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">190</div><div class="codeline">The circuitry surrounding the dendritic error network is very simplistic compared to the intricate networks of cortical</div><div class="clear"></div>
+<div class="linenb">191</div><div class="codeline">microcircuits - not to mention its numerous connections to other parts of the brain. In this regard, the network still</div><div class="clear"></div>
+<div class="linenb">192</div><div class="codeline">holds much room for improvement. Furthermore, a seminal model for how the cortical microcircuit might be able to perform</div><div class="clear"></div>
+<div class="linenb">193</div><div class="codeline">predictive coding \citep{bastos2012canonical} appears to conflict with the dendritic error model. While the resulting</div><div class="clear"></div>
+<div class="linenb">194</div><div class="codeline">network has not yet been computationally modeled, it is backed by a vast amount of empirical data and regarded highly in</div><div class="clear"></div>
+<div class="linenb">195</div><div class="codeline">the literature \citep{Lillicrap2020,Park2013,whittington2019theories}. One important hypothesis made by it, is that prediction errors are encoded in separate neuronal</div><div class="clear"></div>
+<div class="linenb">196</div><div class="codeline">populations, rather than dendritic compartments. This claim is shared by other works</div><div class="clear"></div>
+<div class="linenb">197</div><div class="codeline">\citep{Hertaeg2022,Whittington2017}, and further work is required to find out if the two hypotheses can be reconciled.</div><div class="clear"></div>
+<div class="linenb">198</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">199</div><div class="codeline">A first step towards an integration of the dendritic error model and the cortical circuitry is provided in this thesis.</div><div class="clear"></div>
+<div class="linenb">200</div><div class="codeline">Present experiments show that the plasticity rule is capable of assigning credit indirectly when dale's law is upheld</div><div class="clear"></div>
+<div class="linenb">201</div><div class="codeline">via additional interneuron populations. Extending this principle to all sets of synapses in the network would introduce</div><div class="clear"></div>
+<div class="linenb">202</div><div class="codeline">novel interneuron populations demanding to be identified. The extent to which the resulting network is compatible with</div><div class="clear"></div>
+<div class="linenb">203</div><div class="codeline">cortical circuitry could prove valuable for further judging the plausibility of the dendritic error model.</div><div class="clear"></div>
+<div class="linenb">204</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">205</div><div class="codeline"><span class="keyword1">\subsubsection</span>*{Deep Feedback Control}</div><div class="clear"></div>
+<div class="linenb">206</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">207</div><div class="codeline">A completely novel solution to the credit assignment problem is provided by <span class="keyword1">\textit</span>{Deep Feedback control}</div><div class="clear"></div>
+<div class="linenb">208</div><div class="codeline">\citep{Meulemans2021,Meulemans2022}. Instead of approximating <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (15410) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span>, this algorithm performs Gauss-Newton</div><div class="clear"></div>
+<div class="linenb">209</div><div class="codeline">optimization, thus employing a previously unexplored approach to training deep neural networks. While originally</div><div class="clear"></div>
+<div class="linenb">210</div><div class="codeline">described as a purely mathematical model, it might be considered even more biologically plausible than the dendritic</div><div class="clear"></div>
+<div class="linenb">211</div><div class="codeline">error network. It considers many features of pyramidal neuron dendrites without being held back by any of the common</div><div class="clear"></div>
+<div class="linenb">212</div><div class="codeline"><span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (15804) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> criticisms or the constrained connectivity of the present model. The authors also show that it shares a close</div><div class="clear"></div>
+<div class="linenb">213</div><div class="codeline">mathematical relationship to the dendritic error network, incorporating some interneuron computations into the pyramidal</div><div class="clear"></div>
+<div class="linenb">214</div><div class="codeline">neurons. Its connectivity however is therefore even further abstracted from the cortical circuitry than the one</div><div class="clear"></div>
+<div class="linenb">215</div><div class="codeline">discussed here. Regardless of its exact details, this algorithm provides an important insight which was largely</div><div class="clear"></div>
+<div class="linenb">216</div><div class="codeline">neglected in this thesis (and perhaps the surrounding niche of the neuroscience community) so far: <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (16367) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> is not the</div><div class="clear"></div>
+<div class="linenb">217</div><div class="codeline">only <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [competitive] (16392) [lt:en:MORFOLOGIK_RULE_EN_US]">competetive</span> mechanism for assigning synaptic credit in neural networks. Therefore, focussing too narrowly on this</div><div class="clear"></div>
+<div class="linenb">218</div><div class="codeline">singular solution might prevent us from considering viable alternatives.</div><div class="clear"></div>
+<div class="linenb">219</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">220</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">221</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">222</div><div class="codeline"><span class="keyword1">\section</span>{Conclusion}</div><div class="clear"></div>
 <div class="linenb">223</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">224</div><div class="codeline">The extent of this capability was confirmed in SNN, by comparing performance on the <span class="highlight" title="An apostrophe may be missing.. Suggestions: [Bars', Bar's] (12828) [lt:en:POSSESSIVE_APOSTROPHE]">Bars</span> dataset of a control network to</div><div class="clear"></div>
-<div class="linenb">225</div><div class="codeline">a <span class="keyword1">\textit</span>{dropout network}. Both networks were initialized with random synaptic weights, and trained with full</div><div class="clear"></div>
-<div class="linenb">226</div><div class="codeline">plasticity ($\eta^{ip}_0 = 0.004, \eta^{pi}_0 = 0.01, \eta^{up}_0 = 0.01, \eta^{up}_1 = 0.003$) to best enable the</div><div class="clear"></div>
-<div class="linenb">227</div><div class="codeline">dropout network to compensate for missing synapses. The dropout network was initialized with $40$ instead of $30$ hidden</div><div class="clear"></div>
-<div class="linenb">228</div><div class="codeline">layer pyramidal neurons to counteract the deletion of $15\%$ of synapses per synaptic population. Both networks</div><div class="clear"></div>
-<div class="linenb">229</div><div class="codeline">performed very similarly, with the control network reaching $100\%$ accuracy somewhat faster (Epoch 140 vs. Epoch 200),</div><div class="clear"></div>
-<div class="linenb">230</div><div class="codeline">while the dropout network exhibited slightly lower test loss at the end of training (results not shown).</div><div class="clear"></div>
-<div class="linenb">231</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">232</div><div class="codeline">These results prove that the dendritic error model is capable of learning in spite of imperfect connectivity, which must</div><div class="clear"></div>
-<div class="linenb">233</div><div class="codeline">be expected to occur in the cortex. This sets it apart from the previous implementation of a predictive coding network</div><div class="clear"></div>
-<div class="linenb">234</div><div class="codeline">\citep{Whittington2017}, and further supports its biological plausibility.</div><div class="clear"></div>
-<div class="linenb">235</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">236</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">237</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">238</div><div class="codeline">\<span class="highlight-sh" title="If a section has sub-sections, it should have more than one such sub-section. [sh:nsubdiv]">section</span>{Separation of synaptic polarity}</div><div class="clear"></div>
-<div class="linenb">239</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">240</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">241</div><div class="codeline">A dogma held in neuroscience for a long time now has been the notion that all neurons are either excitatory or</div><div class="clear"></div>
-<div class="linenb">242</div><div class="codeline">inhibitory, as dictated by their type (also known as Dale's law \citep{Kandel1968}). Several studies have since shown</div><div class="clear"></div>
-<div class="linenb">243</div><div class="codeline">that some neurons violate this law through co-transmission or specific release sites for different neurotransmitters</div><div class="clear"></div>
-<div class="linenb">244</div><div class="codeline">\citep{Svensson2019,Barranca2022}. Despite these findings, pyramidal neurons are still regarded to release exclusively</div><div class="clear"></div>
-<div class="linenb">245</div><div class="codeline">Glutamate, therefore being strictly excitatory \citep{gerfen2018long,spruston2008pyramidal,Eyal2018}.</div><div class="clear"></div>
-<div class="linenb">246</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">247</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">248</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">249</div><div class="codeline">A key limitation of the present network model is the requirement that all synapses must be able to assume both positive</div><div class="clear"></div>
-<div class="linenb">250</div><div class="codeline">and negative polarities. When restricting any synaptic population in the network to just one polarity, the network is</div><div class="clear"></div>
-<div class="linenb">251</div><div class="codeline">unable to reach the self-predicting state \todo{expand?}. Thus, activity in any neuron must be able to have both</div><div class="clear"></div>
-<div class="linenb">252</div><div class="codeline">excitatory and inhibitory postsynaptic effects facilitated by appropriate synaptic weights. This requirement is at odds</div><div class="clear"></div>
-<div class="linenb">253</div><div class="codeline">with biology, which dictates a singular synaptic polarity for all outgoing connections of a neuron, determined by neuron</div><div class="clear"></div>
-<div class="linenb">254</div><div class="codeline">type and its corresponding neurotransmitter \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [cite me] (14882) [lt:en:MORFOLOGIK_RULE_EN_US]">citeme</span>.</div><div class="clear"></div>
-<div class="linenb">255</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">256</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">257</div><div class="codeline">To investigate to what degree the plasticity rule can deal with this constraint, an experiment was conducted: A</div><div class="clear"></div>
-<div class="linenb">258</div><div class="codeline">population of pyramidal neurons $A$  was connected to another population $C$ with plastic synapses that were constrained</div><div class="clear"></div>
-<div class="linenb">259</div><div class="codeline">to positive weights. In order to facilitate the required depression, $A$ was also connected to a population of</div><div class="clear"></div>
-<div class="linenb">260</div><div class="codeline">inhibitory interneurons $B$ through excitatory synapses with random and non-plastic weights. The interneurons in turn</div><div class="clear"></div>
-<div class="linenb">261</div><div class="codeline">were connected to $C$ through plastic, inhibitory connections. All incoming synapses at $C$ targeted the same dendritic</div><div class="clear"></div>
-<div class="linenb">262</div><div class="codeline">compartment. When inducing a dendritic error in that compartment, all plastic synapses in the network collaborated in</div><div class="clear"></div>
-<div class="linenb">263</div><div class="codeline">order to minimize that error. When injecting a positive basal error for example, the inhibitory weights (<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [BC, PC, JC, QC, WC, AC, C, CC, DC, EC, FC, KC, LC, MC, NC, RC, SC, TC, UC, VC, ZC, °C, GC, HC, IC, OC, YC] (15685) [lt:en:MORFOLOGIK_RULE_EN_US]">$C</span> \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (15689) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span></div><div class="clear"></div>
-<div class="linenb">264</div><div class="codeline">B$) decayed, while excitatory synaptic weights ($A \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (15705) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span> <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [BY, BE, BC, BT, B, BA, BB, BD, BF, BM, BO, BP, BR, BS, BU, BI, BK, BL, BX, BG, BH, BJ, BV] (15716) [lt:en:MORFOLOGIK_RULE_EN_US]">B$</span>) increased. Flipping the sign of that error injection</div><div class="clear"></div>
-<div class="linenb">265</div><div class="codeline">had the opposite effect on weights, and likewise cancelled the artificial error. This shows that a separation of</div><div class="clear"></div>
-<div class="linenb">266</div><div class="codeline">synaptic polarity does not interfere with the principles of the <span class="highlight-spelling" title="Possible spelling mistake found. (15950) [lt:en:MORFOLOGIK_RULE_EN_US]">Urbanczik-Senn</span> plasticity when depression is facilitated</div><div class="clear"></div>
-<div class="linenb">267</div><div class="codeline">by interneurons.</div><div class="clear"></div>
-<div class="linenb">268</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">269</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">270</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">271</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\begin{minipage}</span>{0.2\textwidth}</div><div class="clear"></div>
-<div class="linenb">272</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textbf</span>{a)}\par\medskip</div><div class="clear"></div>
-<div class="linenb">273</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">274</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_exc_inh_network}</div><div class="clear"></div>
-<div class="linenb">275</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\end{minipage}</span>\hfill</div><div class="clear"></div>
-<div class="linenb">276</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\begin{minipage}</span>{0.7\textwidth}</div><div class="clear"></div>
-<div class="linenb">277</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textbf</span>{b)}\par\medskip</div><div class="clear"></div>
-<div class="linenb">278</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">279</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_exc_inh_split}</div><div class="clear"></div>
-<div class="linenb">280</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\end{minipage}</span></div><div class="clear"></div>
-<div class="linenb">281</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Error minimization under biological constraints on synaptic polarity and network connectivity]{Error</div><div class="clear"></div>
-<div class="linenb">282</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;minimization under biological constraints on synaptic polarity and network connectivity. <span class="keyword1">\textbf</span>{a)} Network</div><div class="clear"></div>
-<div class="linenb">283</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;architecture. An excitatory population $A$ connects to a dendrite of Neuron $C$ both directly and through</div><div class="clear"></div>
-<div class="linenb">284</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inhibitory interneuron population $B$. Only synapses $A\rightarrow C$ and $B \rightarrow C$ are plastic through</div><div class="clear"></div>
-<div class="linenb">285</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dendritic error rules. Populations $A$ and $B$ are fully connected with random weights. <span class="keyword1">\textbf</span>{b)}</div><div class="clear"></div>
-<div class="linenb">286</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textit</span>{Left:} All plastic synapses arrive at apical dendrites and evolve according to Equation</div><div class="clear"></div>
-<div class="linenb">287</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ref{eq-delta_w_pi}. <span class="keyword1">\textit</span>{Right:} Identical network setup, plasticity for synapses at basal dendrites</div><div class="clear"></div>
-<div class="linenb">288</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Equations \ref{eq-delta_w_up}, \ref{eq-delta_w_ip}). <span class="keyword1">\textit</span>{Top:} Dendritic error of a single target neuron.</div><div class="clear"></div>
-<div class="linenb">289</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Errors of opposite signs are induced at $0$ and $500ms$ (vertical dashed line). <span class="keyword1">\textit</span>{Bottom:} Synaptic</div><div class="clear"></div>
-<div class="linenb">290</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weights of incoming connections. All initial synaptic weights and input neuron activations were drawn from</div><div class="clear"></div>
-<div class="linenb">291</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uniform distributions.}</div><div class="clear"></div>
-<div class="linenb">292</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-exc-inh-split}</div><div class="clear"></div>
-<div class="linenb">293</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">294</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">295</div><div class="codeline">Yet, as criticized previously \citep{whittington2019theories}, the one-to-one connections between $A$ and $B$ are</div><div class="clear"></div>
-<div class="linenb">296</div><div class="codeline">untypical for biological neural networks \<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [cite me] (16150) [lt:en:MORFOLOGIK_RULE_EN_US]">citeme</span>. Hence, a second experiment was performed, in which $A$ and $B$ were</div><div class="clear"></div>
-<div class="linenb">297</div><div class="codeline">fully connected through static synapses with random positive weights. This decrease in specificity of the connections</div><div class="clear"></div>
-<div class="linenb">298</div><div class="codeline">did not hinder the error-correcting learning, as shown in Fig. \ref{fig-exc-inh-split}.</div><div class="clear"></div>
-<div class="linenb">299</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">300</div><div class="codeline">These results are useful, as they enable a biologically plausible way for excitatory long-range pyramidal projections to</div><div class="clear"></div>
-<div class="linenb">301</div><div class="codeline">connect to pyramidal neurons in another layer of the network (i.e.\ in a different part of the cortex). The steps</div><div class="clear"></div>
-<div class="linenb">302</div><div class="codeline">required to facilitate this type of network are rather simple; A pyramidal neuron projection could enter a distant</div><div class="clear"></div>
-<div class="linenb">303</div><div class="codeline">cortical area and spread its <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [atonal] (16786) [lt:en:MORFOLOGIK_RULE_EN_US]">axonal</span> tree \phrasing within a layer that contains both pyramidal- and inhibitory</div><div class="clear"></div>
-<div class="linenb">304</div><div class="codeline">interneuron dendrites. If these interneurons themselves connect to the local pyramidal population, Dendritic errors with</div><div class="clear"></div>
-<div class="linenb">305</div><div class="codeline">arbitrary signs and magnitudes could be minimized.</div><div class="clear"></div>
-<div class="linenb">306</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">307</div><div class="codeline">While error minimization is important, it does not necessarily imply that synaptic credit assignment is successful as</div><div class="clear"></div>
-<div class="linenb">308</div><div class="codeline">well. Numerous weight configurations are conceivable which could silence dendritic errors, but likely only a small</div><div class="clear"></div>
-<div class="linenb">309</div><div class="codeline">subset of them is capable of transmitting useful information. To prove that this nonspecific connectivity is compatible</div><div class="clear"></div>
-<div class="linenb">310</div><div class="codeline">with learning of complex tasks, it was introduced into the dendritic error network. The connection between Interneurons</div><div class="clear"></div>
-<div class="linenb">311</div><div class="codeline">and Pyramidal neuron apical dendrites was selected for the first test, as the employed plasticity rule had proven most</div><div class="clear"></div>
-<div class="linenb">312</div><div class="codeline">resilient to parameter imperfections previously. A network of rate neurons was set up and parametrized as described in</div><div class="clear"></div>
-<div class="linenb">313</div><div class="codeline">Section \ref{sec-le-tpres} ($t_{pres}= 50ms$). The Weights $w^{pi}$ were redrawn and restricted to positive values, and</div><div class="clear"></div>
-<div class="linenb">314</div><div class="codeline">a secondary inhibitory interneuron population was created and fully connected to both populations as described in Fig.</div><div class="clear"></div>
-<div class="linenb">315</div><div class="codeline">\ref{fig-exc-inh-split}. The inhibitory interneuron population was chosen to be 4 times as large as the target pyramidal</div><div class="clear"></div>
-<div class="linenb">316</div><div class="codeline">population, and $30\%$ of incoming excitatory connections were randomly deleted. The idea behind this was, to seed</div><div class="clear"></div>
-<div class="linenb">317</div><div class="codeline">interneurons which were to serve as inhibitory counterparts for individual excitatory partners. From this seeding, the</div><div class="clear"></div>
-<div class="linenb">318</div><div class="codeline">dendritic error rule could then ideally derive useful information about presynaptic activity.</div><div class="clear"></div>
-<div class="linenb">319</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">320</div><div class="codeline">The experiment was successful, as the network was able to learn successfully in competitive time (100\% accuracy after</div><div class="clear"></div>
-<div class="linenb">321</div><div class="codeline">200 Epochs) albeit to a higher final test loss (results not shown). These results show that the dendritic plasticity</div><div class="clear"></div>
-<div class="linenb">322</div><div class="codeline">rule is capable of correctly assigning credit to two separate populations under much less sanitized inputs. Further</div><div class="clear"></div>
-<div class="linenb">323</div><div class="codeline">experiments are required to show <span class="keyword1">\textbf</span>{A:} how large such an inhibitory interneuron population needs to be, and what</div><div class="clear"></div>
-<div class="linenb">324</div><div class="codeline">role the dropout has to play, <span class="keyword1">\textbf</span>{B:} whether this capability extends to the spiking implementation and <span class="keyword1">\textbf</span>{C:}</div><div class="clear"></div>
-<div class="linenb">325</div><div class="codeline">if all neuron populations in the network can be connected in this way to separate excitatory and inhibitory pathways.</div><div class="clear"></div>
-<div class="linenb">326</div><div class="codeline">Such experiments would allow for a closer investigation into how well the dendritic error network corresponds to</div><div class="clear"></div>
-<div class="linenb">327</div><div class="codeline">cortical connectivity - if at all. Furthermore, the added interneuron populations would themselves have to have some</div><div class="clear"></div>
-<div class="linenb">328</div><div class="codeline">cortical equivalent which they are to represent.</div><div class="clear"></div>
-<div class="linenb">329</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">330</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">331</div><div class="codeline"><span class="keyword1">\subsection</span>{Interneuron nudging}</div><div class="clear"></div>
-<div class="linenb">332</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">333</div><div class="codeline">An easily overlooked connection of this network is the nudging signal from pyramidal neurons to their interneuron</div><div class="clear"></div>
-<div class="linenb">334</div><div class="codeline">sisters. These were deliberately not included in the previous dropout studies. If any interneuron was to not receive its</div><div class="clear"></div>
-<div class="linenb">335</div><div class="codeline">nudging signal, its incoming synapses would be unable to adapt their weights. As a result, both interneuron- and FF</div><div class="clear"></div>
-<div class="linenb">336</div><div class="codeline">error would fail to converge, in turn impeding apical error reduction. These one-to-one connections can  therefore be</div><div class="clear"></div>
-<div class="linenb">337</div><div class="codeline">considered the most important communication channels in the network. If there is no redundancy in the neurons, deleting</div><div class="clear"></div>
-<div class="linenb">338</div><div class="codeline">any of them breaks the network's learning scheme. Sacramento et al.\ claim that the interneurons of the network resemble</div><div class="clear"></div>
-<div class="linenb">339</div><div class="codeline">somatostatin-expressing (<span class="keyword1">\textit</span>{SST}) neurons. This is a reasonable assumption, as SST cells are ubiquitous in the</div><div class="clear"></div>
-<div class="linenb">340</div><div class="codeline">cortex and inhabit the same layers as pyramidal neurons. Furthermore, they share dense and recurrent synaptic</div><div class="clear"></div>
-<div class="linenb">341</div><div class="codeline">connections to these pyramidal neurons \citep{urban2016somatostatin}. Finally, they have been shown to receive top-down</div><div class="clear"></div>
-<div class="linenb">342</div><div class="codeline">instructive signals, which have been hypothesized to transmit prediction errors \citep{Leinweber2017}.</div><div class="clear"></div>
-<div class="linenb">343</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">344</div><div class="codeline">Several experiments similar to those on synaptic polarity were conducted in an attempt to replace these one-to-one</div><div class="clear"></div>
-<div class="linenb">345</div><div class="codeline">connections with more plausible connectivity schemes. Regrettably, none of them were able to retain the learning</div><div class="clear"></div>
-<div class="linenb">346</div><div class="codeline">capability of this network. Thus, these connections remain as perhaps the biologically most implausible aspect of the</div><div class="clear"></div>
-<div class="linenb">347</div><div class="codeline">dendritic error network. Further work is required to investigate if and how this constraint can be relaxed.</div><div class="clear"></div>
-<div class="linenb">348</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">349</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">350</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">351</div><div class="codeline"><span class="keyword1">\section</span>{Performance of the different implementations}<span class="keyword1">\label</span>{sec-benchmark}</div><div class="clear"></div>
-<div class="linenb">352</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">353</div><div class="codeline">As stated in \citep{Haider2021}, simulating large dendritic error networks with the full leaky dynamics quickly becomes</div><div class="clear"></div>
-<div class="linenb">354</div><div class="codeline">unfeasible. While the NEST simulator can be regarded as rather fast \citep{albada2018performance}, simulations on it by</div><div class="clear"></div>
-<div class="linenb">355</div><div class="codeline">design cannot employ batched matrix multiplication, as is typical in machine learning. Thus, by computing neuron updates</div><div class="clear"></div>
-<div class="linenb">356</div><div class="codeline">individually even in highly structured networks like this one, NEST was expected to perform worse than previous</div><div class="clear"></div>
-<div class="linenb">357</div><div class="codeline">implementations using PyTorch and dedicated GPUs. Yet not only did the NEST implementations compute rather slowly, the</div><div class="clear"></div>
-<div class="linenb">358</div><div class="codeline">spiking variant was the slowest across the board. To investigate the extent of this, as well as possible causes, several</div><div class="clear"></div>
-<div class="linenb">359</div><div class="codeline">benchmark experiments were performed. These tests were run on an <span class="keyword1">\textit</span>{AMD Ryzen <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Thread ripper] (21716) [lt:en:MORFOLOGIK_RULE_EN_US]">Threadripper</span> 2990WX} using 8 cores at</div><div class="clear"></div>
-<div class="linenb">360</div><div class="codeline">up to $3.0GHz$. All reported simulation times $t_{sim}$ are averaged over $5$ independent runs, and only measure the</div><div class="clear"></div>
-<div class="linenb">361</div><div class="codeline">time taken simulating (in seconds) without considering network initialization. \newline</div><div class="clear"></div>
-<div class="linenb">362</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">363</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">364</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">365</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">366</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.95\textwidth]{fig_benchmark_n_hidden}</div><div class="clear"></div>
-<div class="linenb">367</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Benchmark of the three implementations under different network sizes]{Benchmark of the three</div><div class="clear"></div>
-<div class="linenb">368</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implementations under different network sizes. Networks of $[9, n_{hidden}, 3]$ neurons per layer  were</div><div class="clear"></div>
-<div class="linenb">369</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instantiated with the same synaptic weights and trained for a single epoch of 10 stimulus presentations of</div><div class="clear"></div>
-<div class="linenb">370</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$50ms$ each. $n_{hidden}=30$ was chosen as a baseline, as it is the default throughout all simulations on the</div><div class="clear"></div>
-<div class="linenb">371</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bars dataset.}</div><div class="clear"></div>
-<div class="linenb">372</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-benchmark-n-hidden}</div><div class="clear"></div>
-<div class="linenb">373</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">374</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">375</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">376</div><div class="codeline">To compare how network size affects simulation time, all three implementations created for this project were trained on</div><div class="clear"></div>
-<div class="linenb">377</div><div class="codeline">10 examples of the <span class="highlight" title="An apostrophe may be missing.. Suggestions: [Bars', Bar's] (22089) [lt:en:POSSESSIVE_APOSTROPHE]">Bars</span> dataset with different numbers of hidden layer pyramidal neurons. The result of this comparison</div><div class="clear"></div>
-<div class="linenb">378</div><div class="codeline">is shown in Fig. \ref{fig-benchmark-n-hidden}.  The NEST implementation using rate neurons performed best in terms of</div><div class="clear"></div>
-<div class="linenb">379</div><div class="codeline">speed across the board. This result was slightly surprising, as the demand on the communication interface between</div><div class="clear"></div>
-<div class="linenb">380</div><div class="codeline">threads is very high, since all neurons transmit an event to each of their postsynaptic targets at every time step.</div><div class="clear"></div>
-<div class="linenb">381</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">382</div><div class="codeline">The NumPy variant is an outlier, and only listed here for completeness. It is the only variant running on a single</div><div class="clear"></div>
-<div class="linenb">383</div><div class="codeline">thread due to a limitation of NumPy. This could feasibly be improved greatly by using batched matrix multiplications, as</div><div class="clear"></div>
-<div class="linenb">384</div><div class="codeline">are provided for example by \texttt{PyTorch}. The original implementations do this, but for practical reasons the</div><div class="clear"></div>
-<div class="linenb">385</div><div class="codeline">Backend was changed here. Notably, this variant exhibits very little slowdown in response to an increase in network</div><div class="clear"></div>
-<div class="linenb">386</div><div class="codeline">size. It seems, that the vectorization of updates on a single thread scales better with network size than the</div><div class="clear"></div>
-<div class="linenb">387</div><div class="codeline">event-based communication performed by NEST.</div><div class="clear"></div>
-<div class="linenb">388</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">389</div><div class="codeline">Not only is the spiking variant of this model slower than the rate version, it also scales worse with network size.</div><div class="clear"></div>
-<div class="linenb">390</div><div class="codeline">Simulation time between $100$ and $250$ hidden layer neurons doubled, compared to an increase of $1.6$ for the rate</div><div class="clear"></div>
-<div class="linenb">391</div><div class="codeline">network. The Difference between the two was even greater when simulating on an office-grade processor (<span class="keyword1">\textit</span>{Intel</div><div class="clear"></div>
-<div class="linenb">392</div><div class="codeline">Core i5-9300H} @ $2.40GHz$, results not shown). Several insights about the comparatively poor performance can be deduced</div><div class="clear"></div>
-<div class="linenb">393</div><div class="codeline">from a first approximation: The most likely causes for increased compute speed are the communication of events and the</div><div class="clear"></div>
-<div class="linenb">394</div><div class="codeline">synaptic plasticity rules. Updates to the neuron state are unlikely to be responsible for the worse performance, as both</div><div class="clear"></div>
-<div class="linenb">395</div><div class="codeline">neuron models are modelled almost identically. These assumptions were tested experimentally.</div><div class="clear"></div>
-<div class="linenb">396</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">397</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">398</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">399</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">400</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">401</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.8\textwidth]{fig_benchmark_plasticity}</div><div class="clear"></div>
-<div class="linenb">402</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Benchmark of both NEST implementations with plastic and non-plastic synapse types]{Benchmark of both NEST</div><div class="clear"></div>
-<div class="linenb">403</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implementations with plastic and non-plastic synapse types. Deep networks of $300-200-100-10$ pyramidal neurons</div><div class="clear"></div>
-<div class="linenb">404</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;per layer were stimulated with 5 samples of random input $\in\{0,1\}$ for $10ms$ each. synaptic weights were</div><div class="clear"></div>
-<div class="linenb">405</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initialized between $\{-0.1, 0.1 \}$ to avoid overstimulation of individual neurons. In the plastic paradigm,</div><div class="clear"></div>
-<div class="linenb">406</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all synapses except for feedback weights $w^{down}$ were plastic with very low learning rates $\eta =</div><div class="clear"></div>
-<div class="linenb">407</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10^{-10}$.}</div><div class="clear"></div>
-<div class="linenb">408</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-benchmark-plasticity}</div><div class="clear"></div>
-<div class="linenb">409</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">410</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">411</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">412</div><div class="codeline">To assess the impact of synaptic updates on computation time, both variants were simulated once with plastic, and once</div><div class="clear"></div>
-<div class="linenb">413</div><div class="codeline">with static synapses. The simulation environment is set up to model synaptic populations with zero-valued learning rates</div><div class="clear"></div>
-<div class="linenb">414</div><div class="codeline">as non-plastic synapses (\texttt{static\_synapse} and \texttt{rate\_connection\_delayed} respectively). Thus, by setting</div><div class="clear"></div>
-<div class="linenb">415</div><div class="codeline">learning rates to zero, it was possible to simulate an entire network without spending any time on synaptic updates.</div><div class="clear"></div>
-<div class="linenb">416</div><div class="codeline">Results of this experiment are shown in Fig. \ref{fig-benchmark-plasticity}.</div><div class="clear"></div>
-<div class="linenb">417</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">418</div><div class="codeline">As expected, synaptic updates in the spiking network are responsible for a much larger proportion of total simulation</div><div class="clear"></div>
-<div class="linenb">419</div><div class="codeline">time than in the rate network. A much less anticipated result was that spiking networks are considerably slower even</div><div class="clear"></div>
-<div class="linenb">420</div><div class="codeline">when plasticity is turned off. This is surprising, as neuron models are almost identical except for some added</div><div class="clear"></div>
-<div class="linenb">421</div><div class="codeline">complexity in the spike generation process. This added complexity includes drawing from a Poisson process, which might</div><div class="clear"></div>
-<div class="linenb">422</div><div class="codeline">be time-costly depending on the underlying implementation. Another possible reason might be added complexity associated</div><div class="clear"></div>
-<div class="linenb">423</div><div class="codeline">with <span class="highlight-spelling" title="Possible spelling mistake found. (25015) [lt:en:MORFOLOGIK_RULE_EN_US]">SpikeEvents</span> in general, which update some postsynaptic variables not employed for this model. Further work is</div><div class="clear"></div>
-<div class="linenb">424</div><div class="codeline">required to more rigorously determine the reasons for this poor performance.\newline</div><div class="clear"></div>
-<div class="linenb">425</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">426</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [no indent] (25212) [lt:en:MORFOLOGIK_RULE_EN_US]">noindent</span> To investigate the degree to which synaptic plasticity and spike transmission in general contribute to</div><div class="clear"></div>
-<div class="linenb">427</div><div class="codeline">computational cost, two more experiments were conducted. Training durations under different values for the scaling</div><div class="clear"></div>
-<div class="linenb">428</div><div class="codeline">parameter $\psi$, as well as with different numbers of threads were recorded. Results are shown in Fig.</div><div class="clear"></div>
-<div class="linenb">429</div><div class="codeline">\ref{fig-benchmark-threads-psi}.</div><div class="clear"></div>
-<div class="linenb">430</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">431</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">432</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">433</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\begin{minipage}</span>{0.5\textwidth}</div><div class="clear"></div>
-<div class="linenb">434</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textbf</span>{a)}\par\medskip</div><div class="clear"></div>
-<div class="linenb">435</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">436</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.95\textwidth]{fig_benchmark_threads}</div><div class="clear"></div>
-<div class="linenb">437</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\end{minipage}</span>\hfill</div><div class="clear"></div>
-<div class="linenb">438</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\begin{minipage}</span>{0.5\textwidth}</div><div class="clear"></div>
-<div class="linenb">439</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textbf</span>{b)}\par\medskip</div><div class="clear"></div>
-<div class="linenb">440</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">441</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.95\textwidth]{fig_benchmark_psi}</div><div class="clear"></div>
-<div class="linenb">442</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword2">\end{minipage}</span></div><div class="clear"></div>
-<div class="linenb">443</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Benchmarks for the spiking implementation]{Benchmarks for the spiking implementation. <span class="keyword1">\textbf</span>{a)}</div><div class="clear"></div>
-<div class="linenb">444</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Simulation on the MNIST dataset for a network of $784-300-100-10$ neurons and $\psi=250$ on different numbers of</div><div class="clear"></div>
-<div class="linenb">445</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads. 10 samples were presented for $50ms$ each, and weights were drawn randomly from a uniform distribution</div><div class="clear"></div>
-<div class="linenb">446</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ \{-0.1, 0.1\}$. <span class="keyword1">\textbf</span>{b)} Training of a default network on the Bars dataset using different values of the</div><div class="clear"></div>
-<div class="linenb">447</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scaling parameter $\psi$. All simulations use 8 threads.}</div><div class="clear"></div>
-<div class="linenb">448</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-benchmark-threads-psi}</div><div class="clear"></div>
-<div class="linenb">449</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">450</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">451</div><div class="codeline">Simulating a large network on an increasing number of threads highlights the diminishing returns gained by spreading out</div><div class="clear"></div>
-<div class="linenb">452</div><div class="codeline">the simulation of NEST neurons. While initial speedup is high, at some point the benefit of parallelizing neuron updates</div><div class="clear"></div>
-<div class="linenb">453</div><div class="codeline">is counteracted by the need to communicate more events across threads. It is to be expected that for even higher</div><div class="clear"></div>
-<div class="linenb">454</div><div class="codeline">parallelization simulation time will begin to increase for this network size.</div><div class="clear"></div>
-<div class="linenb">455</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">456</div><div class="codeline">The second figure shows that reducing $\psi$ much lower will likewise lead to diminishing returns. On the other hand,</div><div class="clear"></div>
-<div class="linenb">457</div><div class="codeline">increasing it in the hopes of improving learning performance comes at a stark cost to simulation time. These results</div><div class="clear"></div>
-<div class="linenb">458</div><div class="codeline">should inform future experiments on increasing efficiency through parametrization.</div><div class="clear"></div>
-<div class="linenb">459</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">460</div><div class="codeline"><span class="keyword1">\section</span>{Pre-training}</div><div class="clear"></div>
-<div class="linenb">461</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">462</div><div class="codeline">One of the two major criticisms of the network noted in \citep{whittington2019theories} is the requirement for</div><div class="clear"></div>
-<div class="linenb">463</div><div class="codeline">pre-training (cf. Supplementary Table \ref{tab-wb-models}). By this, the authors mean the initialization to the</div><div class="clear"></div>
-<div class="linenb">464</div><div class="codeline">self-predicting state from which most simulations are started. The original paper implicitly considers three different</div><div class="clear"></div>
-<div class="linenb">465</div><div class="codeline">learning configurations: In the first one, the network starts from the self-predicting state and only feedforward</div><div class="clear"></div>
-<div class="linenb">466</div><div class="codeline">weights are plastic (cf. Sec. \ref{sec-le-tpres}). In the second one, the network starts from random weights and <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [into, ninth, hints, inn, linen, mint, Finn, hint, mints, pint, tint, Hinton, Linton, pints, tints, Jinan, jinn, lint, pinto, Minn, minty, pinon, linty, INT, INTG, dint, int, lints, INTJ, ITN, Mint, Minton, Sinan, Tintin, vint, vints] (26811) [lt:en:MORFOLOGIK_RULE_EN_US]">$Intn</span></div><div class="clear"></div>
-<div class="linenb">467</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (26818) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span> <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Proper, Syrupy] (26829) [lt:en:MORFOLOGIK_RULE_EN_US]">Pyr$ synapses are plastic, so they can minimize FB error. The third variant, in which feedback $Pyr</span></div><div class="clear"></div>
-<div class="linenb">468</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [right arrow] (26838) [lt:en:MORFOLOGIK_RULE_EN_US]">rightarrow</span> <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Pyre] (26849) [lt:en:MORFOLOGIK_RULE_EN_US]">Pyr$</span> weights are plastic, is not considered here. An experiment was conducted comparing performance of the</div><div class="clear"></div>
-<div class="linenb">469</div><div class="codeline">first two variants while training on the Bars dataset. These experiments showed that training was marginally slower, but</div><div class="clear"></div>
-<div class="linenb">470</div><div class="codeline">led to identical loss (results not shown). While initializing the network to a self-predicting state does give it a</div><div class="clear"></div>
-<div class="linenb">471</div><div class="codeline">slight 'head-start', this is by no means a condition for learning.</div><div class="clear"></div>
-<div class="linenb">472</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">473</div><div class="codeline">Furthermore, training the network towards the self-predicting state does not require any kind of structured input, let</div><div class="clear"></div>
-<div class="linenb">474</div><div class="codeline">alone targets for activation. The network is driven towards this state purely by noise injection at the input layer. As</div><div class="clear"></div>
-<div class="linenb">475</div><div class="codeline">background noise is trivial to generate (perhaps unavoidable) for any cortical circuit, the self-predicting state might</div><div class="clear"></div>
-<div class="linenb">476</div><div class="codeline">be the default rather than the exception. For these reasons, I do not consider pre-training to be an issue that</div><div class="clear"></div>
-<div class="linenb">477</div><div class="codeline">interferes with the model's biological plausibility.</div><div class="clear"></div>
-<div class="linenb">478</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">479</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">480</div><div class="codeline"><span class="keyword1">\section</span>{Behavioral timescale learning}</div><div class="clear"></div>
-<div class="linenb">481</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">482</div><div class="codeline">As a final experiment, the extent to which the network can handle learning on biological timescales was investigated.</div><div class="clear"></div>
-<div class="linenb">483</div><div class="codeline">One criticism occasionally aimed at <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Backdrop, Back prop] (27972) [lt:en:MORFOLOGIK_RULE_EN_US]">Backprop</span> is the requirement for instructive signals to be available immediately</div><div class="clear"></div>
-<div class="linenb">484</div><div class="codeline">\citep{Bartunov2018}. The assumption is, that an agent in the real world would select an action, and be informed about</div><div class="clear"></div>
-<div class="linenb">485</div><div class="codeline">the consequences only after some delay. Learning algorithms should therefore be capable of handling delayed instructive</div><div class="clear"></div>
-<div class="linenb">486</div><div class="codeline">signals.</div><div class="clear"></div>
-<div class="linenb">487</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">488</div><div class="codeline">Furthermore, all membrane potentials and synaptic weight derivatives of the dendritic error network are reset after each</div><div class="clear"></div>
-<div class="linenb">489</div><div class="codeline">stimulus presentation. This procedure ensures that residuals from the previous run do not interfere with learning of a</div><div class="clear"></div>
-<div class="linenb">490</div><div class="codeline">subsequent stimulus. It was confirmed experimentally that networks fail to learn when this reset is not performed after</div><div class="clear"></div>
-<div class="linenb">491</div><div class="codeline">every training sample (results not shown).</div><div class="clear"></div>
-<div class="linenb">492</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">493</div><div class="codeline">Two additions were made to the model to confirm that it is capable of learning without these constraints. First, the</div><div class="clear"></div>
-<div class="linenb">494</div><div class="codeline">target activation was delayed to be first injected $5ms$ after the stimulus. This serves to ensure that  that learning</div><div class="clear"></div>
-<div class="linenb">495</div><div class="codeline">does not rely on simultaneous presentation of stimulus and target. Secondly, instead of manually resetting membrane</div><div class="clear"></div>
-<div class="linenb">496</div><div class="codeline">potentials, the network was allowed to relax after each training sample. During this relaxation period  (termed</div><div class="clear"></div>
-<div class="linenb">497</div><div class="codeline"><span class="keyword1">\textit</span>{soft reset}), the network is simulated for $15ms$ without any current injections. A training comparison between</div><div class="clear"></div>
-<div class="linenb">498</div><div class="codeline">a vanilla network and these two additions is shown in Fig. \ref{fig-idle-time}.</div><div class="clear"></div>
-<div class="linenb">499</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">500</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">501</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
-<div class="linenb">502</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;\centering</div><div class="clear"></div>
-<div class="linenb">503</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\includegraphics</span>[width=0.9\textwidth]{fig_idle_time}</div><div class="clear"></div>
-<div class="linenb">504</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\caption</span>[Comparison of learning under minimal external control]{Comparison of learning under minimal external</div><div class="clear"></div>
-<div class="linenb">505</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;control. <span class="keyword1">\textbf</span>{Blue:} default parametrization for the Bars dataset. <span class="keyword1">\textbf</span>{Orange:} during the first $5ms$ of</div><div class="clear"></div>
-<div class="linenb">506</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a training pattern, no target is provided. Afterwards training continues as usual for the remaining $45ms$.</div><div class="clear"></div>
-<div class="linenb">507</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\textbf</span>{Green:} Additionally, the network is not manually reset after each training sample, but simulated for</div><div class="clear"></div>
-<div class="linenb">508</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;another $15ms$ without stimulation. Increased loss of the delayed target paradigms might be explained by the</div><div class="clear"></div>
-<div class="linenb">509</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shorter effective training time per stimulus.}</div><div class="clear"></div>
-<div class="linenb">510</div><div class="codeline">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword1">\label</span>{fig-idle-time}</div><div class="clear"></div>
-<div class="linenb">511</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
-<div class="linenb">512</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">513</div><div class="codeline">All paradigms lead to equally fast learning of the Bars dataset, with delayed target presentation causing a slightly</div><div class="clear"></div>
-<div class="linenb">514</div><div class="codeline">higher test loss. These results show that constraints like this have only miniscule impact on learning performance of</div><div class="clear"></div>
-<div class="linenb">515</div><div class="codeline">the dendritic error network. Thus, a cortical network of this kind can be expected to be indifferent to idle time in</div><div class="clear"></div>
-<div class="linenb">516</div><div class="codeline">which it is only driven by white noise. Likewise, incoming sensory information in the self-predicting state does not</div><div class="clear"></div>
-<div class="linenb">517</div><div class="codeline">cause plasticity which would drive weights away from what was previously learned. Only when a target is presented to the</div><div class="clear"></div>
-<div class="linenb">518</div><div class="codeline">output layer will weights adapt. This insight shows that the network requires even less external control, which might be</div><div class="clear"></div>
-<div class="linenb">519</div><div class="codeline">of use for improving its efficiency \todo{ref outlook}. More importantly, with the need to manually reset membrane</div><div class="clear"></div>
-<div class="linenb">520</div><div class="codeline">potentials, another biologically implausible mechanism can be omitted from simulations of this network.</div><div class="clear"></div>
-<div class="linenb">521</div><div class="codeline"></div><div class="clear"></div>
-<div class="linenb">522</div><div class="codeline">It should be noted that this experiment makes the assumption that the brain is either capable of retaining an input</div><div class="clear"></div>
-<div class="linenb">523</div><div class="codeline">sequence until feedback is available, or otherwise 'replay' the pattern at a later point. While such mechanisms are much</div><div class="clear"></div>
-<div class="linenb">524</div><div class="codeline">less elegant than trace-based solutions for delayed reward signalling \citep{bellec2020solution}, the brain has been</div><div class="clear"></div>
-<div class="linenb">525</div><div class="codeline">found capable of such replays \citep{Marblestone2016}.</div><div class="clear"></div>
+<div class="linenb">224</div><div class="codeline">This project further establishes the dendritic error network as one of the most biologically plausible mechanisms for</div><div class="clear"></div>
+<div class="linenb">225</div><div class="codeline">approximating the <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Back propagation] (16730) [lt:en:MORFOLOGIK_RULE_EN_US]">Backpropagation</span> of errors algorithm. As hypothesized, the spiking variant of the <span class="highlight-spelling" title="Possible spelling mistake found. (16811) [lt:en:MORFOLOGIK_RULE_EN_US]">Urbanczik-Senn</span></div><div class="clear"></div>
+<div class="linenb">226</div><div class="codeline">plasticity is capable of performing well in a much more demanding setting than previously shown. The model furthermore</div><div class="clear"></div>
+<div class="linenb">227</div><div class="codeline">proved to be largely unhindered by the vast majority of biological constraints which were imposed on it. Particularly</div><div class="clear"></div>
+<div class="linenb">228</div><div class="codeline">constraints on connectivity and synaptic polarity were shown to impede learning to only minor degrees. The model</div><div class="clear"></div>
+<div class="linenb">229</div><div class="codeline">overcomes all but a few of the general arguments for claiming that the <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Back propagation] (17247) [lt:en:MORFOLOGIK_RULE_EN_US]">Backpropagation</span> algorithm could not plausibly be</div><div class="clear"></div>
+<div class="linenb">230</div><div class="codeline">implemented by networks of biological neurons. Only when investigating the correspondence to cortical microcircuits more</div><div class="clear"></div>
+<div class="linenb">231</div><div class="codeline">closely does the network exhibit serious limitations. </div><div class="clear"></div>
+<div class="linenb">232</div><div class="codeline"></div><div class="clear"></div>
+<div class="linenb">233</div><div class="codeline">The predictive coding hypothesis has had a substantial impact on the recent developments in cognitive science. The</div><div class="clear"></div>
+<div class="linenb">234</div><div class="codeline">dendritic error network is a promising model for explaining how individual computations of this hypothesis could be</div><div class="clear"></div>
+<div class="linenb">235</div><div class="codeline">distributed across cortical neurons. Finding a biologically plausible mechanism that replaces (or alternatively</div><div class="clear"></div>
+<div class="linenb">236</div><div class="codeline">explains) the <span class="highlight" title="This word is normally spelled as one.. Suggestions: [interlayer] (17830) [lt:en:EN_COMPOUNDS]">inter-layer</span> nudging signals would arguably elevate it to a prime contender for explaining supervised</div><div class="clear"></div>
+<div class="linenb">237</div><div class="codeline">learning in the cortex. Nevertheless, such optimism must be paired with restraint given the vast complexity of the</div><div class="clear"></div>
+<div class="linenb">238</div><div class="codeline">cortex - and associated areas - which a general model would have to encompass. Either way, further research into the</div><div class="clear"></div>
+<div class="linenb">239</div><div class="codeline">dendritic error network is likely to help us better understand the intriguing capabilities of the human brain.</div><div class="clear"></div>
 </div>
 <hr/>
 Output produced by TeXtidote v0.8.4, &copy; 2018-2022 Sylvain Hall&eacute; - All rights reserved.<br/>

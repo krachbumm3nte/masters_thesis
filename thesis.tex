@@ -32,7 +32,7 @@
     colorlinks=true,
     linkcolor=black,
     citecolor=black,
-    urlcolor=blue,
+    urlcolor=black,
 }
 
 
@@ -80,6 +80,8 @@
 \newcommand{\intro}{\textcolor{blue}{\textbf{introduce term?}}}
 
 \newdateformat{myformat}{\THEDAY{. }\monthnamengerman[\THEMONTH] \THEYEAR}
+
+\counterwithout{footnote}{chapter}
 
 \begin{document}
 
@@ -151,7 +153,7 @@ Marburg, den \myformat\today \hspace{4cm} Johannes Gille
 
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt}
+\setlength{\parskip}{7pt}
 
 \include{01_introduction.tex}
 \include{02_methods.tex}
