@@ -46,7 +46,7 @@ as well as lateral interneuron connections arrive at the apical compartments of 
 pyramidal neuron forms two reciprocal loops, one with all interneurons in the same layer, and one with all pyramidal
 neurons in the next layer.
 
-all interneurons further receive feedback information from superficial pyramidal neurons. These feedback connections are
+All interneurons further receive feedback information from superficial pyramidal neurons. These feedback connections are
 unique within this model, as they connect one pyramidal neuron to exactly one interneuron. Instead of transmitting a
 neuronal activation as all other synapses do, these connections relay somatic voltage directly. This one-to-one
 connectivity puts a strict constraint on the number of interneurons in a hidden layer, as it must be equal to the number
@@ -233,7 +233,7 @@ error of feedforward synapses (Equation \ref{eq-delta_w_up}), since any nonzero 
 soma\footnote{This property might actually be considered the purpose of the Urbanczik-Senn plasticity. In the original
 paper, currents were injected directly into the soma to change the error term. Introducing a second dendrite which
 performs that very task is far more sensible for biological neurons, and thus might also be implemented in future
-iterations of the interneurons.}. As a result, in the self-predicting state all plasticiy in the network is disabled, and the
+iterations of the interneurons.}. As a result, in the self-predicting state all plasticity in the network is disabled, and the
 state is stable regardless of the kind of stimulus injected into the input layer. Next, notice how information flows
 backwards through the network; All feedback pathways between layers ultimately pass through the apical compartments of
 pyramidal neurons. Thus, successful silencing of all apical compartments implies that no information can travel
@@ -253,7 +253,7 @@ akin to Backprop.
 Training the network then requires only the injection of a target activation into the network's output layer alongside
 with a stimulus at the input layer. Feedback connections as a result elicit a prediction error arises in the previous
 layer. Synapses then drive to minimize this error by approaching a new self-predicting state in which interneurons
-mirror the novel behaviour of their sisters. The new self-predicting state will minimize prediction error, while
+mirror the novel behavior of their sisters. The new self-predicting state will minimize prediction error, while
 conforming to the input-output pair injected into the layer. Note that this interaction is not exclusive to the last two
 layers. Any apical errors elicit a change in somatic activity, which preceding interneurons will fail to predict. Thus,
 errors are propagated backwards through arbitrarily deep networks, causing error minimization at every layer. See the
@@ -266,12 +266,12 @@ Classical Backprop relies on a strict separation of a forward pass of some stimu
 dependent on the arising loss at the output layer. Since the present network is time-continuous, stimulus and target
 activation are injected into the network simultaneously. These injections are maintained for a given presentation time
 $t_{pres}$ in order to allow the network to calculate errors through its recurrent connections before slowly adapting
-weights. Particluarly for deep networks, signals travelling from both the input and output layer require some time to
+weights. Particularly for deep networks, signals travelling from both the input and output layer require some time to
 balance out and elicit the correct dendritic error terms. This property poses the most significant drawback of this type
 of time-continuous approximation of Backprop: The network tends to overshoot activations in some neurons, which in turn
 causes an imbalance between dendritic and somatic compartments. This effect causes the network to change synaptic
 weights away from the desired state during the first few milliseconds of a stimulus presentation. The solution
-Sacramento et al. found for this issue was to drastically reduce learning rates, while increasing stimulus presentation
+Sacramento et al.\ found for this issue was to drastically reduce learning rates, while increasing stimulus presentation
 time. This was sufficient to prove that plasticity in this kind of network is able to perform error propagation, but
 still has some issues. Most notably, training is highly inefficient and computationally intensive. A closer
 investigation of this and an alternative solution will be presented in Section \ref{sec-latent-eq}.
@@ -308,7 +308,7 @@ transmitted across threads and compute nodes by the Simulator. A Multitude of Ev
 differently by postsynaptic neurons.} in NEST can not be handled in the same simulation step in which they were sent.
 Thus, NEST enforces a synaptic transmission delay of at least one simulation step for all connections. This property is
 integral to other parallel simulation backends \citep{Hines1997} as well as neuromorphic hardware
-\citep{davies2018loihi}. It may not even considered a limitation by some, as synaptic transmission within biological
+\citep{davies2018loihi}. It may not even be considered a limitation by some, as synaptic transmission within biological
 neurons is never instantaneous either \citep{kandel2021principles}. Yet particularly with regard to the relaxation
 period (cf. Section \ref{sec-latent-eq}), it can be expected to affect performance.
 
@@ -382,7 +382,7 @@ dynamically grows and shrinks during simulation and is only ever as long as the 
 all presynaptic neurons. This approach proves to be more efficient in terms of computation time, since fewer calls to
 the update function are required per synapse. It does come at the cost of memory consumption, as the history can grow
 particularly large for simulations with low in-degrees or large ISI\footnote{It should also be noted that in this
-approach requires redundant integration of the history by every synapse. Stapmanns et al. propose a third solution, in
+approach requires redundant integration of the history by every synapse. Stapmanns et al.\ propose a third solution, in
 which this integration is performed once whenever a spike is transmitted through any incoming connection, with the
 resulting weight change being applied to all synapses immediately. This approach proved to be even more efficient for
 some network configurations, but is incompatible with simulations where incoming synapses have heterogeneous synaptic
@@ -395,7 +395,7 @@ spike.
 \subsection{Integrating weight changes}
 
 
-Stapmanns et al. describe the Urbanczik-Senn plasticity rule based on the general equation for weight changes, while
+Stapmanns et al.\ describe the Urbanczik-Senn plasticity rule based on the general equation for weight changes, while
 omitting obsolete parameters:
 
 \begin{align}
@@ -443,7 +443,7 @@ $[0,\infty)$:
 \end{align}
 
 since spikes naturally only occur for $t>0$, this simplified integral allows for a much more efficient computation of
-the convolution. The Function $F$ on the right-hand side of Equation \ref{eq-delta-w-spiking} can therefore be rewriten
+the convolution. The Function $F$ on the right-hand side of Equation \ref{eq-delta-w-spiking} can therefore be rewritten
 as:
 
 \begin{align}
@@ -454,7 +454,7 @@ as:
 with learning rate $\eta$. $V_i^\ast$ then is the dendritic error of the dendrite that the synapse between $j$ and $i$
 is located at\footnote{The dendritic error here is defined as the difference between two hypothetical rates based on the
 arbitrary function $\phi$. The original implementation uses the difference between the true postsynaptic spiketrain and
-this dendritic prediction ($V_i^\ast = (s_i - \phi(\hat{v}_i^{dend}) )$). Furthermore, Stapmanns et al. show that
+this dendritic prediction ($V_i^\ast = (s_i - \phi(\hat{v}_i^{dend}) )$). Furthermore, Stapmanns et al.\ show that
 generating a spiketrain from the dendritic potential ($V_i^\ast = (s_i - s_i^{dend})$) also results in successful
 learning, although at the cost of additional training time. The rate-based variant was chosen in order to not hinder
 learning performance any more than necessary.}. Writing out the convolutions in Equation \ref{eq-delta-w-t-T}
@@ -485,7 +485,7 @@ is stored by the postsynaptic neuron.
 
 The most significant drawback of the dendritic error model is the previously mentioned requirement for long stimulus
 presentation times and appropriately low learning rates. This makes the network prohibitively inefficient for the large
-networks required for complex learning tasks. Sacramento et al. developed a steady-state approximation of their network
+networks required for complex learning tasks. Sacramento et al.\ developed a steady-state approximation of their network
 which models the state of the network after it has fully relaxed in response to a stimulus-target pair. It does not
 suffer from these issues and shows that their model can in principle solve more demanding learning tasks such as MNIST.
 Yet, these types of approximation are much further detached from biological neurons than the original model and thus do
@@ -502,15 +502,15 @@ membrane time constant $\tau_m$, a feedforward network with $N$ layers of leaky 
 constant of $N \tau_m$. Yet, in the present model, a target activation simultaneously injected into the output neurons
 slowly propagates backwards through the highly recurrent network. Neurons at early layers require all subsequent layers
 to be fully relaxed in order to correctly compute their dendritic error terms, effectively being dependent on two
-network passes. Haider et al. state that this kind of network therefore requires $2N\tau_m$ to relax in response to a
+network passes. Haider et al.\ state that this kind of network therefore requires $2N\tau_m$ to relax in response to a
 given input-output pairing. This prediction proved to be slightly optimistic in experiments, as shown in Fig.
 \ref{fig-error-comp-le}.
 
 
-Slow network relaxation is a major issue, as it implies that plasticity during the first few miliseconds of a stimulus
+Slow network relaxation is a major issue, as it implies that plasticity during the first few milliseconds of a stimulus
 presentation is driven by faulty error terms. The network then needs to undo the weight changes made during the
 relaxation period in the later phase of a stimulus presentation, in order to make tangible progress on the learning
-task. Haider et al. call this issue the "relaxation problem" and suggest that it might be inherent to most established
+task. Haider et al.\ call this issue the "relaxation problem" and suggest that it might be inherent to most established
 attempts at biologically plausible Backpropagation algorithms
 \citep{Whittington2017,guerguiev2017towards,sacramento2018dendritic,millidge2020activation}.
 
@@ -535,7 +535,7 @@ presentation time and learning rates, thus increasing computational efficiency.
 
 
 
-The approach proposed by Haider et al. is to change the parameter of the activation function $\phi$, a mechanism called
+The approach proposed by Haider et al.\ is to change the parameter of the activation function $\phi$, a mechanism called
 \textit{Latent Equilibrium} (LE). Neurons in the original dendritic error network transmit a function of their somatic
 potential $u_i$, which is updated through Euler integration at every simulation step (Equation \ref{eq-r-t-sacramento}).
 In contrast, neurons using Latent Equilibrium (henceforth called \textit{LE neurons}) transmit a function of what the
@@ -548,7 +548,7 @@ integration is simply performed with a larger Euler step:
 \end{align}
 
 instead of broadcasting their rate based on the current somatic potential ($r_i(t) = \phi(u_i(t))$), LE neurons transmit
-their predicted future activation, denoted as $\breve{r}_i(t) = \phi(\breve{u}_i(t))$. The degree to wich LE neurons
+their predicted future activation, denoted as $\breve{r}_i(t) = \phi(\breve{u}_i(t))$. The degree to which LE neurons
 look ahead is determined by the \textit{effective membrane time constant} $\tau_{eff} = \frac{C_m}{g_l + g^{bas} +
 g^{api}}$. This time constant takes into account the conductance with which dendritic compartments leak into the soma,
 which is a key driving factor for the speed at which the network relaxes. Any computations that employ or relate to this
@@ -599,7 +599,7 @@ When employing prospective dynamics in the dendritic error networks, local error
 relax much faster, as shown in Fig. \ref{fig-error-comp-le}. These simulations highlight the superiority of LE for
 learning in this network, as the relaxation period is almost instantaneous. In contrast, the error terms in the original
 dendritic error network drive random synaptic plasticity even when the network is fully trained on a given dataset and
-is able to make accurate predictions. Thus, both the issue of erroneous weight changes, as well as concerns over
+is able to make accurate predictions. Thus, both the issue of erroneous weight changes, and concerns over
 response time and learning speed can be solved by LE. The authors furthermore show, that learning with this mechanism is
 indifferent to presentation times or effective time constants in their rate neuron model.
 
@@ -621,7 +621,7 @@ performance, this was deemed sufficient.
 After facing some setbacks when attempting to train the first spiking variant of the network, the decision was made to
 also implement a rate-based variant of the neuron in NEST.  While the additional effort required for another
 implementation might be questionable, this model turned out to be indispensible. It enabled the identification of both
-errors in the model, as well as training mechanisms and parameters that required changes to enable spike-compatible
+errors in the model, and training mechanisms and parameters that required changes to enable spike-compatible
 learning. The rate version in NEST additionally served to distinguish discrepancies that are due to the novel simulation
 backend from those that were introduced by the spike-based communication scheme (cf. Section \ref{sec-le-tpres}).
 
@@ -648,13 +648,13 @@ relevant matrix multiplications. The two NEST variants will be referred to as
 A major issue of the spiking network is the fact that under the default parametrization, spikes are too infrequent for
 the network to accurately compute the dendritic error terms. Initial experiments showed that the network is rather
 sensitive to changes in parametrization, which meant that it was desirable to change as few existing parameters as
-possible. Therefore, a novel parameter $\psi$ was introduced to increase spike frequency independently from the
+possible. Therefore, a novel parameter $\psi$ was introduced to increase spike frequency independently of the
 network's other parameters. In a spiking neuron $i$, the probability of eliciting a spike is linearly increased by this
 factor ($r_i = \psi \phi(u_i)$). Likewise, all synaptic weights $W$ in a spiking network are attenuated by the same
 factor ($W \leftarrow \frac{W}{\psi}$). These changes cancel each other out, and an increased value for $\psi$ elicits
 no change in absolute compartment voltages of a network. Instead, it serves to stabilize these voltages over time, which
 drastically improves learning performance. One mechanism in which this parameter also needs to be considered is the
-plasticity rule. Weight changes are affected by $\psi$ multiple times, which can be observed when explicity pulling it
+plasticity rule. Weight changes are affected by $\psi$ multiple times, which can be observed when explicitly pulling it
 out of the activation function. As an example, take feedforward weights at layer $l$:
 
 \begin{align*}
@@ -706,18 +706,18 @@ simulations, all targets are encoded with one-hot vectors. Thus, accuracy is def
 for a test run over $N$ samples, with $\delta$ being the Kronecker delta function. Train error is defined as inverse
 accuracy.\newline
 
-\textbf{Loss}: Unless specified otherwise, train- and test loss are are computed through MSE between predicted and
+\textbf{Loss}: Unless specified otherwise, train- and test loss are computed through MSE between predicted and
 target output:
 \begin{align*}
   MSE & = \frac{1}{M} \sum_{i=1}^M \left( y^{target}_i-y^{pred}_i \right)^2
 \end{align*}
 with $M$ neurons in the output layer, which is again averaged over $N$ test samples. Due to the network's relaxation
-period, $y^{pred}$ can not be accurately computed instantaneously\footnote{Sacramento et al. actually do exactly this.
+period, $y^{pred}$ can not be accurately computed instantaneously\footnote{Sacramento et al.\ actually do exactly this.
 They compute $y^{pred}$ without neuron dynamics, only from the input, activation function $\phi$, and feedforward
 weights. This approach makes the assumption that the network is permanently in a perfect self-predicting state, in which
 lateral and feedback weights have no impact on pyramidal neuron activity. Particularly for the spiking variant, this
 assumption was shown to be erroneous, leading to artificially inflated performance. Hence, all tests are performed by
 fully simulating networks with disabled plasticity.}. Instead, the network needs to be presented with the stimulus for a
 given time $t_{pres}$. Particularly for the SNN, as well as networks injected with noise, output layer membranes
-fluctuate strongly. therefore, $y^{pred}$ is an average over recorded somatic potentials for each output neuron. This
+fluctuate strongly. Therefore, $y^{pred}$ is an average over recorded somatic potentials for each output neuron. This
 recording typically starts after $\sim 70\%$ of $t_{pres}$ has passed.
